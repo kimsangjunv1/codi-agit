@@ -80,7 +80,7 @@ const SkeletonBase = <T extends ElementType = "div">({
                         transition={{ duration: 0.2, ease: "easeOut" }}
                         className={`${className?.skeleton ?? ""} ${minWidth} h-[auto!important] flex w-full ${minHeight} absolute top-0 left-0 col-span-3`}
                     >
-                        <UI.Error onClick={() => onError?.()} />
+                        <UI.ErrorRetry onRetry={() => onError?.()} />
                     </motion.div>
                 )}
             </AnimatePresence>
