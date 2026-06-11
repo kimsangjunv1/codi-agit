@@ -13,15 +13,15 @@ import {
 } from "@/entities/invitation/api/invitation.query";
 import {
     InvitationCodeListItem,
-    patchInvitationCodePayloadType,
-    setInvitationCodePayloadType,
+    PatchInvitationCodePayload,
+    SetInvitationCodePayload,
 } from "@/entities/invitation/model/invitation.type";
 import { util } from "@/shared/lib/util";
 import ManagerPageShell from "@/widgets/manager/ui/ManagerPageShell";
 import ManagerListSkeleton from "@/widgets/manager/ui/ManagerListSkeleton";
 
 const InvitationManager = () => {
-    const invitationCodeCreateValueRef = useRef<setInvitationCodePayloadType>({ is_active: false, expire_at: "" });
+    const invitationCodeCreateValueRef = useRef<SetInvitationCodePayload>({ is_active: false, expire_at: "" });
 
     const { data: getInvitationCodeListData, isLoading } = useGetInvitationCodeListOnManagerQuery();
     const { mutate: setInvitationCodeFetch } = useSetInvitationCodeQuery();

@@ -1,11 +1,17 @@
 import { clientApi } from "@/shared/lib/api/client";
+import {
+    DeleteCommentManagerResponse,
+    GetCommentDetailResponse,
+    GetCommentLatestListResponse,
+    GetCommentManagerListResponse,
+} from "@/entities/comment/model/comment.type";
 
 /**
  * 댓글 - 게시물에 해당하는 댓글 목록 불러오기
  */
 export const getCommentListFetch = (idx: number) => {
     const url = `/api/v1/get/comment/detail/${idx}`;
-    return clientApi(url, { method: "GET" });
+    return clientApi.get<GetCommentDetailResponse>(url);
 };
 
 /**
@@ -13,17 +19,17 @@ export const getCommentListFetch = (idx: number) => {
  */
 export const getCommentLatestListFetch = () => {
     const url = `/api/v1/get/comment/latest`;
-    return clientApi(url, { method: "GET" });
+    return clientApi.get<GetCommentLatestListResponse>(url);
 };
 
 /**
  * 댓글 - 생성
  */
-export const setCommentFetch = (data: any) =>
-    clientApi("/api/v1/set/comment/create", { method: "POST", body: data });
+export const setCommentFetch = (data: unknown) =>
+    clientApi.post<unknown>("/api/v1/set/comment/create", data);
 
 export const getCommentManagerListFetch = () =>
-    clientApi("/api/v1/get/comment/manager", { method: "GET" });
+    clientApi.get<GetCommentManagerListResponse>("/api/v1/get/comment/manager");
 
 export const deleteCommentManagerFetch = (data: { idx: number }) =>
-    clientApi("/api/v1/delete/comment/manager", { method: "DELETE", body: data });
+    clientApi.delete<DeleteCommentManagerResponse>("/api/v1/delete/comment/manager", { body: data });

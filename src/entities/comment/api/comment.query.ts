@@ -1,24 +1,24 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { getCommentLatestListFetch, getCommentListFetch, getCommentManagerListFetch, deleteCommentManagerFetch, setCommentFetch } from "@/entities/comment/api/comment.api";
-
+import { AgitRoutes } from "@/shared/constants/entityKeys";
 import {
-    GetCommentDetailResponseType,
-    GetCommentLatestListResponseType,
-    GetCommentManagerListResponseType,
-    deleteCommentManagerPayloadType,
+    deleteCommentManagerFetch,
+    getCommentLatestListFetch,
+    getCommentListFetch,
+    getCommentManagerListFetch,
+    setCommentFetch,
+} from "@/entities/comment/api/comment.api";
+import {
+    DeleteCommentManagerPayload,
+    GetCommentDetailResponse,
+    GetCommentLatestListResponse,
+    GetCommentManagerListResponse,
 } from "@/entities/comment/model/comment.type";
-
 import { useToastStore } from "@/shared/stores/useToastStore";
 
-/**
- * 댓글 - 게시물별 상세 목록
- */
 export const useGetCommentDetailQuery = (commentIdx?: number) => {
-    const MUTATION_KEY = "comment";
-
-    const { data, isLoading, isError, isFetching, refetch } = useQuery<GetCommentDetailResponseType>({
-        queryKey: [MUTATION_KEY, "useGetCommentDetailQuery", commentIdx],
+    const { data, isLoading, isError, isFetching, refetch } = useQuery<GetCommentDetailResponse>({
+        queryKey: [AgitRoutes.KEY_COMMENT, "detail", commentIdx],
         queryFn: () => getCommentListFetch(commentIdx!),
         staleTime: 0,
         enabled: !!commentIdx,
@@ -27,14 +27,9 @@ export const useGetCommentDetailQuery = (commentIdx?: number) => {
     return { data, isLoading, isError, isFetching, refetch };
 };
 
-/**
- * 댓글 - 최신 목록
- */
 export const useGetCommentLatestListQuery = () => {
-    const MUTATION_KEY = "comment";
-
-    const { data, isLoading, isError, isFetching, refetch } = useQuery<GetCommentLatestListResponseType>({
-        queryKey: [MUTATION_KEY, "useGetCommentLatestListQuery"],
+    const { data, isLoading, isError, isFetching, refetch } = useQuery<GetCommentLatestListResponse>({
+        queryKey: [AgitRoutes.KEY_COMMENT, "latest"],
         queryFn: () => getCommentLatestListFetch(),
         staleTime: 0,
     });
@@ -42,34 +37,18 @@ export const useGetCommentLatestListQuery = () => {
     return { data, isLoading, isError, isFetching, refetch };
 };
 
-/**
- * 댓글 - 생성
- */
 export const useSetCommentQuery = () => {
     const { setToast } = useToastStore();
-
-    const MUTATION_KEY = "comment";
     const queryClient = useQueryClient();
 
-    const {
-        data,
-        mutate,
-        mutateAsync,
-        error,
-        isError,
-        isSuccess,
-        isIdle,
-        isPending,
-        isPaused,
-        reset,
-    } = useMutation({
-        mutationKey: [MUTATION_KEY, "useSetCommentQuery"],
-        mutationFn: (payload: any) => setCommentFetch(payload),
+    const { data, mutate, mutateAsync, error, isError, isSuccess, isIdle, isPending, isPaused, reset } = useMutation({
+        mutationKey: [AgitRoutes.KEY_COMMENT, "set"],
+        mutationFn: (payload: unknown) => setCommentFetch(payload),
         onSuccess: () => {
             setToast({ msg: "댓글을 생성했어요", time: 2 });
-            queryClient.invalidateQueries({ queryKey: [MUTATION_KEY] });
+            queryClient.invalidateQueries({ queryKey: [AgitRoutes.KEY_COMMENT] });
         },
-        onError: (err: any) => {
+        onError: (err: Error) => {
             setToast({ msg: err.message ?? "에러 발생", time: 2 });
         },
     });
@@ -78,10 +57,8 @@ export const useSetCommentQuery = () => {
 };
 
 export const useGetCommentManagerListQuery = () => {
-    const MUTATION_KEY = "comment";
-
-    const { data, isLoading, isError, isFetching, refetch } = useQuery<GetCommentManagerListResponseType>({
-        queryKey: [MUTATION_KEY, "useGetCommentManagerListQuery"],
+    const { data, isLoading, isError, isFetching, refetch } = useQuery<GetCommentManagerListResponse>({
+        queryKey: [AgitRoutes.KEY_COMMENT, "manager", "list"],
         queryFn: () => getCommentManagerListFetch(),
         staleTime: 0,
     });
@@ -91,29 +68,16 @@ export const useGetCommentManagerListQuery = () => {
 
 export const useDeleteCommentManagerQuery = () => {
     const { setToast } = useToastStore();
-
-    const MUTATION_KEY = "comment";
     const queryClient = useQueryClient();
 
-    const {
-        data,
-        mutate,
-        mutateAsync,
-        error,
-        isError,
-        isSuccess,
-        isIdle,
-        isPending,
-        isPaused,
-        reset,
-    } = useMutation({
-        mutationKey: [MUTATION_KEY, "useDeleteCommentManagerQuery"],
-        mutationFn: (payload: deleteCommentManagerPayloadType) => deleteCommentManagerFetch(payload),
+    const { data, mutate, mutateAsync, error, isError, isSuccess, isIdle, isPending, isPaused, reset } = useMutation({
+        mutationKey: [AgitRoutes.KEY_COMMENT, "manager", "delete"],
+        mutationFn: (payload: DeleteCommentManagerPayload) => deleteCommentManagerFetch(payload),
         onSuccess: () => {
             setToast({ msg: "댓글을 삭제했어요", time: 2 });
-            queryClient.invalidateQueries({ queryKey: [MUTATION_KEY] });
+            queryClient.invalidateQueries({ queryKey: [AgitRoutes.KEY_COMMENT] });
         },
-        onError: (err: any) => {
+        onError: (err: Error) => {
             setToast({ msg: err.message ?? "에러 발생", time: 2 });
         },
     });

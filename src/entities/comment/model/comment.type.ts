@@ -1,8 +1,8 @@
-import { ApiResponseType } from "@/shared/model/common.type";
+import { ApiResponse } from "@/shared/model/common.type";
 
-export interface GetCommentDetailDataType {
+export interface GetCommentDetailData {
     idx: number;
-    id: string; // UUID
+    id: string;
     post_id: number;
     profile: number;
     author: string;
@@ -10,20 +10,20 @@ export interface GetCommentDetailDataType {
     password: string | null;
     is_admin: boolean;
     is_modified: boolean;
-    created_at: string; // ISO Date string
-    updated_at: string; // ISO Date string
+    created_at: string;
+    updated_at: string;
 }
 
-export type GetCommentDetailResponseType = ApiResponseType<GetCommentDetailDataType[]>;
+export type GetCommentDetailResponse = ApiResponse<GetCommentDetailData[]>;
 
-export interface GetCommentLatestListType {
+export interface GetCommentLatestListItem {
     idx: number;
     author: string;
     msg: string;
-    created_at: string; // ISO Date string
+    created_at: string;
 }
 
-export type GetCommentLatestListResponseType = ApiResponseType<GetCommentLatestListType[]>;
+export type GetCommentLatestListResponse = ApiResponse<GetCommentLatestListItem[]>;
 
 export interface CommentManagerItem {
     idx: number;
@@ -37,9 +37,9 @@ export interface CommentManagerItem {
     };
 }
 
-export interface deleteCommentManagerPayloadType {
+export interface DeleteCommentManagerPayload {
     idx: number;
 }
 
-export type GetCommentManagerListResponseType = ApiResponseType<CommentManagerItem[]>;
-export type DeleteCommentManagerResponseType = ApiResponseType<unknown>;
+export type GetCommentManagerListResponse = ApiResponse<CommentManagerItem[]>;
+export type DeleteCommentManagerResponse = ApiResponse<unknown>;

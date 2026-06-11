@@ -18,7 +18,7 @@ import PostHero from "@/widgets/post/ui/PostHero";
 import { useToastStore } from "@/shared/stores/useToastStore";
 import { useCreatePostStore } from "@/shared/stores/useCreatePostStore";
 
-// const PostDetail = ({ id, initialData }: { id: string, initialData: { body: GetPostDetailResponseType; header: ApiHeaderResponseType } }) => {
+// const PostDetail = ({ id, initialData }: { id: string, initialData: { body: GetPostDetailResponse; header: ApiHeaderResponse } }) => {
 const PostDetail = ({ id }: { id: string }) => {
     const { setPostIdx } = useCreatePostStore();
 

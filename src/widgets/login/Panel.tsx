@@ -1,13 +1,13 @@
 "use client";
 
-import PageFrame from "@/widgets/layout/PageFrame";
-
+import { LoginPageProvider } from "./model/LoginContext";
 import * as LoginLayer from "@/widgets/login/ui";
 
 export default function Panel() {
     return (
-        <PageFrame id="login" className={{ inner: "flex flex-col gap-[2.4rem]", container: "" }}>
+        <LoginPageProvider>
             <LoginLayer.LoginForm />
-        </PageFrame>
+            <LoginLayer.Modal />
+        </LoginPageProvider>
     );
 }

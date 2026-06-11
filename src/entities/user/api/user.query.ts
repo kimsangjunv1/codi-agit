@@ -1,37 +1,22 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
+import { AgitRoutes } from "@/shared/constants/entityKeys";
 import { getUserManagerListFetch, setUserFetch } from "@/entities/user/api/user.api";
-import { GetUserManagerListResponseType, setUserPayloadType } from "@/entities/user/model/user.type";
+import { GetUserManagerListResponse, SetUserPayload } from "@/entities/user/model/user.type";
 import { useToastStore } from "@/shared/stores/useToastStore";
 
-/**
- * 사용자 - 회원가입
- */
 export const useSetUserQuery = () => {
     const { setToast } = useToastStore();
-
-    const MUTATION_KEY = "user";
     const queryClient = useQueryClient();
 
-    const {
-        data,
-        mutate,
-        mutateAsync,
-        error,
-        isError,
-        isSuccess,
-        isIdle,
-        isPending,
-        isPaused,
-        reset,
-    } = useMutation({
-        mutationKey: [MUTATION_KEY, "useSetUserQuery"],
-        mutationFn: (payload: setUserPayloadType) => setUserFetch(payload),
+    const { data, mutate, mutateAsync, error, isError, isSuccess, isIdle, isPending, isPaused, reset } = useMutation({
+        mutationKey: [AgitRoutes.KEY_USER, "set"],
+        mutationFn: (payload: SetUserPayload) => setUserFetch(payload),
         onSuccess: () => {
             setToast({ msg: "계정을 생성했어요", time: 2 });
-            queryClient.invalidateQueries({ queryKey: [MUTATION_KEY] });
+            queryClient.invalidateQueries({ queryKey: [AgitRoutes.KEY_USER] });
         },
-        onError: (err: any) => {
+        onError: (err: Error) => {
             setToast({ msg: err.message ?? "에러 발생", time: 2 });
         },
     });
@@ -40,10 +25,8 @@ export const useSetUserQuery = () => {
 };
 
 export const useGetUserManagerListQuery = () => {
-    const MUTATION_KEY = "user";
-
-    const { data, isLoading, isError, isFetching, refetch } = useQuery<GetUserManagerListResponseType>({
-        queryKey: [MUTATION_KEY, "useGetUserManagerListQuery"],
+    const { data, isLoading, isError, isFetching, refetch } = useQuery<GetUserManagerListResponse>({
+        queryKey: [AgitRoutes.KEY_USER, "manager", "list"],
         queryFn: () => getUserManagerListFetch(),
         staleTime: 0,
     });

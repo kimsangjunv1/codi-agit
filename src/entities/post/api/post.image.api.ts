@@ -1,19 +1,23 @@
-import { clientApi } from "@/shared/lib/api/client";
+import { clientFetch } from "@/shared/lib/api/client";
+
+type UploadPostImageResponse = {
+    resultCode: string;
+    resultMessage?: string;
+    result?: { url: string };
+};
 
 export const uploadPostImageFetch = async (file: File) => {
     const formData = new FormData();
     formData.append("file", file);
 
-    const response = await fetch("/api/v1/set/post/image", {
+    const data = await clientFetch<UploadPostImageResponse>("/api/v1/set/post/image", {
         method: "POST",
         body: formData,
     });
 
-    const data = await response.json();
-
-    if (!response.ok || data?.resultCode !== "SUCCESS" || !data?.result?.url) {
+    if (data?.resultCode !== "SUCCESS" || !data?.result?.url) {
         throw new Error(data?.resultMessage ?? "이미지 업로드에 실패했습니다.");
     }
 
-    return data.result.url as string;
+    return data.result.url;
 };

@@ -1,13 +1,13 @@
 "use client";
 
-import PageFrame from "@/widgets/layout/PageFrame";
-
+import { InvitationManagerPageProvider } from "./model/InvitationManagerContext";
 import * as InvitationManagerLayer from "@/widgets/manager/invitation/ui";
 
 export default function Panel() {
     return (
-        <PageFrame id="manager-invitation" className={{ inner: "flex flex-col gap-[2.4rem]", container: "" }}>
+        <InvitationManagerPageProvider>
             <InvitationManagerLayer.InvitationManager />
-        </PageFrame>
+            <InvitationManagerLayer.Modal />
+        </InvitationManagerPageProvider>
     );
 }

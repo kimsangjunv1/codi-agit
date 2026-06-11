@@ -1,13 +1,13 @@
 "use client";
 
-import PageFrame from "@/widgets/layout/PageFrame";
-
+import { SignupPageProvider } from "./model/SignupContext";
 import * as SignupLayer from "@/widgets/signup/ui";
 
 export default function Panel() {
     return (
-        <PageFrame id="signup" className={{ inner: "flex flex-col gap-[2.4rem]", container: "" }}>
+        <SignupPageProvider>
             <SignupLayer.SignupForm />
-        </PageFrame>
+            <SignupLayer.Modal />
+        </SignupPageProvider>
     );
 }

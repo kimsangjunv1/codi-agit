@@ -1,4 +1,4 @@
-export interface ApiPaginationResponseType {
+export interface ApiPaginationResponse {
     page: number;
     pageSize: number;
     totalCount: number;
@@ -7,15 +7,15 @@ export interface ApiPaginationResponseType {
     hasPrevious: boolean;
 }
 
-export interface ApiResponseType<T = unknown> {
-    pagination: ApiPaginationResponseType | null;
+export interface ApiResponse<T = unknown> {
+    pagination: ApiPaginationResponse | null;
     result: T;
     resultCode: string;
     resultMessage: string;
 }
 
-/** @deprecated ApiResponseType.resultCode / resultMessage 사용 */
-export interface ApiHeaderResponseType {
+/** @deprecated ApiResponse.resultCode / resultMessage 사용 */
+export interface ApiHeaderResponse {
     resultMsg: string;
     resultCode: number;
     isSuccessful: boolean;

@@ -1,7 +1,6 @@
 "use client";
 
-import PageFrame from "@/widgets/layout/PageFrame";
-
+import { PostDetailPageProvider } from "./model/PostDetailContext";
 import * as PostLayer from "@/widgets/post/ui";
 
 type PostDetailPanelProps = {
@@ -10,8 +9,9 @@ type PostDetailPanelProps = {
 
 export default function Panel({ id }: PostDetailPanelProps) {
     return (
-        <PageFrame id="post-detail" className={{ inner: "flex flex-col gap-[2.4rem]", container: "" }}>
+        <PostDetailPageProvider>
             <PostLayer.PostDetail id={id} />
-        </PageFrame>
+            <PostLayer.Modal />
+        </PostDetailPageProvider>
     );
 }

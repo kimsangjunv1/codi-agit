@@ -1,59 +1,32 @@
+import Main from "@/widgets/layout/Main";
 import HomeView from "@/views/home/HomeView";
-import { supabaseServer } from "@/shared/lib/supabase/supabaseServer";
+import { getPostLatestListServerFetch } from "@/entities/post/api/post.api";
+import { GetPostLatestListResponse } from "@/entities/post/model/post.type";
 import { buildPagination } from "@/shared/lib/utils/apiResponse";
 
 export const revalidate = 300;
 
+const createFallbackData = (): GetPostLatestListResponse => ({
+    result: [],
+    pagination: buildPagination({ page: 1, pageSize: 10, totalCount: 0 }),
+    resultCode: "ERROR",
+    resultMessage: "조회실패",
+});
+
 const Page = async () => {
-    let initialData = {
-        result: [] as Array<{
-            idx: number;
-            title: string;
-            thumbnail: string;
-            summary: string;
-            created_at: string;
-            views: number;
-            likes: number;
-            category: { title: string };
-        }>,
-        pagination: buildPagination({ page: 1, pageSize: 10, totalCount: 0 }),
-        resultCode: "ERROR",
-        resultMessage: "조회실패",
-    };
+    let initialData = createFallbackData();
 
     try {
-        const supabase = await supabaseServer();
-
-        const { data: currentData, error } = await supabase
-            .from("posts")
-            .select("idx, title, thumbnail, summary, created_at, views, likes, category!left(title)")
-            .order("created_at", { ascending: false })
-            .limit(10);
-
-        if (error) throw error;
-
-        const formattedData = currentData?.map((item) => ({
-            ...item,
-            category: item.category?.[0] ?? { title: "" },
-        }));
-
-        const totalCount = currentData?.length ?? 0;
-
-        initialData = {
-            result: formattedData ?? [],
-            pagination: buildPagination({
-                page: 1,
-                pageSize: 10,
-                totalCount,
-            }),
-            resultCode: "SUCCESS",
-            resultMessage: "조회성공",
-        };
+        initialData = await getPostLatestListServerFetch();
     } catch (err: unknown) {
         console.error("SSR fetch error:", err);
     }
 
-    return <HomeView initialData={initialData} />;
+    return (
+        <Main id="home" className={{ inner: "min-h-[100dvh]", container: "" }}>
+            <HomeView initialData={initialData} />
+        </Main>
+    );
 };
 
 export default Page;

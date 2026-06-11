@@ -1,13 +1,13 @@
 "use client";
 
-import PageFrame from "@/widgets/layout/PageFrame";
-
+import { LabPageProvider } from "./model/LabContext";
 import * as LabLayer from "@/widgets/lab/ui";
 
 export default function Panel() {
     return (
-        <PageFrame id="lab" className={{ inner: "flex flex-col gap-[2.4rem]", container: "" }}>
+        <LabPageProvider>
             <LabLayer.LabGuide />
-        </PageFrame>
+            <LabLayer.Modal />
+        </LabPageProvider>
     );
 }
