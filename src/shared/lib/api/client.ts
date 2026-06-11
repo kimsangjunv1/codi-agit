@@ -1,39 +1,49 @@
-// src/shared/lib/api/client.ts
-type RequestOptions = Omit<RequestInit, "body"> & {
-    body?: any;
+import { finishApiPending, startApiPending } from "@/shared/stores/useApiPendingStore";
+
+type ClientFetchOptions = Omit<RequestInit, "body"> & {
+    body?: unknown;
 };
 
-export const clientApi = async (url: string, options: RequestOptions = {}) => {
-    const baseUrl = process.env.NEXT_PUBLIC_DOMAIN_URL || "http://localhost:3000"; // 개발용
+export type ApiResponse<T> = {
+    result: T;
+};
 
+export async function clientFetch<T>(url: string, options: ClientFetchOptions = {}): Promise<T> {
+    const isFormData = options.body instanceof FormData;
+    const method = (options.method ?? "GET").toUpperCase();
+    const shouldTrackPending = typeof window !== "undefined" && method !== "GET" && method !== "HEAD";
     const headers: HeadersInit = {
-        "Content-Type": "application/json",
-        ...(options.headers || {}),
+        ...(isFormData ? {} : { "Content-Type": "application/json" }),
+        ...(options.headers ?? {}),
     };
 
-    // 예: 토큰이 필요하면 붙이기
-    // const token = typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
-    // if (token) {
-    //     headers["Authorization"] = `Bearer ${token}`;
-    // }
-
-    const response = await fetch(
-        baseUrl + url,
-        {
-            ...options,
-            headers,
-            body: options.body ? JSON.stringify(options.body) : undefined,
-        }
-    );
-
-    if (!response.ok) {
-        // 공통 에러 처리
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || "API 요청 실패");
+    if (shouldTrackPending) {
+        startApiPending();
     }
 
-    return response.json();
-};
+    try {
+        const response = await fetch(url, {
+            ...options,
+            headers,
+            body: options.body === undefined ? undefined : isFormData ? (options.body as FormData) : JSON.stringify(options.body),
+        });
+        const data = await response.json().catch(() => null);
 
-/** @deprecated clientApi 사용 */
-export const clientFetch = clientApi;
+        if (!response.ok) {
+            throw new Error(data?.message ?? "API 요청에 실패했습니다.");
+        }
+
+        return data as T;
+    } finally {
+        if (shouldTrackPending) {
+            finishApiPending();
+        }
+    }
+}
+
+export const clientApi = {
+    get: <T>(url: string) => clientFetch<T>(url),
+    post: <T>(url: string, body?: unknown, options?: ClientFetchOptions) => clientFetch<T>(url, { ...options, method: "POST", body }),
+    patch: <T>(url: string, body?: unknown, options?: ClientFetchOptions) => clientFetch<T>(url, { ...options, method: "PATCH", body }),
+    delete: <T>(url: string, options?: ClientFetchOptions) => clientFetch<T>(url, { ...options, method: "DELETE" }),
+};
