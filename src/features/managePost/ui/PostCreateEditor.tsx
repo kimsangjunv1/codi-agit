@@ -1,0 +1,94 @@
+"use client";
+
+import { Fragment, useEffect } from "react";
+
+import SortableBlock from "@/widgets/post/ui/SortableBlock";
+import PostHero from "@/widgets/post/ui/PostHero";
+import PostAttachedImageList from "@/widgets/post/ui/PostAttachedImageList";
+
+import { useGetCategoryListQuery } from "@/entities/category/api/category.query";
+
+import { useBlockStore } from "@/widgets/post/model/useEditorBlockStore";
+import { useCreatePostStore } from "@/shared/stores/useCreatePostStore";
+import { usePostDraftImageStore } from "@/shared/stores/usePostDraftImageStore";
+
+const PostCreateEditor = () => {
+    const { reset: resetBlocks } = useBlockStore();
+    const { reset: resetPost, setTitle, setSummary, setThumbnail, setCategoryIdx, category_idx } = useCreatePostStore();
+    const { reset: resetDraftImages } = usePostDraftImageStore();
+    const { data: getCategoryListData } = useGetCategoryListQuery();
+
+    useEffect(() => {
+        resetBlocks();
+        resetPost();
+        resetDraftImages();
+    }, [resetBlocks, resetPost, resetDraftImages]);
+
+    useEffect(() => {
+        const firstCategory = getCategoryListData?.result?.find((e) => e.is_enabled);
+        if (firstCategory && category_idx === 0) {
+            setCategoryIdx(firstCategory.idx);
+        }
+    }, [getCategoryListData, category_idx, setCategoryIdx]);
+
+    return (
+        <section className="flex flex-col w-full post pb-[7.2rem]">
+            <section className="mx-auto post-inner flex flex-col gap-[5.2rem] w-full items-center">
+                <RenderContents
+                    onTitleChange={setTitle}
+                    onSummaryChange={setSummary}
+                    onThumbnailChange={setThumbnail}
+                    onCategoryChange={setCategoryIdx}
+                />
+            </section>
+        </section>
+    );
+};
+
+const RenderContents = ({
+    onTitleChange,
+    onSummaryChange,
+    onThumbnailChange,
+    onCategoryChange,
+}: {
+    onTitleChange: (value: string) => void;
+    onSummaryChange: (value: string) => void;
+    onThumbnailChange: (value: string) => void;
+    onCategoryChange: (value: number) => void;
+}) => {
+    const { title, summary, thumbnail, category_idx } = useCreatePostStore();
+
+    return (
+        <Fragment>
+            <section className="flex flex-col justify-center items-center gap-[3.2rem] h-[100dvh] p-[0.8rem] w-full">
+                <PostHero
+                    mode="edit"
+                    imageUrl={thumbnail}
+                    title={title}
+                    summary={summary}
+                    categoryIdx={category_idx}
+                    editLabel="작성 중"
+                    onTitleChange={onTitleChange}
+                    onSummaryChange={onSummaryChange}
+                    onThumbnailChange={onThumbnailChange}
+                    onCategoryChange={onCategoryChange}
+                />
+            </section>
+
+            <Contents />
+        </Fragment>
+    );
+};
+
+const Contents = () => {
+    return (
+        <article className="flex gap-[0.4rem] w-full max-w-[var(--size-tablet)] px-[1.2rem] [content-visibility:auto]">
+            <section className="flex flex-col gap-[7.2rem] flex-1">
+                <SortableBlock />
+                <PostAttachedImageList />
+            </section>
+        </article>
+    );
+};
+
+export default PostCreateEditor;

@@ -1,0 +1,51 @@
+import { supabaseAdmin } from "@/shared/lib/supabase/supabaseServer";
+import { ensurePostImagesBucket, POST_IMAGES_BUCKET } from "@/shared/lib/supabase/postImagesBucket";
+import { apiError, apiSuccess } from "@/shared/lib/apiResponse";
+
+export async function POST(req: Request) {
+    try {
+        const formData = await req.formData();
+        const file = formData.get("file");
+
+        if (!(file instanceof File)) {
+            return apiError("업로드할 파일이 없습니다.", { status: 400, result: { statusCode: 0 } });
+        }
+
+        if (!file.type.startsWith("image/")) {
+            return apiError("이미지 파일만 업로드할 수 있습니다.", { status: 400, result: { statusCode: 0 } });
+        }
+
+        const supabase = supabaseAdmin();
+        await ensurePostImagesBucket(supabase);
+
+        const extension = file.name.split(".").pop() ?? "jpg";
+        const filePath = `posts/${Date.now()}-${crypto.randomUUID()}.${extension}`;
+
+        const { error } = await supabase.storage.from(POST_IMAGES_BUCKET).upload(filePath, file, {
+            cacheControl: "3600",
+            upsert: false,
+            contentType: file.type,
+        });
+
+        if (error) {
+            throw error;
+        }
+
+        const { data } = supabase.storage.from(POST_IMAGES_BUCKET).getPublicUrl(filePath);
+
+        return apiSuccess(
+            {
+                statusCode: 1,
+                url: data.publicUrl,
+            },
+            { resultMessage: "업로드성공", pagination: null },
+        );
+    } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : "이미지 업로드 중 문제가 발생했습니다.";
+
+        return apiError(message, {
+            status: 500,
+            result: { statusCode: 0 },
+        });
+    }
+}

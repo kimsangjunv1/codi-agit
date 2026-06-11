@@ -1,0 +1,241 @@
+"use client";
+
+import { Fragment, memo, useCallback, useEffect, useMemo } from "react";
+
+import { Block, PostPrevNextInfo, SectionContent } from "@/entities/post/model/post.type";
+
+import { util } from "@/shared/lib/util";
+import { highlightCode } from "@/shared/lib/highlight";
+
+import useNavigate from "@/shared/hooks/useNavigate";
+import { useGetPostDetailQuery } from "@/entities/post/api/post.query";
+
+import UI from "@/shared/ui/common/UIComponent";
+import IconComponent from "@/shared/ui/common/IconComponent";
+import GiscusComments from "@/shared/ui/common/GiscusComments";
+import PostHero from "@/widgets/post/ui/PostHero";
+
+import { useToastStore } from "@/shared/stores/useToastStore";
+import { useCreatePostStore } from "@/shared/stores/useCreatePostStore";
+
+// const PostDetail = ({ id, initialData }: { id: string, initialData: { body: GetPostDetailResponseType; header: ApiHeaderResponseType } }) => {
+const PostDetail = ({ id }: { id: string }) => {
+    const { setPostIdx } = useCreatePostStore();
+
+    useEffect(() => {
+        setPostIdx(parseInt(id));
+    }, []);
+
+    return (
+        <section className="flex flex-col w-full post pb-[7.2rem]">
+            <section className="mx-auto post-inner flex flex-col gap-[5.2rem] w-full items-center">
+                <RenderContents id={id} />
+            </section>
+        </section>
+    );
+};
+
+const RenderContents = ({ id }: { id: string }) => {
+    const { data: getPostListData } = useGetPostDetailQuery(parseInt(id));
+
+    const DATA = useMemo(() => getPostListData?.result, [getPostListData]);
+
+    return (
+        <>
+            <section className="flex flex-col justify-center items-center gap-[3.2rem] h-[100dvh] p-[0.8rem] w-full">
+                <PostHero
+                    mode="view"
+                    imageUrl={DATA?.thumbnail ?? ""}
+                    title={DATA?.title ?? ""}
+                    summary={DATA?.summary ?? ""}
+                    createDate={DATA?.created_at ?? ""}
+                    viewCount={DATA?.views ?? 0}
+                    likeCount={DATA?.likes ?? 0}
+                />
+            </section>
+
+            <Contents
+                contents={DATA?.contents ?? []}
+                prev={DATA?.prev}
+                next={DATA?.next}
+                postId={id}
+            />
+        </>
+    );
+};
+
+const CodeBlockContent = memo(({ content }: { content: string }) => {
+    const html = useMemo(() => `<pre class="code-block"><code>${highlightCode(content)}</code></pre>`, [content]);
+
+    return (
+        <section className="overflow-x-auto">
+            <div dangerouslySetInnerHTML={{ __html: html }} />
+        </section>
+    );
+});
+CodeBlockContent.displayName = "CodeBlockContent";
+
+const ContentColumn = memo(({ col, rowLength, onCopySentence }: { col: SectionContent; rowLength: number; onCopySentence: (text: string) => void }) => {
+    const columnClassName = `flex-1 min-w-[calc((var(--size-tablet)-(1.6rem*10))/2)] ${rowLength !== 0 ? "flex gap-[2.4rem]" : ""} ${rowLength === 1 ? "col-span-2" : "min-h-[36.0rem]"} ${col.type === 0 ? "flex-col" : ""} ${col.type === 1 || col.type === 2 ? "rounded-[2.4rem] overflow-hidden" : ""} ${col.type === 2 ? "flex-col" : ""}`;
+
+    return (
+        <section className={columnClassName}>
+            {col.type === 0 ? (
+                <Fragment>
+                    {col.title || col.subtitle ? (
+                        <section className="flex flex-col gap-[0.8rem]">
+                            {col.subtitle ? <p className="text-[#676767]">{col.subtitle}</p> : null}
+                            {col.title ? <h5 className="text-[2.4rem] font-bold text-[var(--color-gray-1000)]">{col.title}</h5> : null}
+                        </section>
+                    ) : null}
+
+                    {typeof col.content === "string" ? (
+                        <section
+                            className="post-tiptap-content flex flex-col items-start gap-[1.6rem] overflow-x-auto [&_p]:whitespace-break-spaces [&_p]:transition-colors [&_p]:border [&_p]:border-transparent [&_p]:cursor-pointer [&_p]:hover:border-[var(--color-gray-400)] [&_p]:rounded-[0.8rem]"
+                            dangerouslySetInnerHTML={{ __html: col.content }}
+                            onClick={(e) => {
+                                const target = e.target as HTMLElement;
+                                if (target.tagName === "P" || target.closest("p")) {
+                                    const paragraph = target.tagName === "P" ? target : target.closest("p");
+                                    onCopySentence(paragraph?.textContent ?? "");
+                                }
+                            }}
+                        />
+                    ) : (
+                        <section className="flex flex-col items-start gap-[1.6rem] overflow-x-auto">
+                            {(col.content as Block[]).map((e) =>
+                                e.children.map((itemInfo, itemIdx) => (
+                                    <p
+                                        key={`${col.id}-${itemIdx}`}
+                                        style={{
+                                            lineHeight: itemInfo.style?.lineHeight,
+                                            fontSize: `${itemInfo.style?.fontSize}rem`,
+                                            fontWeight: itemInfo.style?.fontWeight,
+                                            color: itemInfo.style?.color,
+                                            textAlign: itemInfo.style?.textAlign as React.CSSProperties["textAlign"],
+                                            background: `${itemInfo.style?.backgroundColor}`,
+                                        }}
+                                        className="whitespace-break-spaces transition-colors border border-transparent cursor-pointer hover:border-[var(--color-gray-400)] rounded-[0.8rem]"
+                                        onClick={() => onCopySentence(itemInfo.value)}
+                                    >
+                                        {itemInfo.value}
+                                    </p>
+                                )),
+                            )}
+                        </section>
+                    )}
+                </Fragment>
+            ) : null}
+
+            {col.type === 1 && col.imageUrl ? (
+                <img
+                    src={col.imageUrl}
+                    alt=""
+                    className="w-full"
+                />
+            ) : null}
+
+            {col.type === 2 ? <CodeBlockContent content={`${col.content}`} /> : null}
+        </section>
+    );
+});
+ContentColumn.displayName = "ContentColumn";
+
+const Contents = ({ contents, prev, next, postId }: { contents: SectionContent[][]; prev?: PostPrevNextInfo; next?: PostPrevNextInfo; postId: string }) => {
+    const { pushToUrl } = useNavigate();
+    const { setToast } = useToastStore();
+
+    const handleCopySentence = useCallback(
+        (text: string) => {
+            util.dom.setCopyOnClipboard(text);
+            setToast({ msg: "선택하신 문장을 복사했어요", time: 2 });
+        },
+        [setToast],
+    );
+
+    return (
+        <article className="flex gap-[0.4rem] w-full max-w-[var(--size-tablet)] px-[1.2rem] [content-visibility:auto]">
+            <section className="flex flex-col gap-[7.2rem] flex-1">
+                {contents?.map((row, rowIdx) => (
+                    <section
+                        key={rowIdx}
+                        className={`flex flex-wrap gap-[1.6rem] ${row.length === 1 && (row?.[0].type === 1 || row?.[0].type === 2) ? "" : ""}`}
+                    >
+                        {row.map((col) => (
+                            <ContentColumn
+                                key={col.id}
+                                col={col}
+                                rowLength={row.length}
+                                onCopySentence={handleCopySentence}
+                            />
+                        ))}
+                    </section>
+                ))}
+
+                <section className="flex gap-[1.6rem] flex-wrap">
+                    <UI.Button
+                        className={`flex items-center justify-start gap-[0.8rem] border border-[var(--color-gray-200)] min-w-[calc(var(--size-tablet)/2-(1.6rem*10))] flex-1 p-[1.6rem] rounded-[1.6rem] hover:border-[var(--color-blue-500)] ${prev ? "" : "pointer-events-none"}`}
+                        onClick={() => {
+                            if (prev) {
+                                pushToUrl(`/post/${prev?.idx}`);
+                            } else {
+                                setToast({ msg: "이전 글이 없어요", time: 2 });
+                            }
+                        }}
+                    >
+                        {prev ? (
+                            <Fragment>
+                                <IconComponent
+                                    type="outlined-arrow-below"
+                                    alt="테스트"
+                                    className="rotate-90"
+                                />
+
+                                <div className="flex flex-col gap-[0.8rem]">
+                                    <p className="text-left text-[1.2rem] font-semibold text-[var(--color-gray-500)]">이전글</p>
+                                    <p className="text-left text-[1.6rem] font-semibold">{prev.title}</p>
+                                </div>
+                            </Fragment>
+                        ) : (
+                            <p className="text-[var(--color-gray-500)]">이전글이 없습니다.</p>
+                        )}
+                    </UI.Button>
+
+                    <UI.Button
+                        className={`flex items-center justify-end gap-[0.8rem] border border-[var(--color-gray-200)] min-w-[calc(var(--size-tablet)/2-(1.6rem*10))] flex-1 p-[1.6rem] rounded-[1.6rem] hover:border-[var(--color-blue-500)] ${next ? "" : "pointer-events-none"}`}
+                        onClick={() => {
+                            if (next) {
+                                pushToUrl(`/post/${next?.idx}`);
+                            } else {
+                                setToast({ msg: "다음 글이 없어요", time: 2 });
+                            }
+                        }}
+                    >
+                        {next ? (
+                            <Fragment>
+                                <div className="flex flex-col gap-[0.8em]">
+                                    <p className="text-right text-[1.2rem] font-semibold text-[var(--color-gray-500)]">다음글</p>
+                                    <p className="text-right text-[1.6rem] font-semibold">{next.title}</p>
+                                </div>
+                                <IconComponent
+                                    type="outlined-arrow-below"
+                                    alt="테스트"
+                                    className="rotate-270"
+                                />
+                            </Fragment>
+                        ) : (
+                            <p className="text-[var(--color-gray-500)]">다음글이 없습니다.</p>
+                        )}
+                    </UI.Button>
+                </section>
+
+                <GiscusComments
+                    term={`post-${postId}`}
+                    className="w-full pt-[2.4rem]"
+                />
+            </section>
+        </article>
+    );
+};
+
+export default PostDetail;

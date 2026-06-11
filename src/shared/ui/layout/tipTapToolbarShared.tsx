@@ -1,0 +1,144 @@
+"use client";
+
+import type { Editor } from "@tiptap/react";
+import { useEditorState } from "@tiptap/react";
+
+export const FONT_SIZES = [14, 16, 18, 20, 24] as const;
+export const LINE_HEIGHTS = ["1", "1.2", "1.5", "1.8", "2"] as const;
+
+export type HeadingValue = "paragraph" | "h1" | "h2" | "h3";
+
+export const useTipTapToolbarState = (editor: Editor) =>
+    useEditorState({
+        editor,
+        selector: (ctx) => ({
+            isBold: ctx.editor.isActive("bold"),
+            canBold: ctx.editor.can().chain().toggleBold().run(),
+            isItalic: ctx.editor.isActive("italic"),
+            canItalic: ctx.editor.can().chain().toggleItalic().run(),
+            isStrike: ctx.editor.isActive("strike"),
+            canStrike: ctx.editor.can().chain().toggleStrike().run(),
+            isUnderline: ctx.editor.isActive("underline"),
+            canUnderline: ctx.editor.can().chain().toggleUnderline().run(),
+            isCode: ctx.editor.isActive("code"),
+            canCode: ctx.editor.can().chain().toggleCode().run(),
+            isParagraph: ctx.editor.isActive("paragraph"),
+            isHeading1: ctx.editor.isActive("heading", { level: 1 }),
+            isHeading2: ctx.editor.isActive("heading", { level: 2 }),
+            isHeading3: ctx.editor.isActive("heading", { level: 3 }),
+            isBulletList: ctx.editor.isActive("bulletList"),
+            isOrderedList: ctx.editor.isActive("orderedList"),
+            isCodeBlock: ctx.editor.isActive("codeBlock"),
+            isBlockquote: ctx.editor.isActive("blockquote"),
+            isHighlight: ctx.editor.isActive("highlight"),
+            canUndo: ctx.editor.can().chain().undo().run(),
+            canRedo: ctx.editor.can().chain().redo().run(),
+        }),
+    });
+
+export const getActiveHeading = (state: ReturnType<typeof useTipTapToolbarState>): HeadingValue => {
+    if (state.isHeading1) return "h1";
+    if (state.isHeading2) return "h2";
+    if (state.isHeading3) return "h3";
+    return "paragraph";
+};
+
+export const iconButtonClass = (active: boolean, disabled = false, compact = false) => {
+    const size = compact ? "w-[3.2rem] h-[3.2rem] text-[1.3rem]" : "w-[3.6rem] h-[3.6rem] text-[1.4rem]";
+
+    return `shrink-0 flex items-center justify-center rounded-[1.2rem] font-semibold transition-colors ${size} ${
+        disabled
+            ? "opacity-40 cursor-not-allowed text-[var(--color-gray-500)]"
+            : active
+              ? "bg-[var(--color-blue-500)] text-white"
+              : "text-[var(--color-gray-1000)] hover:bg-[var(--color-gray-200)]"
+    }`;
+};
+
+export const preventEditorBlur = (e: React.MouseEvent) => {
+    const target = e.target as HTMLElement;
+
+    if (target.tagName === "SELECT" || target.tagName === "OPTION" || target.closest("select")) {
+        return;
+    }
+
+    e.preventDefault();
+};
+
+export const ToolbarDivider = () => (
+    <span className="shrink-0 w-[0.1rem] h-[2.4rem] bg-[var(--color-gray-200)] mx-[0.2rem]" aria-hidden />
+);
+
+export const ToolbarIconButton = ({
+    label,
+    title,
+    active,
+    disabled,
+    compact,
+    className,
+    onClick,
+    children,
+}: {
+    label: string;
+    title: string;
+    active?: boolean;
+    disabled?: boolean;
+    compact?: boolean;
+    className?: string;
+    onClick: () => void;
+    children?: React.ReactNode;
+}) => (
+    <button
+        type="button"
+        title={title}
+        aria-label={label}
+        aria-pressed={active}
+        disabled={disabled}
+        className={`${iconButtonClass(!!active, disabled, compact)} ${className ?? ""}`}
+        onMouseDown={preventEditorBlur}
+        onClick={onClick}
+    >
+        {children ?? label}
+    </button>
+);
+
+export const ToolbarSelect = ({
+    label,
+    value,
+    onChange,
+    options,
+}: {
+    label: string;
+    value: string;
+    onChange: (value: string) => void;
+    options: { label: string; value: string }[];
+}) => (
+    <label className="shrink-0 relative flex items-center">
+        <span className="sr-only">{label}</span>
+        <select
+            aria-label={label}
+            value={value}
+            onMouseDown={(e) => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
+            onChange={(e) => onChange(e.target.value)}
+            className="relative z-20 h-[3.6rem] pl-[1rem] pr-[2.4rem] rounded-[1.2rem] text-[1.2rem] font-semibold text-[var(--color-gray-1000)] bg-[var(--color-gray-100)] hover:bg-[var(--color-gray-200)] border border-[var(--color-gray-200)] outline-none cursor-pointer appearance-none"
+        >
+            {options.map((option) => (
+                <option key={option.value} value={option.value}>
+                    {option.label}
+                </option>
+            ))}
+        </select>
+        <span className="pointer-events-none absolute right-[0.8rem] text-[1rem] text-[var(--color-gray-500)]">▾</span>
+    </label>
+);
+
+export const applyHeading = (editor: Editor, value: HeadingValue) => {
+    if (value === "paragraph") {
+        editor.chain().focus().setParagraph().run();
+        return;
+    }
+
+    const level = Number(value.replace("h", "")) as 1 | 2 | 3;
+    editor.chain().focus().toggleHeading({ level }).run();
+};
