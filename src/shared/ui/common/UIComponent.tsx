@@ -29,7 +29,7 @@ import { util } from '@/shared/lib/util';
 import { useDirtyStore } from '@/shared/stores/useDirtyStore';
 import { useModalStore } from '@/shared/stores/useModalStore';
 import { QueryErrorResetBoundary } from '@tanstack/react-query';
-import { ErrorBoundary } from 'react-error-boundary';
+import { ErrorBoundary, type FallbackProps, getErrorMessage } from 'react-error-boundary';
 
 const CheckBox = ({ defaultState = false, className, checked, guide, desc_no, preventClick = false, onChange }: CheckBoxProps) => {
     const [ currentState, setCurrentState ] = useState<boolean>( defaultState );
@@ -2038,7 +2038,7 @@ const ColorPicker = ({ defaultValue, onChange }: { defaultValue?: string, onChan
 
 interface ErrorBoundaryWrapperProps {
     children: React.ReactNode;
-    fallback?: React.ComponentType<{ error: Error; resetErrorBoundary: () => void }>;
+    fallback?: React.ComponentType<FallbackProps>;
     loading?: React.ReactNode;
 }
 
@@ -2091,13 +2091,32 @@ const Loading = () => {
     )
 }
 
-const Error = ({ error, resetErrorBoundary }: any) => {
+const ErrorRetry = ({ onRetry }: { onRetry?: () => void }) => (
+    <article role="alert" className="h-[100dvh!important] w-[100dvw!important] flex flex-col items-center justify-center gap-[1.6rem]">
+        <div className="alert-inner flex flex-col gap-[1.6rem] shadow-[var(--shadow-normal)] rounded-[1.6rem] bg-white p-[0.4rem]">
+            <section className="flex flex-col gap-[1.6rem] px-[1.6rem] py-[0.8rem]">
+                <p>에러 발생!</p>
+            </section>
+
+            <UI.Button
+                onClick={onRetry}
+                className="p-[1.6rem] shadow-[var(--shadow-normal)] bg-[var(--color-orange-500)] rounded-[1.2rem]"
+            >
+                다시 시도
+            </UI.Button>
+        </div>
+    </article>
+);
+
+const Error = ({ error, resetErrorBoundary }: FallbackProps) => {
+    const message = getErrorMessage(error) ?? '알 수 없는 오류가 발생했습니다.';
+
     return (
         <article role='alert' className='h-[100dvh!important] w-[100dvw!important] flex flex-col items-center justify-center gap-[1.6rem]'>
             <div className='alert-inner flex flex-col gap-[1.6rem] shadow-[var(--shadow-normal)] rounded-[1.6rem] bg-white p-[0.4rem]'>
                 <section className='flex flex-col gap-[1.6rem] px-[1.6rem] py-[0.8rem]'>
                     <p>에러 발생!</p>
-                    <pre>{error.message}</pre>
+                    <pre>{message}</pre>
                 </section>
                 
                 <UI.Button
@@ -2147,6 +2166,7 @@ const UI = {
     ColorPicker,
     Empty,
     Error,
+    ErrorRetry,
     Loading,
     ErrorBoundaryWrapper,
     Table: Object.assign(Table, {
