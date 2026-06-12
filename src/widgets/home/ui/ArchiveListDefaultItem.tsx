@@ -1,14 +1,13 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "motion/react";
 
-import UI from "@/shared/ui/common/UIComponent";
 import { util } from "@/shared/lib/util";
 import { PostItem } from "@/entities/post/model/post.type";
 
 type ArchiveListDefaultItemProps = {
     post: PostItem;
-    onSelect: (idx: number) => void;
 };
 
 const getCategoryClassName = (categoryIdx: number) => {
@@ -17,7 +16,7 @@ const getCategoryClassName = (categoryIdx: number) => {
     return "text-[var(--color-pink-500)]";
 };
 
-const ArchiveListDefaultItem = ({ post, onSelect }: ArchiveListDefaultItemProps) => {
+const ArchiveListDefaultItem = ({ post }: ArchiveListDefaultItemProps) => {
     return (
         <motion.section
             layout
@@ -32,9 +31,9 @@ const ArchiveListDefaultItem = ({ post, onSelect }: ArchiveListDefaultItemProps)
                 damping: 10,
             }}
         >
-            <UI.Button
+            <Link
+                href={`/post/${post.idx}`}
                 className="flex justify-start items-center gap-[1.6rem] hover:scale-[1.04] transition-transform px-[1.2rem]"
-                onClick={() => onSelect(post.idx)}
             >
                 <motion.img
                     layout="position"
@@ -53,7 +52,7 @@ const ArchiveListDefaultItem = ({ post, onSelect }: ArchiveListDefaultItemProps)
                         {util.string.getCurrentDate(post.created_at)} ・ {post.likes ?? 0} likes
                     </h5>
                 </div>
-            </UI.Button>
+            </Link>
         </motion.section>
     );
 };

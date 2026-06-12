@@ -3,7 +3,6 @@
 import { useLayoutEffect, useRef } from "react";
 import { AnimatePresence } from "motion/react";
 
-import useNavigate from "@/shared/hooks/useNavigate";
 import { useGetPostListQuery } from "@/entities/post/api/post.query";
 import { useLayoutStore } from "@/shared/stores/useLayoutStore";
 import { clampPageScroll } from "@/widgets/home/lib/clampPageScroll";
@@ -16,7 +15,6 @@ import ListViewModeToggle from "./ListViewModeToggle";
 const ArchiveList = () => {
     const { data, isLoading, isError, error, refetch } = useGetPostListQuery();
     const { categoryFilter, listViewMode } = useLayoutStore();
-    const { pushToUrl } = useNavigate();
     const listRef = useRef<HTMLElement | null>(null);
 
     const posts = data?.result ?? [];
@@ -56,8 +54,6 @@ const ArchiveList = () => {
         return <FeedEmpty title="해당 카테고리에 게시물이 없습니다" />;
     }
 
-    const handleSelect = (idx: number) => pushToUrl(`/post/${idx}`);
-
     return (
         <>
             <article
@@ -71,9 +67,9 @@ const ArchiveList = () => {
                 <AnimatePresence mode="popLayout">
                     {filtered.map((post) =>
                         listViewMode === "grid" ? (
-                            <ArchiveListGridItem key={post.idx} post={post} onSelect={handleSelect} />
+                            <ArchiveListGridItem key={post.idx} post={post} />
                         ) : (
-                            <ArchiveListDefaultItem key={post.idx} post={post} onSelect={handleSelect} />
+                            <ArchiveListDefaultItem key={post.idx} post={post} />
                         ),
                     )}
                 </AnimatePresence>

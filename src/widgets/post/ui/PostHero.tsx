@@ -18,6 +18,7 @@ type PostHeroViewProps = {
     createDate: string;
     viewCount: number;
     likeCount: number;
+    thumbnailAlt?: string;
 };
 
 type PostHeroEditProps = {
@@ -38,6 +39,7 @@ type PostHeroProps = PostHeroViewProps | PostHeroEditProps;
 const PostHero = (props: PostHeroProps) => {
     const [initGlow, setInitGlow] = useState(false);
     const heroImageSrc = props.imageUrl || undefined;
+    const heroImageAlt = props.mode === "view" ? props.thumbnailAlt || props.title : "";
 
     return (
         <motion.article
@@ -85,7 +87,7 @@ const PostHero = (props: PostHeroProps) => {
                 {heroImageSrc ? (
                     <img
                         src={heroImageSrc}
-                        alt=""
+                        alt={heroImageAlt}
                         className="object-cover object-center w-full h-full aspect-auto pointer-events-none"
                     />
                 ) : (
@@ -104,7 +106,7 @@ const PostHeroViewContent = ({ title, summary, createDate, viewCount, likeCount 
     <>
         <section className="flex flex-col gap-[1.2rem] pointer-events-none">
             <TextShimmer
-                as="h2"
+                as="h1"
                 duration={2}
                 color={{
                     start: "#ffffff90",
