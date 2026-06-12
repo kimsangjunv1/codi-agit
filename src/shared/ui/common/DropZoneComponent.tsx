@@ -49,7 +49,6 @@ const DropZoneComponent = ({
 
     const handleDelete = (index: number) => {
         const nextFiles = value.filter((_, i) => i !== index);
-        console.log("nextFiles", nextFiles)
         onDelete(nextFiles);
     };
 

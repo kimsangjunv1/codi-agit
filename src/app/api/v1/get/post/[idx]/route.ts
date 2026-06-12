@@ -1,5 +1,5 @@
 import { supabaseAdmin, supabaseServer } from "@/shared/lib/supabase/supabaseServer";
-import { apiError, apiSuccess, singleItemPagination } from "@/shared/lib/apiResponse";
+import { apiError, apiSuccess, resolveRouteError, singleItemPagination } from "@/shared/lib/apiResponse";
 
 export async function GET(req: Request) {
     try {
@@ -98,9 +98,10 @@ export async function GET(req: Request) {
                 pagination: singleItemPagination(),
             }
         );
-    } catch (err: any) {
-        return apiError(err.message || "조회수 처리 중 문제가 발생했습니다.", {
-            status: err.status ?? 500,
+    } catch (err: unknown) {
+        const { message, status } = resolveRouteError(err, "조회수 처리 중 문제가 발생했습니다.");
+        return apiError(message, {
+            status,
             result: null,
         });
     }

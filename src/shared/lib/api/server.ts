@@ -1,6 +1,3 @@
-import { NextResponse } from "next/server";
-import type { ApiResponse } from "@/shared/lib/api/client";
-
 type ServerFetchOptions = Omit<RequestInit, "body"> & {
     body?: unknown;
     throwOnError?: boolean;
@@ -25,16 +22,6 @@ export async function serverFetch<T>(url: string, options: ServerFetchOptions = 
     }
 
     return data as T;
-}
-
-export function apiOk<T>(data: T, init?: ResponseInit) {
-    const response: ApiResponse<T> = { result: data };
-
-    return NextResponse.json(response, init);
-}
-
-export function apiError(message: string, status = 400) {
-    return NextResponse.json({ message }, { status });
 }
 
 export const serverApi = {

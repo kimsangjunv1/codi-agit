@@ -83,7 +83,6 @@ const ToolbarComponent = ({ defaultConfig, onStyleChange }: { defaultConfig: Rec
                             <UI.ColorPicker
                                 defaultValue={ defaultConfig.color }
                                 onChange={(e) => {
-                                    console.log("asd",e );
                                     onStyleChange({ color: e });
                                 }}
                             />
@@ -95,7 +94,6 @@ const ToolbarComponent = ({ defaultConfig, onStyleChange }: { defaultConfig: Rec
                             <UI.ColorPicker
                                 defaultValue={ defaultConfig.backgroundColor }
                                 onChange={(e) => {
-                                    console.log("asd",e );
                                     onStyleChange({ backgroundColor: e });
                                 }}
                             />
@@ -129,8 +127,6 @@ const ToolbarComponent = ({ defaultConfig, onStyleChange }: { defaultConfig: Rec
                                 ]}
                                 onChange={(e) => {
                                     onStyleChange({ fontSize: e })
-                                    // onStyleChange({ fontSize: parseInt(e, 10) })
-                                    console.log("e", e)
                                 }}
                                 className={{
                                     button: "p-0"
@@ -181,7 +177,6 @@ const ToolbarComponent = ({ defaultConfig, onStyleChange }: { defaultConfig: Rec
                                     },
                                 ]}
                                 onChange={(e) => {
-                                    console.log("e", e)
                                     onStyleChange({ textAlign: e })
                                 }}
                                 className={{

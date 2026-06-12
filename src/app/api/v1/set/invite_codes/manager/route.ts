@@ -1,7 +1,7 @@
 import { randomUUID } from "crypto";
 import { requireAdmin } from "@/shared/lib/auth/requireSession";
 import { supabaseAdmin } from "@/shared/lib/supabase/supabaseServer";
-import { apiError, apiSuccess, singleItemPagination } from "@/shared/lib/apiResponse";
+import { apiError, apiSuccess, resolveRouteError, singleItemPagination } from "@/shared/lib/apiResponse";
 
 const TABLE_NAME = "invite_codes";
 
@@ -29,9 +29,8 @@ export async function POST(req: Request) {
             resultMessage: "등록성공",
             pagination: singleItemPagination(),
         });
-    } catch (error: any) {
-        return apiError(error.message || "문제가 생겼습니다", {
-            status: error.status ?? 500,
-        });
+    } catch (error: unknown) {
+        const { message, status } = resolveRouteError(error);
+        return apiError(message, { status });
     }
 }

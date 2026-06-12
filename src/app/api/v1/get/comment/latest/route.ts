@@ -1,5 +1,5 @@
 import { supabaseServer } from "@/shared/lib/supabase/supabaseServer";
-import { apiError, apiSuccess, buildPagination } from "@/shared/lib/apiResponse";
+import { apiError, apiSuccess, resolveRouteError, buildPagination } from "@/shared/lib/apiResponse";
 
 const TABLE_NAME_POST = "comments";
 
@@ -25,9 +25,8 @@ export async function GET() {
                 totalCount,
             }),
         });
-    } catch (error: any) {
-        return apiError(error.message || "문제가 생겼습니다", {
-            status: error.status ?? 500,
-        });
+    } catch (error: unknown) {
+        const { message, status } = resolveRouteError(error);
+        return apiError(message, { status });
     }
 }

@@ -77,8 +77,6 @@ const BlockEditableComponent = ({
             const updatedList = newList.map((b, i) => ({ ...b, order: i }));
 
             setTimeout(() => {
-                console.log("??? idx", refs.current[updatedList[blockIdx + 1].order * 1000 + 0]);
-                // 새로 추가된 블록의 첫 번째 child focus
                 refs.current[updatedList[blockIdx + 1].order * 1000 + 0]?.focus();
                 actionLock.current[blockOrder] = false;
             }, 0);
@@ -291,8 +289,6 @@ const BlockEditableComponent = ({
                                             const html = refs.current[lockKey]?.innerText ?? "";
                                             tempRef.current = html;
 
-                                            console.log("?html", html);
-
                                             if (event.key === "Enter") {
                                                 event.preventDefault();
 
@@ -312,7 +308,6 @@ const BlockEditableComponent = ({
                                             }
 
                                             if (event.key === "ArrowDown") {
-                                                console.log("ArrowDown");
                                                 const sel = window.getSelection();
                                                 if (!sel || sel.rangeCount === 0) return;
                                                 const range = sel.getRangeAt(0);
@@ -354,7 +349,6 @@ const BlockEditableComponent = ({
 
                                                 const el = refs.current[lockKey];
                                                 if (!el) return;
-                                                console.log("ArrowUp");
 
                                                 const cursorRect = range.getBoundingClientRect();
                                                 const elRect = el.getBoundingClientRect();
@@ -363,7 +357,6 @@ const BlockEditableComponent = ({
 
                                                 // 커서가 맨 윗줄에 있으면 이전 element로 이동
                                                 if (VALUE <= 10 && VALUE > -10) {
-                                                    console.log("여기 까지 옴 2");
                                                     // 단순히 -1 하면 같은 block에서만 동작
                                                     // 다른 block까지 고려하려면:
                                                     let prevKey = lockKey - 1;
@@ -379,7 +372,6 @@ const BlockEditableComponent = ({
                                             }
                                         }}
                                         onBlur={() => {
-                                            console.log("????asd");
                                             const html = refs.current[lockKey]?.innerText ?? "";
 
                                             setList((prev) =>

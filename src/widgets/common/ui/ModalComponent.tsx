@@ -3,9 +3,16 @@
 import { useEffect, useState } from "react";
 
 import UI from "@/shared/ui/common/UIComponent";
-import { DUMMY_IMAGE_RESPONSE } from "@/shared/constants/lists/configDummyResponse";
 import { CategoryItemManager } from "@/entities/category/model/category.type";
 import Image from "next/image";
+
+const PLACEHOLDER_IMAGES = [
+    {
+        idx: 101,
+        create_at: "2025-09-01T09:10:00Z",
+        url: "/images/picture/img-dummy-thumbnail-01.png",
+    },
+];
 
 // 이미지: 관리
 
@@ -34,7 +41,7 @@ const Box = ({ defaultImageUrl = "/", onChange }: { defaultImageUrl: string, onC
                 <p className="text-[var(--color-gray-500)]">업로드된 이미지</p>
                 
                 <section className="grid grid-cols-[1fr_1fr_1fr_1fr] grid-rows-[7.2rem_7.2rem_7.2rem_7.2rem] pb-[3.2rem] gap-[0.8rem] h-[calc(1.6rem*10)] overflow-y-auto bg-[var(--color-gray-300)] p-[0.4rem] rounded-[1.6rem]">
-                    { DUMMY_IMAGE_RESPONSE.map((e, i) =>
+                    { PLACEHOLDER_IMAGES.map((e, i) =>
                         <UI.Button
                             key={i}
                             className={` ${ e.idx === selectedImage ? "border border-[var(--color-brand-500)]" : "" }`}

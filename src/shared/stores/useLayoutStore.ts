@@ -88,7 +88,7 @@ export const useLayoutStore = create<LayoutStoreType>()(
         },
         setIsNeedBackdrop: (args: boolean) => {
             set(() => ({
-                isAccountSidebarOpen: args
+                isNeedBackdrop: args
             }))
         },
         setIsNeedNavigation: (args: boolean) => {
