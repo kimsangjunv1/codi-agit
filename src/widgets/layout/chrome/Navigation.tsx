@@ -1,8 +1,9 @@
 "use client"
 
 import { useParams, useRouter } from "next/navigation"
-import { Fragment, useEffect, useState } from "react"
+import { Fragment, useEffect, useMemo, useState } from "react"
 import { AnimatePresence, motion } from "motion/react"
+import { useSession } from "next-auth/react"
 
 import UI from "@/shared/ui/common/UIComponent"
 import IconComponent from "@/shared/ui/common/IconComponent"
@@ -17,9 +18,33 @@ import { useModalStore } from "@/shared/stores/useModalStore"
 import { useBlockStore } from "@/widgets/post/model/useEditorBlockStore"
 import { useToastStore } from "@/shared/stores/useToastStore"
 
+const POST_NAV_ACTIONS = [
+    {
+        title: "공유하기",
+        icon: "outlined-copy",
+        action: "share" as const,
+    },
+    {
+        title: "게시물 삭제하기",
+        icon: "outlined-cross",
+        action: "delete" as const,
+    },
+    {
+        title: "좋아요",
+        icon: "outlined-like",
+        action: "like" as const,
+    },
+    {
+        title: "수정하기",
+        icon: "outlined-edit",
+        action: "edit" as const,
+    },
+];
+
 const Navigation = () => {
     const params = useParams();
     const router = useRouter();
+    const { data: session } = useSession();
 
     const [ showMenu, setShowMenu ] = useState(false);
     
@@ -39,35 +64,36 @@ const Navigation = () => {
     const IS_ROUTE_POST_VIEW = currentPathName.includes("post") && !currentPathName.includes("modify") && !currentPathName.includes("create");
     const postIdx = parseInt((params?.id) as string);
     const { data: getPostListData } = useGetPostDetailQuery(postIdx, undefined, {
-        enabled: IS_ROUTE_POST_VIEW ? false : !!postIdx,
+        enabled: !!postIdx && IS_ROUTE_POST_VIEW,
     });
     const IS_ROUTE_POST_EDIT = currentPathName.includes("post") && currentPathName.includes("modify");
     const IS_ROUTE_POST_CREATE = currentPathName.includes("post") && currentPathName.includes("create");
 
     const postId = parseInt(params?.id as string);
 
-    const AdditionalFunctionList = [
-        {
-            title: "공유하기",
-            icon: "outlined-copy",
-            action: "share" as const,
-        },
-        {
-            title: "게시물 삭제하기",
-            icon: "outlined-cross",
-            action: "delete" as const,
-        },
-        {
-            title: "좋아요",
-            icon: "outlined-like",
-            action: "like" as const,
-        },
-        {
-            title: "수정하기",
-            icon: "outlined-edit",
-            action: "edit" as const,
-        },
-    ];
+    const canManagePost = useMemo(() => {
+        const userId = session?.user?.id;
+        const postOwnerId = getPostListData?.result?.user_id;
+
+        if (session?.user?.role === "admin") return true;
+        if (!userId || !postOwnerId) return false;
+
+        return userId === postOwnerId;
+    }, [getPostListData?.result?.user_id, session?.user?.id, session?.user?.role]);
+
+    const isLoggedIn = !!session?.user?.id;
+
+    const visibleActions = useMemo(
+        () =>
+            POST_NAV_ACTIONS.filter((item) => {
+                if (item.action === "share") return true;
+                if (item.action === "like") return isLoggedIn;
+                if (item.action === "edit" || item.action === "delete") return canManagePost;
+
+                return false;
+            }),
+        [canManagePost, isLoggedIn],
+    );
 
     const deletePostModal = () => {
         const postTitle = getPostListData?.result?.title;
@@ -268,7 +294,7 @@ const Navigation = () => {
                         </Fragment>
                     ) : (
                         <Fragment>
-                            { AdditionalFunctionList.map((e) => {
+                            { visibleActions.map((e) => {
                                 const isLiked = e.action === "like" && getPostListData?.result?.alreadyLiked;
                                 const isDelete = e.action === "delete";
 
@@ -286,7 +312,12 @@ const Navigation = () => {
                                         }`}
                                         onClick={() => {
                                             if ( e.action === "like" ) {
-                                                likeIncrementFetch({ postId });
+                                                if ( !session?.user?.id ) {
+                                                    setToast({ msg: "로그인이 필요합니다", time: 2 });
+                                                    return;
+                                                }
+
+                                                likeIncrementFetch({ postId, userId: session.user.id });
                                             } else if ( e.action === "edit" ) {
                                                 pushToUrl(`/post/${post_idx}/modify`);
                                             } else if ( e.action === "delete" ) {
