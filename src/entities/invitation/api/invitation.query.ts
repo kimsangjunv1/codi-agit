@@ -29,13 +29,13 @@ export const useGetInvitationCodeCheckQuery = (code: string) => {
 };
 
 export const useGetInvitationCodeListOnManagerQuery = () => {
-    const { data, isLoading, isError, isFetching, refetch } = useQuery<GetInvitationCodeListOnManagerResponse>({
+    const { data, isLoading, isError, error, isFetching, refetch } = useQuery<GetInvitationCodeListOnManagerResponse>({
         queryKey: [AgitRoutes.KEY_INVITATION, "manager", "list"],
         queryFn: () => getInvitationCodeListOnManagerFetch(),
         staleTime: 0,
     });
 
-    return { data, isLoading, isError, isFetching, refetch };
+    return { data, isLoading, isError, error, isFetching, refetch };
 };
 
 export const useSetInvitationCodeQuery = () => {

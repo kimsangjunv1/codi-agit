@@ -57,13 +57,13 @@ export const useSetCommentQuery = () => {
 };
 
 export const useGetCommentManagerListQuery = () => {
-    const { data, isLoading, isError, isFetching, refetch } = useQuery<GetCommentManagerListResponse>({
+    const { data, isLoading, isError, error, isFetching, refetch } = useQuery<GetCommentManagerListResponse>({
         queryKey: [AgitRoutes.KEY_COMMENT, "manager", "list"],
         queryFn: () => getCommentManagerListFetch(),
         staleTime: 0,
     });
 
-    return { data, isLoading, isError, isFetching, refetch };
+    return { data, isLoading, isError, error, isFetching, refetch };
 };
 
 export const useDeleteCommentManagerQuery = () => {

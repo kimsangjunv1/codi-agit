@@ -11,12 +11,13 @@ import { CommentManagerItem } from "@/entities/comment/model/comment.type";
 import { util } from "@/shared/lib/util";
 import ManagerPageShell from "@/widgets/manager/ui/ManagerPageShell";
 import ManagerListSkeleton from "@/widgets/manager/ui/ManagerListSkeleton";
+import ManagerListError from "@/widgets/manager/ui/ManagerListError";
 
 const CommentManager = () => {
     const { pushToUrl } = useNavigate();
     const { setModal } = useModalStore();
 
-    const { data, isLoading } = useGetCommentManagerListQuery();
+    const { data, isLoading, isError, error, refetch } = useGetCommentManagerListQuery();
     const { mutate: deleteCommentFetch } = useDeleteCommentManagerQuery();
 
     const deleteCommentModal = (item: CommentManagerItem) =>
@@ -44,6 +45,11 @@ const CommentManager = () => {
         <ManagerPageShell title="댓글 관리" description="등록된 댓글을 조회·삭제합니다.">
             {isLoading ? (
                 <ManagerListSkeleton />
+            ) : isError || data?.resultCode === "ERROR" ? (
+                <ManagerListError
+                    message={isError ? error?.message : data?.resultMessage}
+                    onRetry={() => refetch()}
+                />
             ) : list.length === 0 ? (
                 <UI.Empty title="등록된 댓글이 없습니다" className="opacity-100" />
             ) : (

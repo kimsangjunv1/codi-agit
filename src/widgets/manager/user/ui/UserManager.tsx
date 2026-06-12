@@ -5,15 +5,21 @@ import { useGetUserManagerListQuery } from "@/entities/user/api/user.query";
 import { util } from "@/shared/lib/util";
 import ManagerPageShell from "@/widgets/manager/ui/ManagerPageShell";
 import ManagerListSkeleton from "@/widgets/manager/ui/ManagerListSkeleton";
+import ManagerListError from "@/widgets/manager/ui/ManagerListError";
 
 const UserManager = () => {
-    const { data, isLoading } = useGetUserManagerListQuery();
+    const { data, isLoading, isError, error, refetch } = useGetUserManagerListQuery();
     const list = data?.result ?? [];
 
     return (
         <ManagerPageShell title="유저 관리" description="가입된 회원 목록을 조회합니다.">
             {isLoading ? (
                 <ManagerListSkeleton />
+            ) : isError || data?.resultCode === "ERROR" ? (
+                <ManagerListError
+                    message={isError ? error?.message : data?.resultMessage}
+                    onRetry={() => refetch()}
+                />
             ) : list.length === 0 ? (
                 <UI.Empty title="등록된 회원이 없습니다" className="opacity-100" />
             ) : (

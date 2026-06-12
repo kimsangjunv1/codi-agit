@@ -16,12 +16,13 @@ import { CategoryItemManager, PatchCategoryPayload, SetCategoryPayload } from "@
 import { util } from "@/shared/lib/util";
 import ManagerPageShell from "@/widgets/manager/ui/ManagerPageShell";
 import ManagerListSkeleton from "@/widgets/manager/ui/ManagerListSkeleton";
+import ManagerListError from "@/widgets/manager/ui/ManagerListError";
 
 const CategoryManager = () => {
     const categoryCreateValueRef = useRef<SetCategoryPayload>({ title: "", description: "" });
     const categoryPatchValueRef = useRef<PatchCategoryPayload>({ idx: 0, title: "", is_enabled: true, description: "" });
 
-    const { data: getCategoryListData, isLoading } = useGetCategoryListOnManagerQuery();
+    const { data: getCategoryListData, isLoading, isError, error, refetch } = useGetCategoryListOnManagerQuery();
     const { mutate: setCategoryFetch } = useSetCategoryQuery();
     const { mutate: patchCategoryFetch } = usePatchCategoryQuery();
     const { mutate: deleteCategoryFetch } = useDeleteCategoryQuery();
@@ -120,6 +121,11 @@ const CategoryManager = () => {
         >
             {isLoading ? (
                 <ManagerListSkeleton />
+            ) : isError || getCategoryListData?.resultCode === "ERROR" ? (
+                <ManagerListError
+                    message={isError ? error?.message : getCategoryListData?.resultMessage}
+                    onRetry={() => refetch()}
+                />
             ) : list.length === 0 ? (
                 <UI.Empty title="등록된 카테고리가 없습니다" className="opacity-100" />
             ) : (
