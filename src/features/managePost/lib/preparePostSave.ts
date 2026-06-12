@@ -1,7 +1,8 @@
 import { uploadPostImageFetch } from "@/entities/post/api/post.image.api";
 import type { SectionContent } from "@/entities/post/model/post.type";
-import type { Row } from "@/widgets/post/model/useEditorBlockStore";
 import { usePostDraftImageStore } from "@/shared/stores/usePostDraftImageStore";
+
+type PostContentRow = SectionContent[];
 
 const replaceUrlInHtml = (html: string, replaceMap: Map<string, string>) => {
     let next = html;
@@ -13,7 +14,10 @@ const replaceUrlInHtml = (html: string, replaceMap: Map<string, string>) => {
     return next;
 };
 
-const replaceRowUrls = (rows: Row[], replaceMap: Map<string, string>): Row[] =>
+const replaceRowUrls = (
+    rows: PostContentRow[],
+    replaceMap: Map<string, string>,
+): PostContentRow[] =>
     rows.map((row) =>
         row.map((block) => {
             const nextBlock: SectionContent = { ...block };
@@ -41,7 +45,7 @@ export const preparePostPayloadForSave = async ({
     summary: string;
     thumbnail: string;
     category_idx: number;
-    contents: Row[];
+    contents: PostContentRow[];
 }) => {
     const { images } = usePostDraftImageStore.getState();
     const replaceMap = new Map<string, string>();

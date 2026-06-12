@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import { useParams } from "next/navigation"
 import { AnimatePresence, motion } from "motion/react"
 
 import UI from '@/shared/ui/common/UIComponent'
@@ -9,14 +8,12 @@ import IconComponent from "@/shared/ui/common/IconComponent"
 import TextShimmer from "@/shared/ui/common/TextShimmerComponent"
 
 import useNavigate from "@/shared/hooks/useNavigate"
-import { useGetPostDetailQuery } from "@/entities/post/api/post.query"
 import { useGetCategoryListQuery } from "@/entities/category/api/category.query"
+import { getPostRouteFlags } from "@/features/managePost"
 
 import { useLayoutStore } from "@/shared/stores/useLayoutStore"
 
 const Header = () => {
-    const params = useParams();
-
     const [ showMenu, setShowMenu ] = useState(false);
     
     const { isMobileMenuOpen, setIsMobileMenuOpen } = useLayoutStore();
@@ -24,16 +21,8 @@ const Header = () => {
     const { mainViewMode, setMainViewMode, categoryFilter, setCategoryFilter  } = useLayoutStore();
 
     const { data: getCategoryListData } = useGetCategoryListQuery();
+    const { IS_ROUTE_POST } = getPostRouteFlags(currentPathName);
     const IS_ROUTE_HOME = currentPathName === "/";
-    const IS_ROUTE_POST = /\/post(\/|$)/.test(currentPathName);
-    // const IS_ROUTE_POST = currentPathName.includes("post") && !currentPathName.includes("modify") && !currentPathName.includes("create");
-    const IS_ROUTE_POST_EDIT = currentPathName.includes("post") && currentPathName.includes("modify");
-    const IS_ROUTE_POST_CREATE = currentPathName.includes("post") && currentPathName.includes("create");
-    const IS_ROUTE_POST_VIEW = IS_ROUTE_POST && !IS_ROUTE_POST_EDIT && !IS_ROUTE_POST_CREATE;
-    const postIdx = parseInt((params?.id) as string);
-    const { data: getPostListData } = useGetPostDetailQuery(postIdx, undefined, {
-        enabled: IS_ROUTE_POST_VIEW ? false : !!postIdx,
-    });
     const IS_ROUTE_POST_LAB = currentPathName.includes("lab")
     const IS_ROUTE_MANAGER = currentPathName.startsWith("/manager");
     const MANAGER_HEADER_TITLE: Record<string, string> = {
@@ -47,12 +36,6 @@ const Header = () => {
     const managerHeaderTitle =
         MANAGER_HEADER_TITLE[currentPathName] ??
         (IS_ROUTE_MANAGER ? "관리자" : "");
-
-    // useEffect(() => {
-    //     if ( showMenu ) {
-    //         setShowMenu( false )
-    //     }
-    // }, [ currentPathName ])
 
     if ( IS_ROUTE_POST ) return null;
 
@@ -215,113 +198,6 @@ const Header = () => {
                                         </motion.section>
                                     )}
                                 </motion.section>
-                            }
-
-                            { IS_ROUTE_POST &&
-                                <section className="flex flex-col gap-[0.8rem]">
-                                    <motion.section
-                                        key={"post_title"}
-                                        initial={{ opacity: 0, transform: "scale(0.8)" }}
-                                        animate={{ opacity: 1, transform: "scale(1)" }}
-                                        exit={{ opacity: 0, transform: "scale(0.8)" }}
-                                        transition={{
-                                            // delay: 0.05 * (i + 1),
-                                            type: "spring",
-                                            mass: 0.1,
-                                            stiffness: 100,
-                                            damping: 10,
-                                        }}
-                                        className="flex gap-[1.6rem] flex-1 justify-center"
-                                    >
-                                        <TextShimmer
-                                            as="h2"
-                                            duration={3}
-                                            style={{
-                                                // color: "var(--color-brand-500)",
-                                                // color: "#ededed",
-                                                fontSize: "2.4rem",
-                                            }}
-                                            color={{
-                                                start: "#ededed",
-                                                end: "#000000"
-                                            }}
-                                            className="font-extrabold"
-                                        >
-                                            {/* {`${ getPostListData?.result?.title }`} */}
-                                            읽는중
-                                        </TextShimmer>
-                                    </motion.section>
-                                </section>
-                            }
-
-                            { IS_ROUTE_POST_EDIT &&
-                                <section className="flex flex-col gap-[0.8rem]">
-                                    <motion.section
-                                        key={"post_title"}
-                                        initial={{ opacity: 0, transform: "scale(0.8)" }}
-                                        animate={{ opacity: 1, transform: "scale(1)" }}
-                                        exit={{ opacity: 0, transform: "scale(0.8)" }}
-                                        transition={{
-                                            // delay: 0.05 * (i + 1),
-                                            type: "spring",
-                                            mass: 0.1,
-                                            stiffness: 100,
-                                            damping: 10,
-                                        }}
-                                        className="flex gap-[1.6rem] flex-1 justify-center"
-                                    >
-                                        <TextShimmer
-                                            as="h2"
-                                            duration={3}
-                                            style={{
-                                                color: "#000000",
-                                                fontSize: "2.4rem",
-                                            }}
-                                            color={{
-                                                start: "#000000",
-                                                end: "#9393a0"
-                                            }}
-                                            className="font-extrabold"
-                                        >
-                                            {`${ getPostListData?.result?.title } | 수정중`}
-                                        </TextShimmer>
-                                    </motion.section>
-                                </section>
-                            }
-
-                            { IS_ROUTE_POST_CREATE &&
-                                <section className="flex flex-col gap-[0.8rem]">
-                                    <motion.section
-                                        key={"post_title"}
-                                        initial={{ opacity: 0, transform: "scale(0.8)" }}
-                                        animate={{ opacity: 1, transform: "scale(1)" }}
-                                        exit={{ opacity: 0, transform: "scale(0.8)" }}
-                                        transition={{
-                                            // delay: 0.05 * (i + 1),
-                                            type: "spring",
-                                            mass: 0.1,
-                                            stiffness: 100,
-                                            damping: 10,
-                                        }}
-                                        className="flex gap-[1.6rem] flex-1 justify-center"
-                                    >
-                                        <TextShimmer
-                                            as="h2"
-                                            duration={3}
-                                            style={{
-                                                color: "#000000",
-                                                fontSize: "2.4rem",
-                                            }}
-                                            color={{
-                                                start: "#000000",
-                                                end: "#9393a0"
-                                            }}
-                                            className="font-extrabold"
-                                        >
-                                            {`생성 중`}
-                                        </TextShimmer>
-                                    </motion.section>
-                                </section>
                             }
 
                             { IS_ROUTE_POST_LAB &&
