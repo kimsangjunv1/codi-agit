@@ -1,3 +1,4 @@
+import { requireSession } from "@/shared/lib/auth/requireSession";
 import { supabaseAdmin } from "@/shared/lib/supabase/supabaseServer";
 import { apiError, apiSuccess } from "@/shared/lib/apiResponse";
 import { revalidatePostPages } from "@/shared/lib/revalidatePost";
@@ -5,6 +6,9 @@ import { revalidatePostPages } from "@/shared/lib/revalidatePost";
 const TABLE_NAME = "posts";
 
 export async function POST(req: Request) {
+    const auth = await requireSession();
+    if (!auth.authorized) return auth.response;
+
     const payload = await req.json();
 
     try {
