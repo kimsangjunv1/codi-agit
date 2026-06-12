@@ -1,3 +1,4 @@
+import { requireAdmin } from "@/shared/lib/auth/requireSession";
 import { supabaseServer } from "@/shared/lib/supabase/supabaseServer";
 import { apiError, apiSuccess, buildPaginationFromQuery, getPageParams } from "@/shared/lib/apiResponse";
 
@@ -5,6 +6,9 @@ const TABLE_NAME = "invite_codes";
 const DEFAULT_PAGE_SIZE = 10;
 
 export async function GET(req: Request) {
+    const auth = await requireAdmin();
+    if (!auth.authorized) return auth.response;
+
     try {
         const supabase = await supabaseServer();
         const { searchParams } = new URL(req.url);

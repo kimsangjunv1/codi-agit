@@ -1,9 +1,13 @@
+import { requireAdmin } from "@/shared/lib/auth/requireSession";
 import { supabaseServer } from "@/shared/lib/supabase/supabaseServer";
 import { apiError, apiSuccess, singleItemPagination } from "@/shared/lib/apiResponse";
 
 const TABLE_NAME = "invite_codes";
 
 export async function DELETE(req: Request) {
+    const auth = await requireAdmin();
+    if (!auth.authorized) return auth.response;
+
     const payload = await req.json();
 
     try {

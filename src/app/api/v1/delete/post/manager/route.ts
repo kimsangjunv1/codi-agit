@@ -1,3 +1,4 @@
+import { requireAdmin } from "@/shared/lib/auth/requireSession";
 import { supabaseServer } from "@/shared/lib/supabase/supabaseServer";
 import { apiError, apiSuccess, singleItemPagination } from "@/shared/lib/apiResponse";
 import { revalidatePostPages } from "@/shared/lib/revalidatePost";
@@ -8,6 +9,9 @@ const TABLE_VIEW = "views";
 const TABLE_LIKE = "likes";
 
 export async function DELETE(req: Request) {
+    const auth = await requireAdmin();
+    if (!auth.authorized) return auth.response;
+
     const payload = await req.json();
 
     try {

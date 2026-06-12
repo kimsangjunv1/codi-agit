@@ -1,8 +1,12 @@
+import { requireSession } from "@/shared/lib/auth/requireSession";
 import { supabaseAdmin } from "@/shared/lib/supabase/supabaseServer";
 import { ensurePostImagesBucket, POST_IMAGES_BUCKET } from "@/shared/lib/supabase/postImagesBucket";
 import { apiError, apiSuccess } from "@/shared/lib/apiResponse";
 
 export async function POST(req: Request) {
+    const auth = await requireSession();
+    if (!auth.authorized) return auth.response;
+
     try {
         const formData = await req.formData();
         const file = formData.get("file");
