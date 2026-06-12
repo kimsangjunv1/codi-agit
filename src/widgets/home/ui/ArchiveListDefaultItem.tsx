@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import TransitionLink from "@/shared/ui/common/TransitionLink";
 import { motion } from "motion/react";
 
 import { util } from "@/shared/lib/util";
@@ -31,7 +31,7 @@ const ArchiveListDefaultItem = ({ post }: ArchiveListDefaultItemProps) => {
                 damping: 10,
             }}
         >
-            <Link
+            <TransitionLink
                 href={`/post/${post.idx}`}
                 className="flex justify-start items-center gap-[1.6rem] hover:scale-[1.04] transition-transform px-[1.2rem]"
             >
@@ -52,7 +52,7 @@ const ArchiveListDefaultItem = ({ post }: ArchiveListDefaultItemProps) => {
                         {util.string.getCurrentDate(post.created_at)} ・ {post.likes ?? 0} likes
                     </h5>
                 </div>
-            </Link>
+            </TransitionLink>
         </motion.section>
     );
 };
