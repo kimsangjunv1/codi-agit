@@ -1,5 +1,5 @@
 import { supabaseAdmin, supabaseServer } from "@/shared/lib/supabase/supabaseServer";
-import { apiError, apiSuccess } from "@/shared/lib/apiResponse";
+import { apiError, apiSuccess, resolveRouteError } from "@/shared/lib/apiResponse";
 
 export async function POST(req: Request) {
     try {
@@ -65,9 +65,10 @@ export async function POST(req: Request) {
             },
             { resultMessage: "조회수 처리 완료", pagination: null }
         );
-    } catch (err: any) {
-        return apiError(err.message || "조회수 처리 중 문제가 발생했습니다.", {
-            status: err.status ?? 500,
+    } catch (err: unknown) {
+        const { message, status } = resolveRouteError(err, "조회수 처리 중 문제가 발생했습니다.");
+        return apiError(message, {
+            status,
             result: { success: false },
         });
     }

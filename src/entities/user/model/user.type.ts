@@ -7,11 +7,6 @@ export interface SetUserPayload {
     inviteCode: string;
 }
 
-export interface SetLoginPayload {
-    password: string;
-    email: string;
-}
-
 export interface UserManagerItem {
     id: string;
     name: string;

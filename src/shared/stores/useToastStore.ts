@@ -52,7 +52,6 @@ export const useToastStore = create<ToastStore>()(
 
             startTimer: (id, seconds, callback) => {
                 if ( intervalRefMap[id] ) {
-                    console.log(`이미 타이머 실행 중: ${id}`);
                     return;
                 }
             

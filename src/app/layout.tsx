@@ -4,13 +4,12 @@ import ReactLenis from "lenis/react";
 import GlobalErrorBoundary from "@/app/providers/GlobalErrorBoundary";
 import QueryProvider from "@/app/providers/QueryProvider";
 import AuthProvider from "@/app/providers/AuthProvider";
-import GlobalErrorListener from "@/app/providers/GlobalErrorListener";
 import PopupProvider from "@/app/providers/PopupProvider";
 
 import Toast from "@/shared/ui/layout/Toast";
 import PageProgress from "@/shared/ui/common/PageProgress";
 import PathCheckComponent from "@/shared/ui/common/PathCheckComponent";
-import ClientPageProgress from "@/shared/ui/common/ClinentComponent";
+import ClientPageProgress from "@/shared/ui/common/ClientComponent";
 import TransitionOverlay from "@/shared/ui/common/TransitionOverlay";
 import RootChromeView from "@/views/layout/RootChromeView";
 
@@ -32,7 +31,6 @@ export default function RootLayout({
                 <GlobalErrorBoundary>
                     <QueryProvider>
                         <AuthProvider>
-                            <GlobalErrorListener>
                                 <PopupProvider>
                                     <PageProgress />
                                     <ReactLenis
@@ -52,7 +50,6 @@ export default function RootLayout({
                                     <ClientPageProgress />
                                 </PopupProvider>
                                 <Toast />
-                            </GlobalErrorListener>
                         </AuthProvider>
                     </QueryProvider>
                 </GlobalErrorBoundary>

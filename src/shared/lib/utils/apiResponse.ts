@@ -76,3 +76,16 @@ export function apiError(
 
     return NextResponse.json(body, { status: options?.status ?? 500 });
 }
+
+export function resolveRouteError(error: unknown, fallback = "문제가 생겼습니다") {
+    const message = error instanceof Error ? error.message : fallback;
+    const status =
+        typeof error === "object" &&
+        error !== null &&
+        "status" in error &&
+        typeof (error as { status: unknown }).status === "number"
+            ? (error as { status: number }).status
+            : 500;
+
+    return { message, status };
+}

@@ -30,7 +30,11 @@ export async function clientFetch<T>(url: string, options: ClientFetchOptions = 
         const data = await response.json().catch(() => null);
 
         if (!response.ok) {
-            throw new Error(data?.message ?? "API 요청에 실패했습니다.");
+            const message =
+                (typeof data?.resultMessage === "string" && data.resultMessage) ||
+                (typeof data?.message === "string" && data.message) ||
+                "API 요청에 실패했습니다.";
+            throw new Error(message);
         }
 
         return data as T;
