@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import ReactLenis from "lenis/react";
 
+import { SITE_DESCRIPTION, SITE_KEYWORDS, SITE_NAME } from "@/shared/lib/seo/constants";
+import { getSiteUrl } from "@/shared/lib/siteUrl";
+
 import GlobalErrorBoundary from "@/app/providers/GlobalErrorBoundary";
 import QueryProvider from "@/app/providers/QueryProvider";
 import AuthProvider from "@/app/providers/AuthProvider";
@@ -17,14 +20,35 @@ import "@/shared/styles/scss/global.css";
 import "@/shared/styles/scss/index.scss";
 
 export const metadata: Metadata = {
-    title: "agit.",
-    description: "agit. 페이지에 오신걸 환영합니다.",
+    metadataBase: new URL(getSiteUrl()),
+    title: {
+        default: SITE_NAME,
+        template: `%s | ${SITE_NAME}`,
+    },
+    description: SITE_DESCRIPTION,
+    keywords: SITE_KEYWORDS,
+    openGraph: {
+        type: "website",
+        locale: "ko_KR",
+        siteName: SITE_NAME,
+        title: SITE_NAME,
+        description: SITE_DESCRIPTION,
+    },
+    twitter: {
+        card: "summary_large_image",
+        title: SITE_NAME,
+        description: SITE_DESCRIPTION,
+    },
+    robots: {
+        index: true,
+        follow: true,
+    },
 };
 
 export default function RootLayout({
     children,
     modal,
-}: Readonly<{ children: React.ReactNode; modal?: React.ReactNode }>) {
+}: Readonly<{ children: React.ReactNode; modal: React.ReactNode }>) {
     return (
         <html lang="ko">
             <body>

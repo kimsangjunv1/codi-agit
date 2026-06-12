@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { motion, useMotionValue, useScroll } from "motion/react";
 
-import useNavigate from "@/shared/hooks/useNavigate";
 import { PostLatestItem } from "@/entities/post/model/post.type";
 
 import ArchiveSliderCard from "./ArchiveSliderCard";
@@ -22,8 +21,6 @@ const ArchiveSliderContent = ({ posts }: ArchiveSliderContentProps) => {
 
     const [maxTranslate, setMaxTranslate] = useState(0);
     const [isDragging, setIsDragging] = useState(false);
-
-    const { replaceToUrl } = useNavigate();
 
     const { scrollYProgress } = useScroll({
         target: scrollRef,
@@ -141,7 +138,6 @@ const ArchiveSliderContent = ({ posts }: ArchiveSliderContentProps) => {
                                 cardRef={(element) => {
                                     cardRefs.current[index] = element;
                                 }}
-                                onSelect={(idx) => replaceToUrl(`/post/${idx}`)}
                             />
                         ))}
                     </motion.div>

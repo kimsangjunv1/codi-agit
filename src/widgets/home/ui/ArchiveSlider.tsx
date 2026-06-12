@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
 import { useGetPostLatestListQuery } from "@/entities/post/api/post.query";
 import { GetPostLatestListResponse } from "@/entities/post/model/post.type";
 
@@ -10,7 +12,21 @@ type ArchiveSliderProps = {
     initialData: GetPostLatestListResponse;
 };
 
-const ArchiveSlider = ({ initialData }: ArchiveSliderProps) => {
+const ArchiveSliderStatic = ({ initialData }: ArchiveSliderProps) => {
+    const posts = initialData.result ?? [];
+
+    if (initialData.resultCode === "ERROR" && posts.length === 0) {
+        return <FeedError message={initialData.resultMessage} onRetry={() => undefined} />;
+    }
+
+    if (posts.length === 0) {
+        return <FeedEmpty />;
+    }
+
+    return <ArchiveSliderContent posts={posts} />;
+};
+
+const ArchiveSliderWithQuery = ({ initialData }: ArchiveSliderProps) => {
     const { data, isLoading, isError, error, refetch } = useGetPostLatestListQuery(initialData);
     const posts = data?.result ?? [];
 
@@ -31,6 +47,20 @@ const ArchiveSlider = ({ initialData }: ArchiveSliderProps) => {
     }
 
     return <ArchiveSliderContent posts={posts} />;
+};
+
+const ArchiveSlider = ({ initialData }: ArchiveSliderProps) => {
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
+
+    if (!isClient) {
+        return <ArchiveSliderStatic initialData={initialData} />;
+    }
+
+    return <ArchiveSliderWithQuery initialData={initialData} />;
 };
 
 export default ArchiveSlider;

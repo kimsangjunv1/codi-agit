@@ -93,6 +93,7 @@ const RenderContents = ({ id, initialData }: { id: string; initialData: GetPostD
                     createDate={DATA?.created_at ?? ""}
                     viewCount={DATA?.views ?? 0}
                     likeCount={DATA?.likes ?? 0}
+                    thumbnailAlt={DATA?.title ?? ""}
                 />
             </section>
 

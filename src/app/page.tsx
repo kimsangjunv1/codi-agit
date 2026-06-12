@@ -1,8 +1,17 @@
+import type { Metadata } from "next";
+
 import Main from "@/widgets/layout/Main";
 import HomeView from "@/views/home/HomeView";
 import { getPostLatestListServerFetch } from "@/entities/post/api/post.api";
 import { GetPostLatestListResponse } from "@/entities/post/model/post.type";
+import { buildPageMetadata, buildWebsiteJsonLd } from "@/shared/lib/seo/metadata";
+import JsonLd from "@/shared/ui/seo/JsonLd";
 import { buildPagination } from "@/shared/lib/utils/apiResponse";
+
+export const metadata: Metadata = buildPageMetadata({
+    title: "ARCHIVE",
+    path: "/",
+});
 
 export const revalidate = 300;
 
@@ -23,9 +32,12 @@ const Page = async () => {
     }
 
     return (
-        <Main id="home" className={{ inner: "min-h-[100dvh]", container: "" }}>
-            <HomeView initialData={initialData} />
-        </Main>
+        <>
+            <JsonLd data={buildWebsiteJsonLd()} />
+            <Main id="home" className={{ inner: "min-h-[100dvh]", container: "" }}>
+                <HomeView initialData={initialData} />
+            </Main>
+        </>
     );
 };
 

@@ -1,19 +1,22 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "motion/react";
 
 import { PostLatestItem } from "@/entities/post/model/post.type";
+
+const MotionLink = motion.create(Link);
 
 type ArchiveSliderCardProps = {
     post: PostLatestItem;
     index: number;
     cardRef: (element: HTMLElement | null) => void;
-    onSelect: (idx: number) => void;
 };
 
-const ArchiveSliderCard = ({ post, index, cardRef, onSelect }: ArchiveSliderCardProps) => {
+const ArchiveSliderCard = ({ post, index, cardRef }: ArchiveSliderCardProps) => {
     return (
-        <motion.section
+        <MotionLink
+            href={`/post/${post.idx}`}
             date-idx={post.idx}
             ref={cardRef}
             className="item w-[36.0rem] relative flex shrink-0 flex-col gap-[1.2rem] overflow-hidden h-[30dvh] rounded-[3.2rem] shadow-[var(--shadow-normal)]"
@@ -37,9 +40,12 @@ const ArchiveSliderCard = ({ post, index, cardRef, onSelect }: ArchiveSliderCard
                 stiffness: 100,
                 damping: 15,
             }}
-            onClick={() => onSelect(post.idx)}
         >
-            <img src={post.thumbnail} alt={post.title} className="object-cover h-full pointer-events-none" />
+            <img
+                src={post.thumbnail}
+                alt={post.title}
+                className="object-cover h-full pointer-events-none"
+            />
             <div className="absolute h-[30%] mask-[linear-gradient(0deg,_#000,_#000_2.5%,_#000_50%,_#0000)] bottom-0 left-0 w-full bg-[#00000000] backdrop-blur-[30px]" />
             <motion.div
                 className="absolute bottom-0 left-[50%] bg-[linear-gradient(0deg,#00000000_0%,#00000000)] transform translate-x-[-50%] w-full flex flex-col justify-center items-center"
@@ -53,7 +59,7 @@ const ArchiveSliderCard = ({ post, index, cardRef, onSelect }: ArchiveSliderCard
                     damping: 10,
                 }}
             >
-                <div className="p-[2.4rem] flex flex-col justify-center gap-[0.8rem]">
+                <div className="p-[2.4rem] flex flex-col justify-center gap-[0.8rem] drop-shadow-[0_0_20px_#000]">
                     <div className="relative overflow-hidden">
                         <motion.h5
                             className="text-center text-white font-extrabold text-[calc(1dvh+1.8rem)] leading-[1.5] whitespace-break-spaces"
@@ -109,7 +115,7 @@ const ArchiveSliderCard = ({ post, index, cardRef, onSelect }: ArchiveSliderCard
                     </div>
                 </div>
             </motion.div>
-        </motion.section>
+        </MotionLink>
     );
 };
 
