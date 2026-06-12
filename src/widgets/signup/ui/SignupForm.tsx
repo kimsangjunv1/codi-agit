@@ -35,7 +35,7 @@ const SignupCredentialsForm = () => {
     const { replaceToUrl, backToUrl } = useNavigate();
     const { data: setUserData, mutate: setUserFetch } = useSetUserQuery();
     const [ currentCode, setCurrentCode ] = useState("");
-    const { data: getInvitationCodeCheckData, refetch: getInvitationCodeCheckFetch, isLoading } = useGetInvitationCodeCheckQuery(currentCode);
+    const { data: getInvitationCodeCheckData, refetch: getInvitationCodeCheckFetch } = useGetInvitationCodeCheckQuery(currentCode);
     
     const [ initGlow, setInitGlow ] = useState(false);
 
@@ -100,6 +100,7 @@ const SignupCredentialsForm = () => {
             email: signUpValueRef.current.email,
             name: signUpValueRef.current.name,
             password: signUpValueRef.current.password,
+            inviteCode: currentCode,
         });
 
         // const DEFAULT_PATH = "/login"
@@ -128,10 +129,6 @@ const SignupCredentialsForm = () => {
             replaceToUrl("/login");
         }
     }, [ setUserData ])
-
-    useEffect(() => {
-        console.log("isLoading", isLoading)
-    }, [ isLoading ])
 
     return (
         <Fragment>
@@ -165,8 +162,7 @@ const SignupCredentialsForm = () => {
                                 <Item
                                     type="text"
                                     title="초대코드"
-                                    description={`최소 ${RULE_NICK_NAME_LENGTH}자리 이상`}
-                                    placeholder="닉네임"
+                                    placeholder="초대코드를 입력해주세요"
                                     onChange={(e) => {
                                         setCurrentCode(e.target.value);
                                     }}
@@ -185,7 +181,7 @@ const SignupCredentialsForm = () => {
                                         getInvitationCodeCheckFetch();
                                     }}
                                 >
-                                    초대코드 체크(임시)
+                                    초대코드 확인
                                 </UI.Button>
                             </Fragment>
                         ) : "" }
