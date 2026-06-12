@@ -1,23 +1,30 @@
-import { requireSession } from "@/shared/lib/auth/requireSession";
+import { requirePostOwnerOrAdmin, requireSession } from "@/shared/lib/auth/requireSession";
 import { supabaseAdmin } from "@/shared/lib/supabase/supabaseServer";
 import { apiError, apiSuccess } from "@/shared/lib/apiResponse";
 import { revalidatePostPages } from "@/shared/lib/revalidatePost";
+import { sanitizePostContents } from "@/shared/lib/sanitizeHtml";
 
 const TABLE_NAME = "posts";
 
 export async function PATCH(req: Request) {
-    const auth = await requireSession();
+    const url = new URL(req.url);
+    const segments = url.pathname.split("/");
+    const idx = segments[segments.length - 1];
+
+    const auth = await requirePostOwnerOrAdmin(idx);
     if (!auth.authorized) return auth.response;
 
     const payload = await req.json();
 
     try {
         const supabase = supabaseAdmin();
-        const url = new URL(req.url);
-        const segments = url.pathname.split("/");
-        const idx = segments[segments.length - 1];
+        const { user_id: _userId, idx: _idx, ...rest } = payload;
+        const sanitizedPayload = {
+            ...rest,
+            contents: sanitizePostContents(payload.contents),
+        };
 
-        const query = supabase.from(TABLE_NAME).update(payload).eq("idx", idx).select().single();
+        const query = supabase.from(TABLE_NAME).update(sanitizedPayload).eq("idx", idx).select().single();
 
         const { data, error } = await query;
 
@@ -32,9 +39,12 @@ export async function PATCH(req: Request) {
             },
             { resultMessage: "수정성공", pagination: null }
         );
-    } catch (error: any) {
-        return apiError(error.message || "문제가 생겼습니다", {
-            status: error.status ?? 500,
+    } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : "문제가 생겼습니다";
+        const status = typeof error === "object" && error !== null && "status" in error ? Number(error.status) : 500;
+
+        return apiError(message, {
+            status: Number.isFinite(status) ? status : 500,
             result: { statusCode: 0 },
         });
     }

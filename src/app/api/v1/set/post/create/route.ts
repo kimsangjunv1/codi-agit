@@ -2,6 +2,7 @@ import { requireSession } from "@/shared/lib/auth/requireSession";
 import { supabaseAdmin } from "@/shared/lib/supabase/supabaseServer";
 import { apiError, apiSuccess } from "@/shared/lib/apiResponse";
 import { revalidatePostPages } from "@/shared/lib/revalidatePost";
+import { sanitizePostContents } from "@/shared/lib/sanitizeHtml";
 
 const TABLE_NAME = "posts";
 
@@ -13,8 +14,13 @@ export async function POST(req: Request) {
 
     try {
         const supabase = supabaseAdmin();
+        const sanitizedPayload = {
+            ...payload,
+            user_id: auth.session.user.id,
+            contents: sanitizePostContents(payload.contents),
+        };
 
-        const query = supabase.from(TABLE_NAME).insert(payload).select("idx").single();
+        const query = supabase.from(TABLE_NAME).insert(sanitizedPayload).select("idx").single();
 
         const { data, error } = await query;
 
@@ -29,9 +35,12 @@ export async function POST(req: Request) {
             },
             { resultMessage: "등록성공", pagination: null }
         );
-    } catch (error: any) {
-        return apiError(error.message || "문제가 생겼습니다", {
-            status: error.status ?? 500,
+    } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : "문제가 생겼습니다";
+        const status = typeof error === "object" && error !== null && "status" in error ? Number(error.status) : 500;
+
+        return apiError(message, {
+            status: Number.isFinite(status) ? status : 500,
             result: { statusCode: 0 },
         });
     }
