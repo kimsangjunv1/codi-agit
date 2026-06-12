@@ -1,5 +1,5 @@
-import { supabaseServer } from "@/shared/lib/supabase/supabaseServer";
-import { apiError, apiSuccess, singleItemPagination } from "@/shared/lib/apiResponse";
+import { supabaseAdmin, supabaseServer } from "@/shared/lib/supabase/supabaseServer";
+import { apiError, apiSuccess, resolveRouteError, singleItemPagination } from "@/shared/lib/apiResponse";
 
 export async function GET(req: Request) {
     try {
@@ -67,13 +67,15 @@ export async function GET(req: Request) {
         const nextData = postsData?.filter((p) => p.idx > Number(idx)).sort((a, b) => a.idx - b.idx)[0] ?? null;
 
         if (!skipTracking && !alreadyViewed && currentData) {
-            const { error: insertError } = await supabase
+            const admin = supabaseAdmin();
+
+            const { error: insertError } = await admin
                 .from("views")
                 .insert({ post_id: idx, user_id: userId ?? null, ip });
             if (insertError) throw insertError;
 
             const newViews = (currentData.views || 0) + 1;
-            const { error: updateError } = await supabase
+            const { error: updateError } = await admin
                 .from("posts")
                 .update({ views: newViews })
                 .eq("idx", idx);
@@ -96,9 +98,10 @@ export async function GET(req: Request) {
                 pagination: singleItemPagination(),
             }
         );
-    } catch (err: any) {
-        return apiError(err.message || "조회수 처리 중 문제가 발생했습니다.", {
-            status: err.status ?? 500,
+    } catch (err: unknown) {
+        const { message, status } = resolveRouteError(err, "조회수 처리 중 문제가 발생했습니다.");
+        return apiError(message, {
+            status,
             result: null,
         });
     }

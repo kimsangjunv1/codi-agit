@@ -28,13 +28,13 @@ export const useGetCategoryListQuery = () => {
 };
 
 export const useGetCategoryListOnManagerQuery = () => {
-    const { data, isLoading, isError, isFetching, refetch } = useQuery<GetCategoryListOnManagerResponse>({
+    const { data, isLoading, isError, error, isFetching, refetch } = useQuery<GetCategoryListOnManagerResponse>({
         queryKey: [AgitRoutes.KEY_CATEGORY, "manager", "list"],
         queryFn: () => getCategoryListOnManagerFetch(),
         staleTime: 0,
     });
 
-    return { data, isLoading, isError, isFetching, refetch };
+    return { data, isLoading, isError, error, isFetching, refetch };
 };
 
 export const useSetCategoryQuery = () => {

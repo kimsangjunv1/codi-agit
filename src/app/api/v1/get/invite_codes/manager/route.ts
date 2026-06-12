@@ -1,12 +1,16 @@
-import { supabaseServer } from "@/shared/lib/supabase/supabaseServer";
-import { apiError, apiSuccess, buildPaginationFromQuery, getPageParams } from "@/shared/lib/apiResponse";
+import { requireAdmin } from "@/shared/lib/auth/requireSession";
+import { supabaseAdmin } from "@/shared/lib/supabase/supabaseServer";
+import { apiError, apiSuccess, resolveRouteError, buildPaginationFromQuery, getPageParams } from "@/shared/lib/apiResponse";
 
 const TABLE_NAME = "invite_codes";
 const DEFAULT_PAGE_SIZE = 10;
 
 export async function GET(req: Request) {
+    const auth = await requireAdmin();
+    if (!auth.authorized) return auth.response;
+
     try {
-        const supabase = await supabaseServer();
+        const supabase = supabaseAdmin();
         const { searchParams } = new URL(req.url);
 
         let query = supabase.from(TABLE_NAME).select("*", { count: "exact" });
@@ -27,9 +31,8 @@ export async function GET(req: Request) {
             resultMessage: "조회성공",
             pagination: buildPaginationFromQuery(searchParams, count ?? 0, DEFAULT_PAGE_SIZE),
         });
-    } catch (error: any) {
-        return apiError(error.message || "문제가 생겼습니다", {
-            status: error.status ?? 500,
-        });
+    } catch (error: unknown) {
+        const { message, status } = resolveRouteError(error);
+        return apiError(message, { status });
     }
 }

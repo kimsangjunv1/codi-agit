@@ -19,11 +19,12 @@ import {
 import { util } from "@/shared/lib/util";
 import ManagerPageShell from "@/widgets/manager/ui/ManagerPageShell";
 import ManagerListSkeleton from "@/widgets/manager/ui/ManagerListSkeleton";
+import ManagerListError from "@/widgets/manager/ui/ManagerListError";
 
 const InvitationManager = () => {
     const invitationCodeCreateValueRef = useRef<SetInvitationCodePayload>({ is_active: false, expire_at: "" });
 
-    const { data: getInvitationCodeListData, isLoading } = useGetInvitationCodeListOnManagerQuery();
+    const { data: getInvitationCodeListData, isLoading, isError, error, refetch } = useGetInvitationCodeListOnManagerQuery();
     const { mutate: setInvitationCodeFetch } = useSetInvitationCodeQuery();
     const { mutate: patchInvitationCodeFetch } = usePatchInvitationCodeQuery();
     const { mutate: deleteInvitationCodeFetch } = useDeleteInvitationCodeQuery();
@@ -86,6 +87,11 @@ const InvitationManager = () => {
         >
             {isLoading ? (
                 <ManagerListSkeleton />
+            ) : isError || getInvitationCodeListData?.resultCode === "ERROR" ? (
+                <ManagerListError
+                    message={isError ? error?.message : getInvitationCodeListData?.resultMessage}
+                    onRetry={() => refetch()}
+                />
             ) : list.length === 0 ? (
                 <UI.Empty title="등록된 초대코드가 없습니다" className="opacity-100" />
             ) : (

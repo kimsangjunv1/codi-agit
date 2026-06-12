@@ -6,6 +6,7 @@ import { Block, GetPostDetailResponse, PostPrevNextInfo, SectionContent } from "
 
 import { util } from "@/shared/lib/util";
 import { highlightCode } from "@/shared/lib/highlight";
+import { sanitizeHtml } from "@/shared/lib/sanitizeHtml";
 
 import useNavigate from "@/shared/hooks/useNavigate";
 import { useGetPostDetailQuery, useIncrementPostViewOnVisit } from "@/entities/post/api/post.query";
@@ -13,6 +14,7 @@ import { useGetPostDetailQuery, useIncrementPostViewOnVisit } from "@/entities/p
 import UI from "@/shared/ui/common/UIComponent";
 import IconComponent from "@/shared/ui/common/IconComponent";
 import GiscusComments from "@/shared/ui/common/GiscusComments";
+import AsyncErrorState from "@/shared/ui/common/AsyncErrorState";
 import PostHero from "@/widgets/post/ui/PostHero";
 
 import { useToastStore } from "@/shared/stores/useToastStore";
@@ -43,9 +45,42 @@ const PostDetail = ({ id, initialData }: PostDetailProps) => {
 };
 
 const RenderContents = ({ id, initialData }: { id: string; initialData: GetPostDetailResponse }) => {
-    const { data: getPostListData } = useGetPostDetailQuery(parseInt(id), initialData);
+    const postIdx = parseInt(id);
+    const { data: getPostListData, isLoading, isError, error, refetch } = useGetPostDetailQuery(postIdx, initialData);
 
-    const DATA = useMemo(() => getPostListData?.result, [getPostListData]);
+    const hasContent = Boolean(getPostListData?.result?.title);
+
+    if (isLoading && !hasContent) {
+        return (
+            <section className="flex items-center justify-center w-full h-[100dvh]">
+                <UI.Loading />
+            </section>
+        );
+    }
+
+    if (isError) {
+        return (
+            <AsyncErrorState
+                title="게시물을 불러오지 못했습니다"
+                message={error?.message}
+                onRetry={() => refetch()}
+                className="h-[100dvh]"
+            />
+        );
+    }
+
+    if (getPostListData?.resultCode === "ERROR") {
+        return (
+            <AsyncErrorState
+                title="게시물을 불러오지 못했습니다"
+                message={getPostListData.resultMessage}
+                onRetry={() => refetch()}
+                className="h-[100dvh]"
+            />
+        );
+    }
+
+    const DATA = getPostListData?.result;
 
     return (
         <>
@@ -72,7 +107,10 @@ const RenderContents = ({ id, initialData }: { id: string; initialData: GetPostD
 };
 
 const CodeBlockContent = memo(({ content }: { content: string }) => {
-    const html = useMemo(() => `<pre class="code-block"><code>${highlightCode(content)}</code></pre>`, [content]);
+    const html = useMemo(
+        () => sanitizeHtml(`<pre class="code-block"><code>${highlightCode(content)}</code></pre>`),
+        [content],
+    );
 
     return (
         <section className="overflow-x-auto">
@@ -83,6 +121,10 @@ const CodeBlockContent = memo(({ content }: { content: string }) => {
 CodeBlockContent.displayName = "CodeBlockContent";
 
 const ContentColumn = memo(({ col, rowLength, onCopySentence }: { col: SectionContent; rowLength: number; onCopySentence: (text: string) => void }) => {
+    const sanitizedContent = useMemo(
+        () => (typeof col.content === "string" ? sanitizeHtml(col.content) : ""),
+        [col.content],
+    );
     const columnClassName = `flex-1 min-w-[calc((var(--size-tablet)-(1.6rem*10))/2)] ${rowLength !== 0 ? "flex gap-[2.4rem]" : ""} ${rowLength === 1 ? "col-span-2" : "min-h-[36.0rem]"} ${col.type === 0 ? "flex-col" : ""} ${col.type === 1 || col.type === 2 ? "rounded-[2.4rem] overflow-hidden" : ""} ${col.type === 2 ? "flex-col" : ""}`;
 
     return (
@@ -99,7 +141,7 @@ const ContentColumn = memo(({ col, rowLength, onCopySentence }: { col: SectionCo
                     {typeof col.content === "string" ? (
                         <section
                             className="post-tiptap-content flex flex-col items-start gap-[1.6rem] overflow-x-auto [&_p]:whitespace-break-spaces [&_p]:transition-colors [&_p]:border [&_p]:border-transparent [&_p]:cursor-pointer [&_p]:hover:border-[var(--color-gray-400)] [&_p]:rounded-[0.8rem]"
-                            dangerouslySetInnerHTML={{ __html: col.content }}
+                            dangerouslySetInnerHTML={{ __html: sanitizedContent }}
                             onClick={(e) => {
                                 const target = e.target as HTMLElement;
                                 if (target.tagName === "P" || target.closest("p")) {

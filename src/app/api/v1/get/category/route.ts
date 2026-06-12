@@ -1,5 +1,5 @@
 import { supabaseServer } from "@/shared/lib/supabase/supabaseServer";
-import { apiError, apiSuccess, buildPaginationFromQuery, getPageParams } from "@/shared/lib/apiResponse";
+import { apiError, apiSuccess, resolveRouteError, buildPaginationFromQuery, getPageParams } from "@/shared/lib/apiResponse";
 
 const TABLE_NAME = "category";
 const DEFAULT_PAGE_SIZE = 10;
@@ -35,9 +35,8 @@ export async function GET(req: Request) {
                 ? null
                 : buildPaginationFromQuery(searchParams, count ?? 0, DEFAULT_PAGE_SIZE),
         });
-    } catch (error: any) {
-        return apiError(error.message || "문제가 생겼습니다", {
-            status: error.status ?? 500,
-        });
+    } catch (error: unknown) {
+        const { message, status } = resolveRouteError(error);
+        return apiError(message, { status });
     }
 }

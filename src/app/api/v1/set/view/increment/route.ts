@@ -1,5 +1,5 @@
-import { supabaseServer } from "@/shared/lib/supabase/supabaseServer";
-import { apiError, apiSuccess } from "@/shared/lib/apiResponse";
+import { supabaseAdmin, supabaseServer } from "@/shared/lib/supabase/supabaseServer";
+import { apiError, apiSuccess, resolveRouteError } from "@/shared/lib/apiResponse";
 
 export async function POST(req: Request) {
     try {
@@ -35,12 +35,14 @@ export async function POST(req: Request) {
         }
 
         if (!existing) {
-            const { error: insertError } = await supabase
+            const admin = supabaseAdmin();
+
+            const { error: insertError } = await admin
                 .from("views")
                 .insert({ post_id: postId, user_id: userId ?? null, ip });
             if (insertError) throw insertError;
 
-            const { data: postData, error: selectError } = await supabase
+            const { data: postData, error: selectError } = await admin
                 .from("posts")
                 .select("views")
                 .eq("idx", postId)
@@ -48,7 +50,7 @@ export async function POST(req: Request) {
             if (selectError) throw selectError;
 
             const newViews = (postData?.views || 0) + 1;
-            const { error: updateError } = await supabase
+            const { error: updateError } = await admin
                 .from("posts")
                 .update({ views: newViews })
                 .eq("idx", postId);
@@ -63,9 +65,10 @@ export async function POST(req: Request) {
             },
             { resultMessage: "조회수 처리 완료", pagination: null }
         );
-    } catch (err: any) {
-        return apiError(err.message || "조회수 처리 중 문제가 발생했습니다.", {
-            status: err.status ?? 500,
+    } catch (err: unknown) {
+        const { message, status } = resolveRouteError(err, "조회수 처리 중 문제가 발생했습니다.");
+        return apiError(message, {
+            status,
             result: { success: false },
         });
     }

@@ -11,12 +11,13 @@ import { PostManagerItem } from "@/entities/post/model/post.type";
 import { util } from "@/shared/lib/util";
 import ManagerPageShell from "@/widgets/manager/ui/ManagerPageShell";
 import ManagerListSkeleton from "@/widgets/manager/ui/ManagerListSkeleton";
+import ManagerListError from "@/widgets/manager/ui/ManagerListError";
 
 const PostManager = () => {
     const { pushToUrl } = useNavigate();
     const { setModal } = useModalStore();
 
-    const { data, isLoading } = useGetPostManagerListQuery();
+    const { data, isLoading, isError, error, refetch } = useGetPostManagerListQuery();
     const { mutate: deletePostFetch } = useDeletePostManagerQuery();
 
     const deletePostModal = (item: PostManagerItem) =>
@@ -45,6 +46,11 @@ const PostManager = () => {
         <ManagerPageShell title="게시물 관리" description="등록된 게시글을 조회·수정·삭제합니다.">
             {isLoading ? (
                 <ManagerListSkeleton />
+            ) : isError || data?.resultCode === "ERROR" ? (
+                <ManagerListError
+                    message={isError ? error?.message : data?.resultMessage}
+                    onRetry={() => refetch()}
+                />
             ) : list.length === 0 ? (
                 <UI.Empty title="등록된 게시물이 없습니다" className="opacity-100" />
             ) : (

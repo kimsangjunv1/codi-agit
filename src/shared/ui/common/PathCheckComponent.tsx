@@ -4,28 +4,28 @@ import { ReactNode, useEffect, useState } from "react";
 
 import { useLayoutStore } from '@/shared/stores/useLayoutStore';
 
+const MOBILE_QUERY = "(max-width: 960px)";
+
 const PathCheckComponent = ({ children }: { children: ReactNode }) => {
-    const [ isNowOnMobile, setIsNowOnMobile ] = useState<boolean>();
+    const [ isNowOnMobile, setIsNowOnMobile ] = useState<boolean>(false);
     
     const { setIsMobile } = useLayoutStore();
-    const setMobileEnvironment = ( e?: boolean ) => setIsNowOnMobile( e );
 
     useEffect(() => {
-         window.addEventListener("resize", () => {
-            const MATCHES = window.matchMedia("(max-width: 960px)").matches
-            setMobileEnvironment(MATCHES);
-        });
+        const mediaQuery = window.matchMedia(MOBILE_QUERY);
+        const handleResize = () => setIsNowOnMobile(mediaQuery.matches);
+
+        handleResize();
+        mediaQuery.addEventListener("change", handleResize);
 
         return () => {
-            window.removeEventListener("resize", () => {
-                setMobileEnvironment();
-            });
+            mediaQuery.removeEventListener("change", handleResize);
         };
     }, []);
 
     useEffect(() => {
-        setIsMobile( isNowOnMobile ?? false );
-    }, [ isNowOnMobile ])
+        setIsMobile(isNowOnMobile);
+    }, [ isNowOnMobile, setIsMobile ])
 
     return children
 }

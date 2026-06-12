@@ -2,7 +2,7 @@ import { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcrypt";
 
-import { supabaseServer } from "@/shared/lib/supabase/supabaseServer";
+import { supabaseAdmin } from "@/shared/lib/supabase/supabaseServer";
 
 export const authOptions: AuthOptions = {
     providers: [
@@ -13,7 +13,7 @@ export const authOptions: AuthOptions = {
                 password: { label: "비밀번호", type: "password" },
             },
             async authorize(credentials) {
-                const supabase = await supabaseServer();
+                const supabase = supabaseAdmin();
 
                 const { data: user, error } = await supabase
                     .from("users")
@@ -36,6 +36,7 @@ export const authOptions: AuthOptions = {
                     id: user.id,
                     name: user.name,
                     email: user.email,
+                    role: user.role ?? "user",
                 };
             },
         }),
@@ -49,6 +50,7 @@ export const authOptions: AuthOptions = {
                 token.id = user.id;
                 token.email = user.email;
                 token.name = user.name;
+                token.role = user.role;
             }
 
             return token;
@@ -58,6 +60,7 @@ export const authOptions: AuthOptions = {
                 session.user.id = token.id as string;
                 session.user.email = token.email as string;
                 session.user.name = token.name as string;
+                session.user.role = token.role;
             }
 
             return session;

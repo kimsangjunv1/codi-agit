@@ -4,11 +4,7 @@ export interface SetUserPayload {
     name: string;
     password: string;
     email: string;
-}
-
-export interface SetLoginPayload {
-    password: string;
-    email: string;
+    inviteCode: string;
 }
 
 export interface UserManagerItem {

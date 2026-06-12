@@ -1,4 +1,5 @@
-import { supabaseServer } from "@/shared/lib/supabase/supabaseServer";
+import { requirePostOwnerOrAdmin } from "@/shared/lib/auth/requireSession";
+import { supabaseAdmin } from "@/shared/lib/supabase/supabaseServer";
 import { apiError, apiSuccess, singleItemPagination } from "@/shared/lib/apiResponse";
 import { revalidatePostPages } from "@/shared/lib/revalidatePost";
 
@@ -9,14 +10,17 @@ const TABLE_LIKE = "likes";
 
 export async function DELETE(req: Request) {
     const payload = await req.json();
+    const idx = payload.idx;
+
+    if (!idx) {
+        return apiError("게시물 번호가 필요합니다", { status: 400 });
+    }
+
+    const auth = await requirePostOwnerOrAdmin(idx);
+    if (!auth.authorized) return auth.response;
 
     try {
-        const supabase = await supabaseServer();
-        const idx = payload.idx;
-
-        if (!idx) {
-            return apiError("게시물 번호가 필요합니다", { status: 400 });
-        }
+        const supabase = supabaseAdmin();
 
         const { error: commentError } = await supabase.from(TABLE_COMMENT).delete().eq("post_id", idx);
         if (commentError) throw commentError;
@@ -37,9 +41,12 @@ export async function DELETE(req: Request) {
             resultMessage: "게시물을 삭제했어요.",
             pagination: singleItemPagination(),
         });
-    } catch (error: any) {
-        return apiError(error.message || "문제가 생겼습니다", {
-            status: error.status ?? 500,
+    } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : "문제가 생겼습니다";
+        const status = typeof error === "object" && error !== null && "status" in error ? Number(error.status) : 500;
+
+        return apiError(message, {
+            status: Number.isFinite(status) ? status : 500,
         });
     }
 }
