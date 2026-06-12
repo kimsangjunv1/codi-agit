@@ -1,4 +1,4 @@
-import { supabaseServer } from "@/shared/lib/supabase/supabaseServer";
+import { supabaseAdmin, supabaseServer } from "@/shared/lib/supabase/supabaseServer";
 import { apiError, apiSuccess, singleItemPagination } from "@/shared/lib/apiResponse";
 
 export async function GET(req: Request) {
@@ -67,13 +67,15 @@ export async function GET(req: Request) {
         const nextData = postsData?.filter((p) => p.idx > Number(idx)).sort((a, b) => a.idx - b.idx)[0] ?? null;
 
         if (!skipTracking && !alreadyViewed && currentData) {
-            const { error: insertError } = await supabase
+            const admin = supabaseAdmin();
+
+            const { error: insertError } = await admin
                 .from("views")
                 .insert({ post_id: idx, user_id: userId ?? null, ip });
             if (insertError) throw insertError;
 
             const newViews = (currentData.views || 0) + 1;
-            const { error: updateError } = await supabase
+            const { error: updateError } = await admin
                 .from("posts")
                 .update({ views: newViews })
                 .eq("idx", idx);

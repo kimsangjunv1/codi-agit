@@ -1,4 +1,4 @@
-import { supabaseServer } from "@/shared/lib/supabase/supabaseServer";
+import { supabaseAdmin } from "@/shared/lib/supabase/supabaseServer";
 import { apiError, apiSuccess, singleItemPagination } from "@/shared/lib/apiResponse";
 import bcrypt from "bcrypt";
 
@@ -6,7 +6,7 @@ const TABLE_NAME = "users";
 
 export async function POST(req: Request) {
     try {
-        const supabase = await supabaseServer();
+        const supabase = supabaseAdmin();
         const { name, email, password } = await req.json();
 
         const hashedPassword = await bcrypt.hash(password, 10);

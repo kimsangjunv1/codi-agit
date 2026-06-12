@@ -1,5 +1,5 @@
 import { requireAdmin } from "@/shared/lib/auth/requireSession";
-import { supabaseServer } from "@/shared/lib/supabase/supabaseServer";
+import { supabaseAdmin } from "@/shared/lib/supabase/supabaseServer";
 import { apiError, apiSuccess, singleItemPagination } from "@/shared/lib/apiResponse";
 import { revalidatePostPages } from "@/shared/lib/revalidatePost";
 
@@ -15,7 +15,7 @@ export async function DELETE(req: Request) {
     const payload = await req.json();
 
     try {
-        const supabase = await supabaseServer();
+        const supabase = supabaseAdmin();
         const idx = payload.idx;
 
         if (!idx) {

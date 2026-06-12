@@ -1,5 +1,5 @@
 import { requireAdmin } from "@/shared/lib/auth/requireSession";
-import { supabaseServer } from "@/shared/lib/supabase/supabaseServer";
+import { supabaseAdmin } from "@/shared/lib/supabase/supabaseServer";
 import { apiError, apiSuccess, singleItemPagination } from "@/shared/lib/apiResponse";
 
 const TABLE_NAME = "comments";
@@ -11,7 +11,7 @@ export async function DELETE(req: Request) {
     const payload = await req.json();
 
     try {
-        const supabase = await supabaseServer();
+        const supabase = supabaseAdmin();
 
         const { data, error } = await supabase.from(TABLE_NAME).delete().eq("idx", payload.idx).select();
 

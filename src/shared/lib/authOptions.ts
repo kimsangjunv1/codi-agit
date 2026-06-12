@@ -2,7 +2,7 @@ import { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcrypt";
 
-import { supabaseServer } from "@/shared/lib/supabase/supabaseServer";
+import { supabaseAdmin } from "@/shared/lib/supabase/supabaseServer";
 
 export const authOptions: AuthOptions = {
     providers: [
@@ -13,7 +13,7 @@ export const authOptions: AuthOptions = {
                 password: { label: "비밀번호", type: "password" },
             },
             async authorize(credentials) {
-                const supabase = await supabaseServer();
+                const supabase = supabaseAdmin();
 
                 const { data: user, error } = await supabase
                     .from("users")
