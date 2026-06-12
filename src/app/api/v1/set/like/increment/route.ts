@@ -1,4 +1,4 @@
-import { supabaseServer } from "@/shared/lib/supabase/supabaseServer";
+import { supabaseAdmin, supabaseServer } from "@/shared/lib/supabase/supabaseServer";
 import { apiError, apiSuccess } from "@/shared/lib/apiResponse";
 
 export async function POST(req: Request) {
@@ -35,12 +35,14 @@ export async function POST(req: Request) {
         }
 
         if (!existing) {
-            const { error: insertError } = await supabase
+            const admin = supabaseAdmin();
+
+            const { error: insertError } = await admin
                 .from("likes")
                 .insert({ post_id: postId, user_id: userId ?? null, ip });
             if (insertError) throw insertError;
 
-            const { data: postData, error: selectError } = await supabase
+            const { data: postData, error: selectError } = await admin
                 .from("posts")
                 .select("likes")
                 .eq("idx", postId)
@@ -48,7 +50,7 @@ export async function POST(req: Request) {
             if (selectError) throw selectError;
 
             const newLikes = (postData?.likes || 0) + 1;
-            const { error: updateError } = await supabase
+            const { error: updateError } = await admin
                 .from("posts")
                 .update({ likes: newLikes })
                 .eq("idx", postId);

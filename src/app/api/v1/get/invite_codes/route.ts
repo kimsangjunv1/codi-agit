@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
-import { supabaseServer } from "@/shared/lib/supabase/supabaseServer";
+import { supabaseAdmin } from "@/shared/lib/supabase/supabaseServer";
 import { apiError } from "@/shared/lib/apiResponse";
 
 const TABLE_NAME = "invite_codes";
 
 export async function GET(req: Request) {
     try {
-        const supabase = await supabaseServer();
+        const supabase = supabaseAdmin();
         const { searchParams } = new URL(req.url);
         const code = searchParams.get("code");
 

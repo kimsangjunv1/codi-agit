@@ -1,5 +1,5 @@
 import { requireAdmin } from "@/shared/lib/auth/requireSession";
-import { supabaseServer } from "@/shared/lib/supabase/supabaseServer";
+import { supabaseAdmin } from "@/shared/lib/supabase/supabaseServer";
 import { apiError, apiSuccess, buildPaginationFromQuery, getPageParams } from "@/shared/lib/apiResponse";
 
 const TABLE_NAME = "invite_codes";
@@ -10,7 +10,7 @@ export async function GET(req: Request) {
     if (!auth.authorized) return auth.response;
 
     try {
-        const supabase = await supabaseServer();
+        const supabase = supabaseAdmin();
         const { searchParams } = new URL(req.url);
 
         let query = supabase.from(TABLE_NAME).select("*", { count: "exact" });

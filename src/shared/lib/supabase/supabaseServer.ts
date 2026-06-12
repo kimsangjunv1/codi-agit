@@ -2,11 +2,15 @@ import { createClient } from "@supabase/supabase-js";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 
+/** 공개 read 전용 — RLS 정책(SELECT) 적용. write·민감 테이블 접근 금지 */
 export async function supabaseServer() {
     return createClient(supabaseUrl, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!);
 }
 
-/** 서버 API 전용 — RLS를 우회하는 service role (클라이언트에 노출 금지) */
+/**
+ * 서버 API 전용 — RLS 우회 service role (클라이언트 노출 금지).
+ * write, users/invite_codes 접근, storage 업로드 등에만 사용한다.
+ */
 export function supabaseAdmin() {
     const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
