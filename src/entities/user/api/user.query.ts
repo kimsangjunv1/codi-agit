@@ -25,11 +25,11 @@ export const useSetUserQuery = () => {
 };
 
 export const useGetUserManagerListQuery = () => {
-    const { data, isLoading, isError, isFetching, refetch } = useQuery<GetUserManagerListResponse>({
+    const { data, isLoading, isError, error, isFetching, refetch } = useQuery<GetUserManagerListResponse>({
         queryKey: [AgitRoutes.KEY_USER, "manager", "list"],
         queryFn: () => getUserManagerListFetch(),
         staleTime: 0,
     });
 
-    return { data, isLoading, isError, isFetching, refetch };
+    return { data, isLoading, isError, error, isFetching, refetch };
 };

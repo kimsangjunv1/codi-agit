@@ -14,6 +14,7 @@ import { useGetPostDetailQuery, useIncrementPostViewOnVisit } from "@/entities/p
 import UI from "@/shared/ui/common/UIComponent";
 import IconComponent from "@/shared/ui/common/IconComponent";
 import GiscusComments from "@/shared/ui/common/GiscusComments";
+import AsyncErrorState from "@/shared/ui/common/AsyncErrorState";
 import PostHero from "@/widgets/post/ui/PostHero";
 
 import { useToastStore } from "@/shared/stores/useToastStore";
@@ -44,9 +45,42 @@ const PostDetail = ({ id, initialData }: PostDetailProps) => {
 };
 
 const RenderContents = ({ id, initialData }: { id: string; initialData: GetPostDetailResponse }) => {
-    const { data: getPostListData } = useGetPostDetailQuery(parseInt(id), initialData);
+    const postIdx = parseInt(id);
+    const { data: getPostListData, isLoading, isError, error, refetch } = useGetPostDetailQuery(postIdx, initialData);
 
-    const DATA = useMemo(() => getPostListData?.result, [getPostListData]);
+    const hasContent = Boolean(getPostListData?.result?.title);
+
+    if (isLoading && !hasContent) {
+        return (
+            <section className="flex items-center justify-center w-full h-[100dvh]">
+                <UI.Loading />
+            </section>
+        );
+    }
+
+    if (isError) {
+        return (
+            <AsyncErrorState
+                title="게시물을 불러오지 못했습니다"
+                message={error?.message}
+                onRetry={() => refetch()}
+                className="h-[100dvh]"
+            />
+        );
+    }
+
+    if (getPostListData?.resultCode === "ERROR") {
+        return (
+            <AsyncErrorState
+                title="게시물을 불러오지 못했습니다"
+                message={getPostListData.resultMessage}
+                onRetry={() => refetch()}
+                className="h-[100dvh]"
+            />
+        );
+    }
+
+    const DATA = getPostListData?.result;
 
     return (
         <>

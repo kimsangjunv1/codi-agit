@@ -93,7 +93,7 @@ export const useGetPostDetailQuery = (
 ) => {
     const hasValidInitialData = initialData?.resultCode === "SUCCESS";
 
-    const { data, isLoading, isError, isFetching, refetch } = useQuery<GetPostDetailResponse>({
+    const { data, isLoading, isError, error, isFetching, refetch } = useQuery<GetPostDetailResponse>({
         queryKey: [AgitRoutes.KEY_POST, "detail", postIdx],
         queryFn: () => getPostDetailFetch(postIdx!),
         staleTime: hasValidInitialData ? POST_DETAIL_STALE_TIME_MS : 0,
@@ -102,7 +102,7 @@ export const useGetPostDetailQuery = (
         initialData: hasValidInitialData ? initialData : undefined,
     });
 
-    return { data, isLoading, isError, isFetching, refetch };
+    return { data, isLoading, isError, error, isFetching, refetch };
 };
 
 export const useIncrementPostViewOnVisit = (postIdx?: number) => {
@@ -237,13 +237,13 @@ export const useSetLikeIncrementQuery = () => {
 };
 
 export const useGetPostManagerListQuery = () => {
-    const { data, isLoading, isError, isFetching, refetch } = useQuery<GetPostManagerListResponse>({
+    const { data, isLoading, isError, error, isFetching, refetch } = useQuery<GetPostManagerListResponse>({
         queryKey: [AgitRoutes.KEY_POST, "manager", "list"],
         queryFn: () => getPostManagerListFetch(),
         staleTime: 0,
     });
 
-    return { data, isLoading, isError, isFetching, refetch };
+    return { data, isLoading, isError, error, isFetching, refetch };
 };
 
 export const useDeletePostManagerQuery = () => {
