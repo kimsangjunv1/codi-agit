@@ -8,38 +8,43 @@ export async function GET(req: Request) {
         const segments = url.pathname.split("/");
         const idx = segments[segments.length - 1];
 
+        const skipTracking =
+            req.headers.get("x-internal-fetch") === "isr" || req.headers.get("x-skip-tracking") === "true";
         const ip = req.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
 
         let alreadyViewed = false;
         let alreadyLiked = false;
         const userId = req.headers.get("x-user-id") || undefined;
-        const filters: string[] = [];
-        if (userId) filters.push(`user_id.eq.${userId}`);
-        if (ip) filters.push(`ip.eq.${ip}`);
 
-        if (filters.length > 0) {
-            const [viewResult, likeResult] = await Promise.all([
-                supabase
-                    .from("views")
-                    .select("id")
-                    .eq("post_id", idx)
-                    .or(filters.join(","))
-                    .limit(1)
-                    .single(),
-                supabase
-                    .from("likes")
-                    .select("id")
-                    .eq("post_id", idx)
-                    .or(filters.join(","))
-                    .limit(1)
-                    .single(),
-            ]);
+        if (!skipTracking) {
+            const filters: string[] = [];
+            if (userId) filters.push(`user_id.eq.${userId}`);
+            if (ip) filters.push(`ip.eq.${ip}`);
 
-            if (viewResult.error && viewResult.error.code !== "PGRST116") throw viewResult.error;
-            if (likeResult.error && likeResult.error.code !== "PGRST116") throw likeResult.error;
+            if (filters.length > 0) {
+                const [viewResult, likeResult] = await Promise.all([
+                    supabase
+                        .from("views")
+                        .select("id")
+                        .eq("post_id", idx)
+                        .or(filters.join(","))
+                        .limit(1)
+                        .single(),
+                    supabase
+                        .from("likes")
+                        .select("id")
+                        .eq("post_id", idx)
+                        .or(filters.join(","))
+                        .limit(1)
+                        .single(),
+                ]);
 
-            alreadyViewed = !!viewResult.data;
-            alreadyLiked = !!likeResult.data;
+                if (viewResult.error && viewResult.error.code !== "PGRST116") throw viewResult.error;
+                if (likeResult.error && likeResult.error.code !== "PGRST116") throw likeResult.error;
+
+                alreadyViewed = !!viewResult.data;
+                alreadyLiked = !!likeResult.data;
+            }
         }
 
         const [currentResult, postsResult] = await Promise.all([
@@ -61,7 +66,7 @@ export async function GET(req: Request) {
         const prevData = postsData?.filter((p) => p.idx < Number(idx)).sort((a, b) => b.idx - a.idx)[0] ?? null;
         const nextData = postsData?.filter((p) => p.idx > Number(idx)).sort((a, b) => a.idx - b.idx)[0] ?? null;
 
-        if (!alreadyViewed && currentData) {
+        if (!skipTracking && !alreadyViewed && currentData) {
             const { error: insertError } = await supabase
                 .from("views")
                 .insert({ post_id: idx, user_id: userId ?? null, ip });

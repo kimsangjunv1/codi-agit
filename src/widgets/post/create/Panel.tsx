@@ -1,15 +1,13 @@
 "use client";
 
-import { PostCreateEditor } from "@/features/managePost";
-import PageFrame from "@/widgets/layout/PageFrame";
+import { PostCreatePageProvider } from "./model/PostCreateContext";
+import * as PostCreateLayer from "@/widgets/post/create/ui";
 
 export default function Panel() {
     return (
-        <PageFrame
-            id="post-create"
-            className={{ inner: "flex flex-col gap-[2.4rem]", container: "" }}
-        >
-            <PostCreateEditor />
-        </PageFrame>
+        <PostCreatePageProvider>
+            <PostCreateLayer.PostEditor />
+            <PostCreateLayer.Modal />
+        </PostCreatePageProvider>
     );
 }

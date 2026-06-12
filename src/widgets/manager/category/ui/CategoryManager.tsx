@@ -12,14 +12,14 @@ import {
     usePatchCategoryQuery,
     useSetCategoryQuery,
 } from "@/entities/category/api/category.query";
-import { CategoryItemManager, patchCategoryPayloadType, setCategoryPayloadType } from "@/entities/category/model/category.type";
+import { CategoryItemManager, PatchCategoryPayload, SetCategoryPayload } from "@/entities/category/model/category.type";
 import { util } from "@/shared/lib/util";
 import ManagerPageShell from "@/widgets/manager/ui/ManagerPageShell";
 import ManagerListSkeleton from "@/widgets/manager/ui/ManagerListSkeleton";
 
 const CategoryManager = () => {
-    const categoryCreateValueRef = useRef<setCategoryPayloadType>({ title: "", description: "" });
-    const categoryPatchValueRef = useRef<patchCategoryPayloadType>({ idx: 0, title: "", is_enabled: true, description: "" });
+    const categoryCreateValueRef = useRef<SetCategoryPayload>({ title: "", description: "" });
+    const categoryPatchValueRef = useRef<PatchCategoryPayload>({ idx: 0, title: "", is_enabled: true, description: "" });
 
     const { data: getCategoryListData, isLoading } = useGetCategoryListOnManagerQuery();
     const { mutate: setCategoryFetch } = useSetCategoryQuery();

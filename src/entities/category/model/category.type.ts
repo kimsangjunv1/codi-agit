@@ -1,18 +1,18 @@
-import { ApiResponseType } from "@/shared/model/common.type";
+import { ApiResponse } from "@/shared/model/common.type";
 
-export interface setCategoryPayloadType {
+export interface SetCategoryPayload {
     title: string;
     description: string;
 }
 
-export interface patchCategoryPayloadType {
+export interface PatchCategoryPayload {
     idx: number;
     title?: string;
     description?: string;
     is_enabled?: boolean;
 }
 
-export interface deleteCategoryPayloadType {
+export interface DeleteCategoryPayload {
     idx: number;
 }
 
@@ -27,5 +27,5 @@ export interface CategoryItemManager extends CategoryItem {
     created_at: string;
 }
 
-export type GetCategoryListResponseType = ApiResponseType<CategoryItem[]>;
-export type GetCategoryListOnManagerResponseType = ApiResponseType<CategoryItemManager[]>;
+export type GetCategoryListResponse = ApiResponse<CategoryItem[]>;
+export type GetCategoryListOnManagerResponse = ApiResponse<CategoryItemManager[]>;

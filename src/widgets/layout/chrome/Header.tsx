@@ -24,13 +24,16 @@ const Header = () => {
     const { mainViewMode, setMainViewMode, categoryFilter, setCategoryFilter  } = useLayoutStore();
 
     const { data: getCategoryListData } = useGetCategoryListQuery();
-    const { data: getPostListData } = useGetPostDetailQuery(parseInt( (params?.id) as string ));
-
     const IS_ROUTE_HOME = currentPathName === "/";
     const IS_ROUTE_POST = /\/post(\/|$)/.test(currentPathName);
     // const IS_ROUTE_POST = currentPathName.includes("post") && !currentPathName.includes("modify") && !currentPathName.includes("create");
     const IS_ROUTE_POST_EDIT = currentPathName.includes("post") && currentPathName.includes("modify");
     const IS_ROUTE_POST_CREATE = currentPathName.includes("post") && currentPathName.includes("create");
+    const IS_ROUTE_POST_VIEW = IS_ROUTE_POST && !IS_ROUTE_POST_EDIT && !IS_ROUTE_POST_CREATE;
+    const postIdx = parseInt((params?.id) as string);
+    const { data: getPostListData } = useGetPostDetailQuery(postIdx, undefined, {
+        enabled: IS_ROUTE_POST_VIEW ? false : !!postIdx,
+    });
     const IS_ROUTE_POST_LAB = currentPathName.includes("lab")
     const IS_ROUTE_MANAGER = currentPathName.startsWith("/manager");
     const MANAGER_HEADER_TITLE: Record<string, string> = {

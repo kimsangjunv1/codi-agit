@@ -1,5 +1,6 @@
 import { supabaseAdmin } from "@/shared/lib/supabase/supabaseServer";
 import { apiError, apiSuccess } from "@/shared/lib/apiResponse";
+import { revalidatePostPages } from "@/shared/lib/revalidatePost";
 
 const TABLE_NAME = "posts";
 
@@ -14,6 +15,8 @@ export async function POST(req: Request) {
         const { data, error } = await query;
 
         if (error) throw error;
+
+        revalidatePostPages(data.idx);
 
         return apiSuccess(
             {

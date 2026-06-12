@@ -1,16 +1,14 @@
-import { ApiPaginationResponseType } from "@/shared/model/common.type";
+import { ApiResponse } from "@/shared/model/common.type";
 
-import { ApiResponseType } from "@/shared/model/common.type";
-
-export interface setUserPayloadType {
+export interface SetUserPayload {
     name: string;
     password: string;
-    email: string;   
+    email: string;
 }
 
-export interface setLoginPayloadType {
+export interface SetLoginPayload {
     password: string;
-    email: string;   
+    email: string;
 }
 
 export interface UserManagerItem {
@@ -20,4 +18,4 @@ export interface UserManagerItem {
     created_at: string;
 }
 
-export type GetUserManagerListResponseType = ApiResponseType<UserManagerItem[]>;
+export type GetUserManagerListResponse = ApiResponse<UserManagerItem[]>;

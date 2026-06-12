@@ -1,13 +1,13 @@
 "use client";
 
-import PageFrame from "@/widgets/layout/PageFrame";
-
+import { CategoryManagerPageProvider } from "./model/CategoryManagerContext";
 import * as CategoryManagerLayer from "@/widgets/manager/category/ui";
 
 export default function Panel() {
     return (
-        <PageFrame id="manager-category" className={{ inner: "flex flex-col gap-[2.4rem]", container: "" }}>
+        <CategoryManagerPageProvider>
             <CategoryManagerLayer.CategoryManager />
-        </PageFrame>
+            <CategoryManagerLayer.Modal />
+        </CategoryManagerPageProvider>
     );
 }

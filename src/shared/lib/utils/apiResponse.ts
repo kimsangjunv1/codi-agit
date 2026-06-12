@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
 
-import type { ApiPaginationResponseType, ApiResponseType } from "@/shared/model/common.type";
+import type { ApiPaginationResponse, ApiResponse } from "@/shared/model/common.type";
 
 export function buildPagination(params: {
     page: number;
     pageSize: number;
     totalCount: number;
-}): ApiPaginationResponseType {
+}): ApiPaginationResponse {
     const { page, pageSize, totalCount } = params;
     const totalPages = pageSize > 0 ? Math.ceil(totalCount / pageSize) : 0;
 
@@ -31,12 +31,12 @@ export function buildPaginationFromQuery(
     searchParams: URLSearchParams,
     totalCount: number,
     defaultPageSize = 10
-): ApiPaginationResponseType {
+): ApiPaginationResponse {
     const { page, pageSize } = getPageParams(searchParams, defaultPageSize);
     return buildPagination({ page, pageSize, totalCount });
 }
 
-export function singleItemPagination(): ApiPaginationResponseType {
+export function singleItemPagination(): ApiPaginationResponse {
     return buildPagination({ page: 1, pageSize: 1, totalCount: 1 });
 }
 
@@ -44,11 +44,11 @@ export function apiSuccess<T>(
     result: T,
     options?: {
         resultMessage?: string;
-        pagination?: ApiPaginationResponseType | null;
+        pagination?: ApiPaginationResponse | null;
         status?: number;
     }
 ) {
-    const body: ApiResponseType<T> = {
+    const body: ApiResponse<T> = {
         pagination: options?.pagination ?? null,
         result,
         resultCode: "SUCCESS",
@@ -64,10 +64,10 @@ export function apiError(
         resultCode?: string;
         status?: number;
         result?: unknown;
-        pagination?: ApiPaginationResponseType | null;
+        pagination?: ApiPaginationResponse | null;
     }
 ) {
-    const body: ApiResponseType<unknown> = {
+    const body: ApiResponse<unknown> = {
         pagination: options?.pagination ?? null,
         result: options?.result ?? null,
         resultCode: options?.resultCode ?? "ERROR",

@@ -1,34 +1,33 @@
-import { ApiResponseType } from "@/shared/model/common.type";
+import { ApiResponse } from "@/shared/model/common.type";
 
-export interface setInvitationCodePayloadType {
-    // code: string;
+export interface SetInvitationCodePayload {
     is_active: boolean;
     expire_at: string | null;
 }
 
-export interface patchInvitationCodePayloadType {
+export interface PatchInvitationCodePayload {
     id: number;
-    is_active: boolean
+    is_active: boolean;
     expire_at: string | null;
 }
 
-export interface deleteInvitationCodePayloadType {
+export interface DeleteInvitationCodePayload {
     id: number;
 }
 
 export interface InvitationCodeListItem {
-  id: number;
-  code: string;
-  is_used: boolean;
-  used_by: string | null;        // UUID, null 가능
-  created_at: string;            // ISO 문자열로 받음
-  is_active: boolean;
-  expire_at: string | null;      // ISO 문자열, null 가능
+    id: number;
+    code: string;
+    is_used: boolean;
+    used_by: string | null;
+    created_at: string;
+    is_active: boolean;
+    expire_at: string | null;
 }
 
-export type GetInvitationCodeListOnManagerResponseType = ApiResponseType<InvitationCodeListItem[]>;
+export type GetInvitationCodeListOnManagerResponse = ApiResponse<InvitationCodeListItem[]>;
 
-export type GetInvitationCodeCheckResponseType = ApiResponseType<{
+export type GetInvitationCodeCheckResponse = ApiResponse<{
     is_active: boolean;
     is_used: boolean;
     expire_at: string;

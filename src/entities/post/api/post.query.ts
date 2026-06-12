@@ -1,15 +1,31 @@
+import { useEffect } from "react";
 import { useQuery, useMutation, useQueryClient, type QueryClient } from "@tanstack/react-query";
 
+import { AgitRoutes } from "@/shared/constants/entityKeys";
+import { POST_DETAIL_STALE_TIME_MS } from "@/shared/constants/postDetail";
 import { useToastStore } from "@/shared/stores/useToastStore";
-import { getPostLatestListFetch, getPostListFetch, getPostManagerListFetch, deletePostManagerFetch, patchPostFetch, setPostFetch, setPostViewIncrementFetch, setPostLikeIncrementFetch } from "@/entities/post/api/post.api";
-
-import { GetPostDetailResponseType, GetPostLatestListResponseType, GetPostListResponseType, GetPostManagerListResponseType, PatchPostResponseType, SetIncrementPostLikeType, SetIncrementPostViewType, SetPostResponseType, deletePostManagerPayloadType } from "@/entities/post/model/post.type";
+import {
+    deletePostManagerFetch,
+    getPostDetailFetch,
+    getPostLatestListFetch,
+    getPostListFetch,
+    getPostManagerListFetch,
+    patchPostFetch,
+    setPostFetch,
+    setPostLikeIncrementFetch,
+    setPostViewIncrementFetch,
+} from "@/entities/post/api/post.api";
+import {
+    DeletePostManagerPayload,
+    GetPostDetailResponse,
+    GetPostLatestListResponse,
+    GetPostListResponse,
+    GetPostManagerListResponse,
+} from "@/entities/post/model/post.type";
 import useNavigate from "@/shared/hooks/useNavigate";
 
-const POST_QUERY_KEY = "post";
-
 const removePostFromListCaches = (queryClient: QueryClient, deletedIdx: number) => {
-    queryClient.setQueryData<GetPostListResponseType>([POST_QUERY_KEY, "useGetPostListQuery"], (old) => {
+    queryClient.setQueryData<GetPostListResponse>([AgitRoutes.KEY_POST, "list"], (old) => {
         if (!old?.result) return old;
 
         return {
@@ -18,7 +34,7 @@ const removePostFromListCaches = (queryClient: QueryClient, deletedIdx: number) 
         };
     });
 
-    queryClient.setQueryData<GetPostLatestListResponseType>([POST_QUERY_KEY, "useGetPostLatestListQuery"], (old) => {
+    queryClient.setQueryData<GetPostLatestListResponse>([AgitRoutes.KEY_POST, "latest"], (old) => {
         if (!old?.result) return old;
 
         return {
@@ -27,7 +43,7 @@ const removePostFromListCaches = (queryClient: QueryClient, deletedIdx: number) 
         };
     });
 
-    queryClient.setQueryData<GetPostManagerListResponseType>([POST_QUERY_KEY, "useGetPostManagerListQuery"], (old) => {
+    queryClient.setQueryData<GetPostManagerListResponse>([AgitRoutes.KEY_POST, "manager", "list"], (old) => {
         if (!old?.result) return old;
 
         return {
@@ -37,23 +53,13 @@ const removePostFromListCaches = (queryClient: QueryClient, deletedIdx: number) 
     });
 
     queryClient.removeQueries({
-        queryKey: [POST_QUERY_KEY, "useGetPostDetailQuery", deletedIdx],
-    });
-
-    // 이전에 잘못 사용하던 쿼리 키 캐시 정리
-    queryClient.removeQueries({
-        queryKey: ["comment", "useGetPostLatestListQuery"],
+        queryKey: [AgitRoutes.KEY_POST, "detail", deletedIdx],
     });
 };
 
-/**
- * 포스트 - 글 목록 불러오기
- */
 export const useGetPostListQuery = () => {
-    const MUTATION_KEY = "post";
-
-    const { data, isLoading, isError, error, isFetching, refetch } = useQuery<GetPostListResponseType>({
-        queryKey: [MUTATION_KEY, "useGetPostListQuery"],
+    const { data, isLoading, isError, error, isFetching, refetch } = useQuery<GetPostListResponse>({
+        queryKey: [AgitRoutes.KEY_POST, "list"],
         queryFn: () => getPostListFetch(),
         staleTime: 0,
         throwOnError: false,
@@ -62,14 +68,11 @@ export const useGetPostListQuery = () => {
     return { data, isLoading, isError, error, isFetching, refetch };
 };
 
-/**
- * 포스트 - 최신 글 목록 불러오기
- */
-export const useGetPostLatestListQuery = (initialData?: GetPostLatestListResponseType) => {
+export const useGetPostLatestListQuery = (initialData?: GetPostLatestListResponse) => {
     const hasValidInitialData = initialData?.resultCode === "SUCCESS";
 
-    const { data, isLoading, isError, error, isFetching, refetch } = useQuery<GetPostLatestListResponseType>({
-        queryKey: [POST_QUERY_KEY, "useGetPostLatestListQuery"],
+    const { data, isLoading, isError, error, isFetching, refetch } = useQuery<GetPostLatestListResponse>({
+        queryKey: [AgitRoutes.KEY_POST, "latest"],
         queryFn: () => getPostLatestListFetch(),
         staleTime: 0,
         initialData: hasValidInitialData ? initialData : undefined,
@@ -79,46 +82,71 @@ export const useGetPostLatestListQuery = (initialData?: GetPostLatestListRespons
     return { data, isLoading, isError, error, isFetching, refetch };
 };
 
-/**
- * 포스트 - 글 상세 불러오기
- */
-export const useGetPostDetailQuery = (postIdx?: number) => {
-    const MUTATION_KEY = "post";
+type UseGetPostDetailQueryOptions = {
+    enabled?: boolean;
+};
 
-    const { data, isLoading, isError, isFetching, refetch } = useQuery<GetPostDetailResponseType>({
-        queryKey: [MUTATION_KEY, "useGetPostDetailQuery", postIdx],
-        queryFn: () => getPostListFetch(postIdx),
-        staleTime: 0,
-        enabled: !!postIdx,
+export const useGetPostDetailQuery = (
+    postIdx?: number,
+    initialData?: GetPostDetailResponse,
+    options?: UseGetPostDetailQueryOptions,
+) => {
+    const hasValidInitialData = initialData?.resultCode === "SUCCESS";
+
+    const { data, isLoading, isError, isFetching, refetch } = useQuery<GetPostDetailResponse>({
+        queryKey: [AgitRoutes.KEY_POST, "detail", postIdx],
+        queryFn: () => getPostDetailFetch(postIdx!),
+        staleTime: hasValidInitialData ? POST_DETAIL_STALE_TIME_MS : 0,
+        refetchOnMount: hasValidInitialData ? false : true,
+        enabled: options?.enabled ?? !!postIdx,
+        initialData: hasValidInitialData ? initialData : undefined,
     });
 
     return { data, isLoading, isError, isFetching, refetch };
 };
 
-/**
- * 포스트 - 글 생성
- */
+export const useIncrementPostViewOnVisit = (postIdx?: number) => {
+    const queryClient = useQueryClient();
+
+    useEffect(() => {
+        if (!postIdx) return;
+
+        let cancelled = false;
+
+        setPostViewIncrementFetch({ postId: postIdx })
+            .then((response) => {
+                if (cancelled || !response?.result?.viewsIncremented) return;
+
+                queryClient.setQueryData<GetPostDetailResponse>([AgitRoutes.KEY_POST, "detail", postIdx], (old) => {
+                    if (!old?.result) return old;
+
+                    return {
+                        ...old,
+                        result: {
+                            ...old.result,
+                            views: (old.result.views ?? 0) + 1,
+                        },
+                    };
+                });
+            })
+            .catch(() => {
+                // 조회수 집계 실패는 화면 표시에 영향을 주지 않음
+            });
+
+        return () => {
+            cancelled = true;
+        };
+    }, [postIdx, queryClient]);
+};
+
 export const useSetPostQuery = () => {
     const { replaceToUrl } = useNavigate();
     const { setToast } = useToastStore();
-
-    const MUTATION_KEY = "post";
     const queryClient = useQueryClient();
 
-    const {
-        data,
-        mutate,
-        mutateAsync,
-        error,
-        isError,
-        isSuccess,
-        isIdle,
-        isPending,
-        isPaused,
-        reset,
-    } = useMutation({
-        mutationKey: [MUTATION_KEY, "useSetProdGroupSimpleQuery"],
-        mutationFn: (payload: any) => setPostFetch(payload),
+    const { data, mutate, mutateAsync, error, isError, isSuccess, isIdle, isPending, isPaused, reset } = useMutation({
+        mutationKey: [AgitRoutes.KEY_POST, "set"],
+        mutationFn: (payload: unknown) => setPostFetch(payload),
         onSuccess: (data) => {
             const RESULT = data?.result?.statusCode;
 
@@ -129,9 +157,9 @@ export const useSetPostQuery = () => {
                 setToast({ msg: "글 등록에 문제가 발생했습니다.", time: 2 });
             }
 
-            queryClient.invalidateQueries({ queryKey: [MUTATION_KEY] });
+            queryClient.invalidateQueries({ queryKey: [AgitRoutes.KEY_POST] });
         },
-        onError: (err: any) => {
+        onError: (err: Error) => {
             setToast({ msg: err.message ?? "서버 통신 중 오류가 발생했습니다.", time: 2 });
         },
     });
@@ -139,30 +167,14 @@ export const useSetPostQuery = () => {
     return { mutate, mutateAsync, isError, isIdle, isSuccess, isPending, isPaused, data, error, reset };
 };
 
-/**
- * 포스트 - 글 수정
- */
 export const usePatchPostQuery = () => {
     const { replaceToUrl } = useNavigate();
     const { setToast } = useToastStore();
-
-    const MUTATION_KEY = "post";
     const queryClient = useQueryClient();
 
-    const {
-        data,
-        mutate,
-        mutateAsync,
-        error,
-        isError,
-        isSuccess,
-        isIdle,
-        isPending,
-        isPaused,
-        reset,
-    } = useMutation({
-        mutationKey: [MUTATION_KEY, "usePatchPostQuery"],
-        mutationFn: (payload: { data: any; idx: number }) => patchPostFetch(payload),
+    const { data, mutate, mutateAsync, error, isError, isSuccess, isIdle, isPending, isPaused, reset } = useMutation({
+        mutationKey: [AgitRoutes.KEY_POST, "patch"],
+        mutationFn: (payload: { data: unknown; idx: number }) => patchPostFetch(payload),
         onSuccess: (data) => {
             const RESULT = data?.result?.statusCode;
 
@@ -172,9 +184,9 @@ export const usePatchPostQuery = () => {
             } else {
                 setToast({ msg: "글 등록에 문제가 발생했습니다.", time: 2 });
             }
-            queryClient.invalidateQueries({ queryKey: [MUTATION_KEY] });
+            queryClient.invalidateQueries({ queryKey: [AgitRoutes.KEY_POST] });
         },
-        onError: (err: any) => {
+        onError: (err: Error) => {
             setToast({ msg: err.message ?? "에러 발생", time: 2 });
         },
     });
@@ -184,29 +196,16 @@ export const usePatchPostQuery = () => {
 
 export const useSetIncrementViewQuery = () => {
     const { setToast } = useToastStore();
-
-    const MUTATION_KEY = "post";
     const queryClient = useQueryClient();
 
-    const {
-        data,
-        mutate,
-        mutateAsync,
-        error,
-        isError,
-        isSuccess,
-        isIdle,
-        isPending,
-        isPaused,
-        reset,
-    } = useMutation({
-        mutationKey: [MUTATION_KEY, "useSetIncrementViewQuery"],
+    const { data, mutate, mutateAsync, error, isError, isSuccess, isIdle, isPending, isPaused, reset } = useMutation({
+        mutationKey: [AgitRoutes.KEY_POST, "increment-view"],
         mutationFn: (payload: { postId: number; userId?: string }) => setPostViewIncrementFetch(payload),
         onSuccess: () => {
             setToast({ msg: "조회수를 수정했어요.", time: 2 });
-            queryClient.invalidateQueries({ queryKey: [MUTATION_KEY] });
+            queryClient.invalidateQueries({ queryKey: [AgitRoutes.KEY_POST] });
         },
-        onError: (err: any) => {
+        onError: (err: Error) => {
             setToast({ msg: err.message ?? "에러 발생", time: 2 });
         },
     });
@@ -216,23 +215,10 @@ export const useSetIncrementViewQuery = () => {
 
 export const useSetLikeIncrementQuery = () => {
     const { setToast } = useToastStore();
-
-    const MUTATION_KEY = "post";
     const queryClient = useQueryClient();
 
-    const {
-        data,
-        mutate,
-        mutateAsync,
-        error,
-        isError,
-        isSuccess,
-        isIdle,
-        isPending,
-        isPaused,
-        reset,
-    } = useMutation({
-        mutationKey: [MUTATION_KEY, "useSetLikeIncrementQuery"],
+    const { data, mutate, mutateAsync, error, isError, isSuccess, isIdle, isPending, isPaused, reset } = useMutation({
+        mutationKey: [AgitRoutes.KEY_POST, "increment-like"],
         mutationFn: (payload: { postId: number; userId?: string }) => setPostLikeIncrementFetch(payload),
         onSuccess: (data) => {
             if (data?.result?.alreadyLiked) {
@@ -240,9 +226,9 @@ export const useSetLikeIncrementQuery = () => {
             } else if (data?.result?.likesIncremented) {
                 setToast({ msg: "좋아요!", time: 2 });
             }
-            queryClient.invalidateQueries({ queryKey: [MUTATION_KEY] });
+            queryClient.invalidateQueries({ queryKey: [AgitRoutes.KEY_POST] });
         },
-        onError: (err: any) => {
+        onError: (err: Error) => {
             setToast({ msg: err.message ?? "에러 발생", time: 2 });
         },
     });
@@ -251,10 +237,8 @@ export const useSetLikeIncrementQuery = () => {
 };
 
 export const useGetPostManagerListQuery = () => {
-    const MUTATION_KEY = "post";
-
-    const { data, isLoading, isError, isFetching, refetch } = useQuery<GetPostManagerListResponseType>({
-        queryKey: [MUTATION_KEY, "useGetPostManagerListQuery"],
+    const { data, isLoading, isError, isFetching, refetch } = useQuery<GetPostManagerListResponse>({
+        queryKey: [AgitRoutes.KEY_POST, "manager", "list"],
         queryFn: () => getPostManagerListFetch(),
         staleTime: 0,
     });
@@ -264,30 +248,17 @@ export const useGetPostManagerListQuery = () => {
 
 export const useDeletePostManagerQuery = () => {
     const { setToast } = useToastStore();
-
-    const MUTATION_KEY = "post";
     const queryClient = useQueryClient();
 
-    const {
-        data,
-        mutate,
-        mutateAsync,
-        error,
-        isError,
-        isSuccess,
-        isIdle,
-        isPending,
-        isPaused,
-        reset,
-    } = useMutation({
-        mutationKey: [MUTATION_KEY, "useDeletePostManagerQuery"],
-        mutationFn: (payload: deletePostManagerPayloadType) => deletePostManagerFetch(payload),
+    const { data, mutate, mutateAsync, error, isError, isSuccess, isIdle, isPending, isPaused, reset } = useMutation({
+        mutationKey: [AgitRoutes.KEY_POST, "manager", "delete"],
+        mutationFn: (payload: DeletePostManagerPayload) => deletePostManagerFetch(payload),
         onSuccess: async (_, variables) => {
             removePostFromListCaches(queryClient, variables.idx);
             setToast({ msg: "게시물을 삭제했어요", time: 2 });
-            await queryClient.invalidateQueries({ queryKey: [MUTATION_KEY] });
+            await queryClient.invalidateQueries({ queryKey: [AgitRoutes.KEY_POST] });
         },
-        onError: (err: any) => {
+        onError: (err: Error) => {
             setToast({ msg: err.message ?? "에러 발생", time: 2 });
         },
     });

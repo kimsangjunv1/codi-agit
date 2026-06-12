@@ -1,7 +1,7 @@
 "use client";
 
-import { PostModifyEditor } from "@/features/managePost";
-import PageFrame from "@/widgets/layout/PageFrame";
+import { PostModifyPageProvider } from "./model/PostModifyContext";
+import * as PostModifyLayer from "@/widgets/post/modify/ui";
 
 type PostModifyPanelProps = {
     id: string;
@@ -9,11 +9,9 @@ type PostModifyPanelProps = {
 
 export default function Panel({ id }: PostModifyPanelProps) {
     return (
-        <PageFrame
-            id="post-modify"
-            className={{ inner: "flex flex-col gap-[2.4rem]", container: "" }}
-        >
-            <PostModifyEditor id={id} />
-        </PageFrame>
+        <PostModifyPageProvider>
+            <PostModifyLayer.PostEditor id={id} />
+            <PostModifyLayer.Modal />
+        </PostModifyPageProvider>
     );
 }

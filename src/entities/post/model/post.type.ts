@@ -1,4 +1,4 @@
-import { ApiPaginationResponseType, ApiResponseType } from "@/shared/model/common.type";
+import { ApiResponse } from "@/shared/model/common.type";
 
 export interface TextStyle {
     lineHeight: number;
@@ -21,7 +21,6 @@ export interface Block {
     style: TextStyle;
 }
 
-// 일반 블록 (텍스트, 이미지 포함, 소제목 등)
 export interface NormalSectionContent {
     id: string;
     type: number;
@@ -32,14 +31,13 @@ export interface NormalSectionContent {
     imageUrl: string;
 }
 
-// 코드 블록
 export interface CodeSectionContent {
     id: string;
     type: number;
     title: string;
     summary: string;
     subtitle: string;
-    content: string | Block[]; // HTML string
+    content: string | Block[];
     imageUrl: string;
 }
 
@@ -66,7 +64,7 @@ export interface PostItem {
     title: string;
     thumbnail: string;
     contents: SectionContent[][];
-    category_idx: number; 
+    category_idx: number;
     created_at: string;
     summary: string;
     views: number;
@@ -75,49 +73,49 @@ export interface PostItem {
         title: string;
         description: string;
         is_enabled: boolean;
-    }
-    prev?: PostPrevNextInfo
-    next?: PostPrevNextInfo
-    alreadyLiked?: boolean
+    };
+    prev?: PostPrevNextInfo;
+    next?: PostPrevNextInfo;
+    alreadyLiked?: boolean;
 }
 
 export interface PostLatestItem {
-  idx: number;
-  title: string;
-  thumbnail: string;
-  summary: string;
-  created_at: string; // ISO 날짜 문자열
-  views: number;
-  likes: number;
-  category: {
+    idx: number;
     title: string;
-  };
+    thumbnail: string;
+    summary: string;
+    created_at: string;
+    views: number;
+    likes: number;
+    category: {
+        title: string;
+    };
 }
 
 export interface PostViewItem {
-  success: boolean,
-  viewsIncremented: boolean,
-  alreadyViewed: boolean
+    success: boolean;
+    viewsIncremented: boolean;
+    alreadyViewed: boolean;
 }
 
 export interface PostLikeItem {
-  success: boolean;
-  likesIncremented: boolean;
-  alreadyLiked: boolean;
+    success: boolean;
+    likesIncremented: boolean;
+    alreadyLiked: boolean;
 }
 
-export type SetIncrementPostLikeType = ApiResponseType<PostLikeItem>;
-export type SetIncrementPostViewType = ApiResponseType<PostViewItem>;
-export type GetPostLatestListResponseType = ApiResponseType<PostLatestItem[]>;
-export type GetPostListResponseType = ApiResponseType<PostItem[]>;
-export type GetPostDetailResponseType = ApiResponseType<PostItem>;
+export type SetIncrementPostLikeResponse = ApiResponse<PostLikeItem>;
+export type SetIncrementPostViewResponse = ApiResponse<PostViewItem>;
+export type GetPostLatestListResponse = ApiResponse<PostLatestItem[]>;
+export type GetPostListResponse = ApiResponse<PostItem[]>;
+export type GetPostDetailResponse = ApiResponse<PostItem>;
 
-export type PatchPostResponseType = ApiResponseType<{
+export type PatchPostResponse = ApiResponse<{
     statusCode: number;
     postIdx: number;
 }>;
 
-export type SetPostResponseType = ApiResponseType<{
+export type SetPostResponse = ApiResponse<{
     statusCode: number;
     postIdx?: number;
 }>;
@@ -135,9 +133,9 @@ export interface PostManagerItem {
     };
 }
 
-export interface deletePostManagerPayloadType {
+export interface DeletePostManagerPayload {
     idx: number;
 }
 
-export type GetPostManagerListResponseType = ApiResponseType<PostManagerItem[]>;
-export type DeletePostManagerResponseType = ApiResponseType<unknown>;
+export type GetPostManagerListResponse = ApiResponse<PostManagerItem[]>;
+export type DeletePostManagerResponse = ApiResponse<unknown>;
