@@ -35,10 +35,12 @@ const Navigation = () => {
     const { mutateAsync: setPostFetchAsync, isPending: isSetPending } = useSetPostQuery();
     const { mutate: likeIncrementFetch } = useSetLikeIncrementQuery();
     const { mutateAsync: deletePostFetchAsync, isPending: isDeletePending } = useDeletePostManagerQuery();
-    const { data: getPostListData } = useGetPostDetailQuery(parseInt( (params?.id) as string ));
-
     const IS_ROUTE_POST = /\/post(\/|$)/.test(currentPathName);
     const IS_ROUTE_POST_VIEW = currentPathName.includes("post") && !currentPathName.includes("modify") && !currentPathName.includes("create");
+    const postIdx = parseInt((params?.id) as string);
+    const { data: getPostListData } = useGetPostDetailQuery(postIdx, undefined, {
+        enabled: IS_ROUTE_POST_VIEW ? false : !!postIdx,
+    });
     const IS_ROUTE_POST_EDIT = currentPathName.includes("post") && currentPathName.includes("modify");
     const IS_ROUTE_POST_CREATE = currentPathName.includes("post") && currentPathName.includes("create");
 

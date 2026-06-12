@@ -3,6 +3,7 @@ import type { ApiResponse } from "@/shared/lib/api/client";
 
 type ServerFetchOptions = Omit<RequestInit, "body"> & {
     body?: unknown;
+    throwOnError?: boolean;
 };
 
 import { getSiteUrl } from "@/shared/lib/siteUrl";
@@ -19,8 +20,8 @@ export async function serverFetch<T>(url: string, options: ServerFetchOptions = 
     });
     const data = await response.json().catch(() => null);
 
-    if (!response.ok) {
-        throw new Error(data?.message ?? "서버 API 요청에 실패했습니다.");
+    if (!response.ok && options.throwOnError !== false) {
+        throw new Error(data?.resultMessage ?? data?.message ?? "서버 API 요청에 실패했습니다.");
     }
 
     return data as T;

@@ -25,8 +25,19 @@ export const getPostListFetch = () => {
  */
 export const getPostDetailFetch = (idx: number) => {
     const url = `/api/v1/get/post/${idx}`;
-    return clientApi.get<GetPostDetailResponse>(url);
+    return clientApi.get<GetPostDetailResponse>(url, {
+        headers: { "x-skip-tracking": "true" },
+    });
 };
+
+/**
+ * 포스트 - 상세 ISR/SSR 조회 (조회수 증가 없음)
+ */
+export const getPostDetailServerFetch = (idx: number) =>
+    serverApi.get<GetPostDetailResponse>(`/api/v1/get/post/${idx}`, {
+        headers: { "x-internal-fetch": "isr" },
+        throwOnError: false,
+    });
 
 /**
  * 포스트 - 최근 생성한 목록 조회 (10개)

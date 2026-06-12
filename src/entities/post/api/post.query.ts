@@ -1,6 +1,8 @@
+import { useEffect } from "react";
 import { useQuery, useMutation, useQueryClient, type QueryClient } from "@tanstack/react-query";
 
 import { AgitRoutes } from "@/shared/constants/entityKeys";
+import { POST_DETAIL_STALE_TIME_MS } from "@/shared/constants/postDetail";
 import { useToastStore } from "@/shared/stores/useToastStore";
 import {
     deletePostManagerFetch,
@@ -80,15 +82,61 @@ export const useGetPostLatestListQuery = (initialData?: GetPostLatestListRespons
     return { data, isLoading, isError, error, isFetching, refetch };
 };
 
-export const useGetPostDetailQuery = (postIdx?: number) => {
+type UseGetPostDetailQueryOptions = {
+    enabled?: boolean;
+};
+
+export const useGetPostDetailQuery = (
+    postIdx?: number,
+    initialData?: GetPostDetailResponse,
+    options?: UseGetPostDetailQueryOptions,
+) => {
+    const hasValidInitialData = initialData?.resultCode === "SUCCESS";
+
     const { data, isLoading, isError, isFetching, refetch } = useQuery<GetPostDetailResponse>({
         queryKey: [AgitRoutes.KEY_POST, "detail", postIdx],
         queryFn: () => getPostDetailFetch(postIdx!),
-        staleTime: 0,
-        enabled: !!postIdx,
+        staleTime: hasValidInitialData ? POST_DETAIL_STALE_TIME_MS : 0,
+        refetchOnMount: hasValidInitialData ? false : true,
+        enabled: options?.enabled ?? !!postIdx,
+        initialData: hasValidInitialData ? initialData : undefined,
     });
 
     return { data, isLoading, isError, isFetching, refetch };
+};
+
+export const useIncrementPostViewOnVisit = (postIdx?: number) => {
+    const queryClient = useQueryClient();
+
+    useEffect(() => {
+        if (!postIdx) return;
+
+        let cancelled = false;
+
+        setPostViewIncrementFetch({ postId: postIdx })
+            .then((response) => {
+                if (cancelled || !response?.result?.viewsIncremented) return;
+
+                queryClient.setQueryData<GetPostDetailResponse>([AgitRoutes.KEY_POST, "detail", postIdx], (old) => {
+                    if (!old?.result) return old;
+
+                    return {
+                        ...old,
+                        result: {
+                            ...old.result,
+                            views: (old.result.views ?? 0) + 1,
+                        },
+                    };
+                });
+            })
+            .catch(() => {
+                // 조회수 집계 실패는 화면 표시에 영향을 주지 않음
+            });
+
+        return () => {
+            cancelled = true;
+        };
+    }, [postIdx, queryClient]);
 };
 
 export const useSetPostQuery = () => {

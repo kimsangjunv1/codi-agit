@@ -1,5 +1,6 @@
 import { supabaseServer } from "@/shared/lib/supabase/supabaseServer";
 import { apiError, apiSuccess, singleItemPagination } from "@/shared/lib/apiResponse";
+import { revalidatePostPages } from "@/shared/lib/revalidatePost";
 
 const TABLE_POST = "posts";
 const TABLE_COMMENT = "comments";
@@ -29,6 +30,8 @@ export async function DELETE(req: Request) {
         const { data, error } = await supabase.from(TABLE_POST).delete().eq("idx", idx).select();
 
         if (error) throw error;
+
+        revalidatePostPages(idx);
 
         return apiSuccess(data, {
             resultMessage: "게시물을 삭제했어요.",

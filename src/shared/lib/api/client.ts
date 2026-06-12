@@ -42,7 +42,7 @@ export async function clientFetch<T>(url: string, options: ClientFetchOptions = 
 }
 
 export const clientApi = {
-    get: <T>(url: string) => clientFetch<T>(url),
+    get: <T>(url: string, options?: ClientFetchOptions) => clientFetch<T>(url, options),
     post: <T>(url: string, body?: unknown, options?: ClientFetchOptions) => clientFetch<T>(url, { ...options, method: "POST", body }),
     patch: <T>(url: string, body?: unknown, options?: ClientFetchOptions) => clientFetch<T>(url, { ...options, method: "PATCH", body }),
     delete: <T>(url: string, options?: ClientFetchOptions) => clientFetch<T>(url, { ...options, method: "DELETE" }),

@@ -2,13 +2,13 @@
 
 import { Fragment, memo, useCallback, useEffect, useMemo } from "react";
 
-import { Block, PostPrevNextInfo, SectionContent } from "@/entities/post/model/post.type";
+import { Block, GetPostDetailResponse, PostPrevNextInfo, SectionContent } from "@/entities/post/model/post.type";
 
 import { util } from "@/shared/lib/util";
 import { highlightCode } from "@/shared/lib/highlight";
 
 import useNavigate from "@/shared/hooks/useNavigate";
-import { useGetPostDetailQuery } from "@/entities/post/api/post.query";
+import { useGetPostDetailQuery, useIncrementPostViewOnVisit } from "@/entities/post/api/post.query";
 
 import UI from "@/shared/ui/common/UIComponent";
 import IconComponent from "@/shared/ui/common/IconComponent";
@@ -18,25 +18,32 @@ import PostHero from "@/widgets/post/ui/PostHero";
 import { useToastStore } from "@/shared/stores/useToastStore";
 import { useCreatePostStore } from "@/shared/stores/useCreatePostStore";
 
-// const PostDetail = ({ id, initialData }: { id: string, initialData: { body: GetPostDetailResponse; header: ApiHeaderResponse } }) => {
-const PostDetail = ({ id }: { id: string }) => {
+type PostDetailProps = {
+    id: string;
+    initialData: GetPostDetailResponse;
+};
+
+const PostDetail = ({ id, initialData }: PostDetailProps) => {
     const { setPostIdx } = useCreatePostStore();
+    const postIdx = parseInt(id);
+
+    useIncrementPostViewOnVisit(postIdx);
 
     useEffect(() => {
-        setPostIdx(parseInt(id));
-    }, []);
+        setPostIdx(postIdx);
+    }, [postIdx, setPostIdx]);
 
     return (
         <section className="flex flex-col w-full post pb-[7.2rem]">
             <section className="mx-auto post-inner flex flex-col gap-[5.2rem] w-full items-center">
-                <RenderContents id={id} />
+                <RenderContents id={id} initialData={initialData} />
             </section>
         </section>
     );
 };
 
-const RenderContents = ({ id }: { id: string }) => {
-    const { data: getPostListData } = useGetPostDetailQuery(parseInt(id));
+const RenderContents = ({ id, initialData }: { id: string; initialData: GetPostDetailResponse }) => {
+    const { data: getPostListData } = useGetPostDetailQuery(parseInt(id), initialData);
 
     const DATA = useMemo(() => getPostListData?.result, [getPostListData]);
 
