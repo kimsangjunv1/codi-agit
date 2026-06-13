@@ -23,6 +23,8 @@ const Header = () => {
     const { data: getCategoryListData } = useGetCategoryListQuery();
     const { IS_ROUTE_POST } = getPostRouteFlags(currentPathName);
     const IS_ROUTE_HOME = currentPathName === "/";
+    const IS_ROUTE_RESUME = currentPathName === "/resume";
+    const IS_ROUTE_RESUME_RENEWAL = currentPathName === "/resume-renewal";
     const IS_ROUTE_MANAGER = currentPathName.startsWith("/manager");
     const MANAGER_HEADER_TITLE: Record<string, string> = {
         "/manager": "관리자",
@@ -232,6 +234,70 @@ const Header = () => {
                                         </TextShimmer>
                                     </motion.section>
                                 </section>
+                            }
+
+                            { IS_ROUTE_RESUME &&
+                                <motion.section
+                                    key={"resume_title"}
+                                    initial={{ opacity: 0, transform: "scale(0.8)" }}
+                                    animate={{ opacity: 1, transform: "scale(1)" }}
+                                    exit={{ opacity: 0, transform: "scale(0.8)" }}
+                                    transition={{
+                                        type: "spring",
+                                        mass: 0.1,
+                                        stiffness: 100,
+                                        damping: 10,
+                                    }}
+                                    className="flex gap-[1.6rem] flex-1 justify-center"
+                                >
+                                    <TextShimmer
+                                        as="h2"
+                                        duration={3}
+                                        style={{
+                                            color: "#000000",
+                                            fontSize: "2.4rem",
+                                        }}
+                                        color={{
+                                            start: "#000000",
+                                            end: "#9393a0"
+                                        }}
+                                        className="font-extrabold"
+                                    >
+                                        RESUME
+                                    </TextShimmer>
+                                </motion.section>
+                            }
+
+                            { IS_ROUTE_RESUME_RENEWAL &&
+                                <motion.section
+                                    key={"resume_renewal_title"}
+                                    initial={{ opacity: 0, transform: "scale(0.8)" }}
+                                    animate={{ opacity: 1, transform: "scale(1)" }}
+                                    exit={{ opacity: 0, transform: "scale(0.8)" }}
+                                    transition={{
+                                        type: "spring",
+                                        mass: 0.1,
+                                        stiffness: 100,
+                                        damping: 10,
+                                    }}
+                                    className="flex gap-[1.6rem] flex-1 justify-center"
+                                >
+                                    <TextShimmer
+                                        as="h2"
+                                        duration={3}
+                                        style={{
+                                            color: "#000000",
+                                            fontSize: "2.4rem",
+                                        }}
+                                        color={{
+                                            start: "#000000",
+                                            end: "#9393a0"
+                                        }}
+                                        className="font-extrabold"
+                                    >
+                                        RESUME RENEWAL
+                                    </TextShimmer>
+                                </motion.section>
                             }
                         </AnimatePresence>
                     </section>

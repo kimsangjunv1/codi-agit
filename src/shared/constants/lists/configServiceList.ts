@@ -5,8 +5,8 @@ export const headerMenuList = [
         type: 1,
     },
     {
-        title: "ABOUT ME",
-        route: "/about",
+        title: "RESUME",
+        route: "/resume",
         type: 1,
     }
 ]
