@@ -8,12 +8,7 @@ type GiscusCommentsProps = {
 };
 
 const isGiscusConfigured = () =>
-    Boolean(
-        process.env.NEXT_PUBLIC_GISCUS_REPO &&
-        process.env.NEXT_PUBLIC_GISCUS_REPO_ID &&
-        process.env.NEXT_PUBLIC_GISCUS_CATEGORY &&
-        process.env.NEXT_PUBLIC_GISCUS_CATEGORY_ID,
-    );
+    Boolean(process.env.NEXT_PUBLIC_GISCUS_REPO && process.env.NEXT_PUBLIC_GISCUS_REPO_ID && process.env.NEXT_PUBLIC_GISCUS_CATEGORY && process.env.NEXT_PUBLIC_GISCUS_CATEGORY_ID);
 
 const GiscusComments = ({ term, className }: GiscusCommentsProps) => {
     if (!isGiscusConfigured()) return null;
@@ -34,7 +29,8 @@ const GiscusComments = ({ term, className }: GiscusCommentsProps) => {
                     reactionsEnabled="1"
                     emitMetadata="0"
                     inputPosition="bottom"
-                    theme="preferred_color_scheme"
+                    // theme="preferred_color_scheme"
+                    theme="light_tritanopia"
                     lang="ko"
                     loading="lazy"
                 />
