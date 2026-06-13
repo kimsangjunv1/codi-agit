@@ -5,6 +5,7 @@
     "scripts": {
         "dev": "next dev -p 3100",
         "build": "next build",
+        "analyze": "ANALYZE=true npm run build",
         "start": "next start -p 3100",
         "lint": "eslint .",
         "typecheck": "tsc --noEmit",
@@ -38,6 +39,7 @@
     },
     "devDependencies": {
         "@eslint/eslintrc": "^3",
+        "@next/bundle-analyzer": "^16.2.9",
         "@tailwindcss/postcss": "^4.1.14",
         "@types/bcrypt": "^6.0.0",
         "@types/node": "^20",

@@ -13,11 +13,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             changeFrequency: "daily",
             priority: 1,
         },
-        {
-            url: `${siteUrl}/lab`,
-            changeFrequency: "weekly",
-            priority: 0.7,
-        },
     ];
 
     const postRoutes: MetadataRoute.Sitemap = posts.map((post) => ({

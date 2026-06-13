@@ -1,6 +1,25 @@
+import bundleAnalyzer from "@next/bundle-analyzer";
 import type { NextConfig } from "next";
 
+const withBundleAnalyzer = bundleAnalyzer({
+    enabled: process.env.ANALYZE === "true",
+});
+
 const nextConfig: NextConfig = {
+    async headers() {
+        return [
+            {
+                source: "/styles/giscus-light.css",
+                headers: [
+                    {
+                        key: "Access-Control-Allow-Origin",
+                        value: "*",
+                    },
+                ],
+            },
+        ];
+    },
+
     images: {
         remotePatterns: [
             {
@@ -11,6 +30,10 @@ const nextConfig: NextConfig = {
                 protocol: "https",
                 hostname: "nwezfnytabthwgbgajso.supabase.co",
             },
+            {
+                protocol: "https",
+                hostname: "picsum.photos",
+            },
         ],
     },
 
@@ -19,4 +42,4 @@ const nextConfig: NextConfig = {
     },
 };
 
-export default nextConfig;
+export default withBundleAnalyzer(nextConfig);
