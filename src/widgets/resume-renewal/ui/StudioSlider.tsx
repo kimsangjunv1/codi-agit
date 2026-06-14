@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { motion, PanInfo, useAnimationFrame, useMotionValue } from "framer-motion";
 import Image from "next/image";
 
+import { R } from "./renewalStyles";
+
 type StudioSliderProps = {
     items: {
         title: string;
@@ -12,8 +14,9 @@ type StudioSliderProps = {
     }[];
     touch?: boolean;
     embedded?: boolean;
+    fullWidth?: boolean;
 };
-export function StudioSlider({ items, touch = false, embedded = false }: StudioSliderProps) {
+export function StudioSlider({ items, touch = false, embedded = false, fullWidth = false }: StudioSliderProps) {
     const trackRef = useRef<HTMLDivElement | null>(null);
     const sliderItems = [...items, ...items];
     const x = useMotionValue(0);
@@ -58,14 +61,18 @@ export function StudioSlider({ items, touch = false, embedded = false }: StudioS
         velocityRef.current = Math.abs(dampedVelocity) < 1 ? 0 : dampedVelocity;
     });
 
+    const isStatic = embedded || fullWidth;
+
     return (
         <motion.section
-            className={`overflow-hidden ${embedded ? "h-full w-full min-h-[calc(100svh-6.4rem)]" : "pb-16"}`}
-            initial={embedded ? false : { opacity: 0, transform: "translateY(100px)" }}
-            animate={embedded ? undefined : { opacity: 1, transform: "translateY(0px)" }}
-            exit={embedded ? undefined : { opacity: 0, transform: "translateY(100px)" }}
+            className={`${R.root} overflow-hidden ${
+                fullWidth ? "w-full" : embedded ? "h-full w-full min-h-[calc(100svh-6.4rem)]" : "pb-16"
+            }`}
+            initial={isStatic ? false : { opacity: 0, transform: "translateY(100px)" }}
+            animate={isStatic ? undefined : { opacity: 1, transform: "translateY(0px)" }}
+            exit={isStatic ? undefined : { opacity: 0, transform: "translateY(100px)" }}
             transition={
-                embedded
+                isStatic
                     ? undefined
                     : {
                           delay: 0.4,
@@ -78,7 +85,7 @@ export function StudioSlider({ items, touch = false, embedded = false }: StudioS
         >
             <motion.div
                 ref={trackRef}
-                className={`flex h-full w-max ${touch ? "cursor-grab active:cursor-grabbing" : ""}`}
+                className={`flex w-max items-start gap-[0.4rem] ${touch ? "cursor-grab active:cursor-grabbing" : ""}`}
                 animate={touch ? undefined : { x: ["0%", "-50%"] }}
                 drag={touch ? "x" : false}
                 dragElastic={touch ? 0.02 : undefined}
@@ -104,16 +111,12 @@ export function StudioSlider({ items, touch = false, embedded = false }: StudioS
             >
                 {sliderItems.map((item, index) => (
                     <article
-                        className={
-                            embedded
-                                ? "relative h-[calc(100svh-6.4rem)] w-[calc(100vw-6.4rem)] shrink-0 overflow-hidden bg-white tablet:w-[calc(50vw-6.4rem)]"
-                                : "relative h-[50dvh] w-[50dvw] overflow-hidden rounded-[0rem] bg-white max-[86rem]:h-[24rem] max-[86rem]:w-[min(34rem,calc(100vw-3.2rem))]"
-                        }
+                        className={`${R.root} relative shrink-0 overflow-hidden bg-white`}
                         key={`${item.title}-${index}`}
                     >
                         <img
                             alt={item.title}
-                            className="h-full w-full object-cover opacity-85 select-none pointer-events-none"
+                            className="block max-h-[50svh] w-auto h-auto object-contain object-top opacity-85 select-none pointer-events-none"
                             src={item.image}
                         />
 

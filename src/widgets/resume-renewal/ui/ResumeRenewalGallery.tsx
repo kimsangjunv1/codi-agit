@@ -62,7 +62,7 @@ const ResumeRenewalGallery = ({ items }: ResumeRenewalGalleryProps) => {
     const colCount = items.length <= 4 ? 2 : 3;
 
     return (
-        <section className={R.divider}>
+        <section className={`${R.root} ${R.divider}`}>
             <div className={R.split}>
                 <div className="hidden tablet:block" aria-hidden />
                 <div className={R.right}>

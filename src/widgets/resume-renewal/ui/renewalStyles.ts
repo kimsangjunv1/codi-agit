@@ -1,5 +1,7 @@
 /** resume-renewal 전용 — 16px(1.6rem) 기준, #000000 단색 */
 export const R = {
+    /** 페이지 루트 — CSS reset(1.4rem) 덮어 최소 16px 보장 */
+    root: "text-[1.6rem] text-[#000000]",
     /** 2단: 왼쪽 시각 / 오른쪽 텍스트 */
     split: "grid grid-cols-1 tablet:grid-cols-2 min-h-[100svh]",
     // split: "grid grid-cols-1 tablet:grid-cols-2",
@@ -14,15 +16,15 @@ export const R = {
     divider: "",
     // divider: "border-t border-[#000000]/10",
     /** typography */
-    label: "text-[1.6rem] tracking-[0.12em] uppercase text-[#000000]",
-    category: "text-[1.6rem] text-[#000000]",
+    label: "text-[1.6rem] text-[#000000] font-bold uppercase",
+    category: "text-[1.6rem] text-[#000000] font-bold uppercase",
     /** ResumeHeroSection h1과 동일 계열 — 섹션 핵심 문장 */
-    keyline: "text-[2.8rem] tablet:text-[2.8rem] font-bold text-[#000000] leading-[1.35] tracking-[-0.02em]",
+    keyline: "text-[2.8rem] tablet:text-[3.2rem] font-bold text-[#000000] leading-[1.35] tracking-[-0.02em]",
     // keyline: "text-[2.4rem] tablet:text-[3.6rem] font-bold text-[#000000] leading-[1.35] tracking-[-0.02em]",
     heroKeyline: "text-[2.8rem] tablet:text-[2.8rem] font-bold text-[#000000] leading-[1.35] tracking-[-0.02em]",
     // heroKeyline: "text-[2.8rem] tablet:text-[4.8rem] font-bold text-[#000000] leading-[1.35] tracking-[-0.02em]",
     title: "text-[2.4rem] tablet:text-[3.2rem] font-bold text-[#000000] leading-[1.25] tracking-[-0.02em]",
-    subtitle: "text-[1.8rem] font-semibold text-[#000000] leading-[1.4]",
+    subtitle: "text-[2.6rem] font-semibold text-[#000000] leading-[1.4]",
     body: "text-[1.6rem] leading-[1.75] text-[#000000]",
     bodyMuted: "text-[1.6rem] leading-[1.75] text-[#000000]",
     meta: "text-[1.6rem] text-[#000000]",

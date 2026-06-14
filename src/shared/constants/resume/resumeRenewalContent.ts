@@ -8,6 +8,8 @@ export type RenewalSliderItem = {
 export type RenewalProjectVisual = {
     category: string;
     sliderItems: RenewalSliderItem[];
+    /** 프로젝트 소개 섹션 왼쪽 로고 (최대 128×128) */
+    logo?: string;
 };
 
 export type RenewalGalleryLinkType = "demo" | "github" | "article" | "screenshot" | "internal";

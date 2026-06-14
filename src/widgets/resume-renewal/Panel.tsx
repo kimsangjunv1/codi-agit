@@ -13,10 +13,11 @@ import ResumeRenewalProfileSection from "./ui/ResumeRenewalProfileSection";
 import ResumeRenewalProject from "./ui/ResumeRenewalProject";
 import ResumeRenewalSkillSection from "./ui/ResumeRenewalSkillSection";
 import ResumeRenewalTocNav from "./ui/ResumeRenewalTocNav";
+import { R } from "./ui/renewalStyles";
 
 const ResumeRenewalPanel = () => {
     return (
-        <article className="relative w-full bg-white">
+        <article className={`relative w-full bg-white ${R.root}`}>
             <ResumeRenewalTocNav />
             <ResumeRenewalHero />
             <ResumeRenewalProfileSection />

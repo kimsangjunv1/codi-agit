@@ -36,7 +36,7 @@ const ResumeRenewalTocNav = () => {
     return (
         <nav
             aria-label="페이지 목차"
-            className="hidden pc:block fixed top-[12rem] right-[0] z-40 bg-black p-[2.4rem]"
+            className={`${R.root} hidden pc:block fixed top-[12rem] right-[0] z-40 bg-black p-[2.4rem]`}
         >
             <ul className="flex flex-col gap-[0.2rem]">
                 {renewalTocItems.map((item) => {

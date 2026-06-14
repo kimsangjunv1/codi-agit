@@ -2,6 +2,7 @@
 
 import type { RenewalProjectEntry } from "@/shared/constants/resume/resumeRenewalData";
 import { getRenewalProjectAnchorId } from "@/shared/constants/resume/resumeRenewalData";
+import RenewalProjectLogoPanel from "./RenewalProjectLogoPanel";
 import RenewalRightBlocks from "./RenewalRightBlocks";
 import RenewalSplitSection from "./RenewalSplitSection";
 import ResumeRenewalCaseStudySection from "./ResumeRenewalCaseStudySection";
@@ -22,8 +23,7 @@ const ResumeRenewalProject = ({ project, index }: ResumeRenewalProjectProps) => 
             <RenewalSplitSection
                 id={anchorId}
                 divider
-                leftFill
-                left={<StudioSlider items={project.sliderItems} touch embedded />}
+                left={<RenewalProjectLogoPanel alt={`${project.title} 로고`} logo={project.logo} />}
             >
                 <RenewalRightBlocks
                     label={<p className={R.category}>{project.category}</p>}
@@ -77,6 +77,10 @@ const ResumeRenewalProject = ({ project, index }: ResumeRenewalProjectProps) => 
                     }
                 />
             </RenewalSplitSection>
+
+            <section className={`${R.root} w-full`}>
+                <StudioSlider items={project.sliderItems} touch fullWidth />
+            </section>
 
             <ResumeRenewalCaseStudySection caseStudy={project.caseStudy} project={project} index={index} />
             <ResumeRenewalGallery items={project.gallery} />
