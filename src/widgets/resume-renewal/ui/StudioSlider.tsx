@@ -15,8 +15,11 @@ type StudioSliderProps = {
     touch?: boolean;
     embedded?: boolean;
     fullWidth?: boolean;
+    variant?: "project" | "marquee";
+    duration?: number;
 };
-export function StudioSlider({ items, touch = false, embedded = false, fullWidth = false }: StudioSliderProps) {
+export function StudioSlider({ items, touch = false, embedded = false, fullWidth = false, variant = "project", duration = 52 }: StudioSliderProps) {
+    const isMarquee = variant === "marquee";
     const trackRef = useRef<HTMLDivElement | null>(null);
     const sliderItems = [...items, ...items];
     const x = useMotionValue(0);
@@ -61,7 +64,72 @@ export function StudioSlider({ items, touch = false, embedded = false, fullWidth
         velocityRef.current = Math.abs(dampedVelocity) < 1 ? 0 : dampedVelocity;
     });
 
-    const isStatic = embedded || fullWidth;
+    const isStatic = embedded || fullWidth || isMarquee;
+
+    const track = (
+        <motion.div
+            ref={trackRef}
+            className={`flex w-max ${isMarquee ? "items-center gap-0" : "items-start gap-[0.4rem]"} ${touch ? "cursor-grab active:cursor-grabbing" : ""}`}
+            animate={touch ? undefined : { x: ["0%", "-50%"] }}
+            drag={touch ? "x" : false}
+            dragElastic={touch ? 0.02 : undefined}
+            dragMomentum={false}
+            onDragStart={() => {
+                isDraggingRef.current = true;
+                velocityRef.current = 0;
+            }}
+            onDrag={() => {
+                const loopWidth = loopWidthRef.current;
+
+                if (!loopWidth) return;
+
+                x.set(normalizeX(x.get(), loopWidth));
+            }}
+            onDragEnd={(_, info: PanInfo) => {
+                isDraggingRef.current = false;
+                velocityRef.current = info.velocity.x;
+                x.set(normalizeX(x.get(), loopWidthRef.current));
+            }}
+            transition={touch ? undefined : { duration, ease: "linear", repeat: Infinity }}
+            style={touch ? { x, touchAction: "pan-y" } : undefined}
+        >
+            {sliderItems.map((item, index) =>
+                isMarquee ? (
+                    <div
+                        className="w-[100dvw] shrink-0"
+                        key={`${item.title}-${index}`}
+                    >
+                        <img
+                            alt=""
+                            aria-hidden
+                            className="block h-auto w-full select-none pointer-events-none"
+                            src={item.image}
+                            draggable={false}
+                        />
+                    </div>
+                ) : (
+                    <article
+                        className={`${R.root} relative shrink-0 overflow-hidden bg-white`}
+                        key={`${item.title}-${index}`}
+                    >
+                        <img
+                            alt={item.title}
+                            className="block max-h-[50svh] w-auto h-auto object-contain object-top opacity-85 select-none pointer-events-none"
+                            src={item.image}
+                        />
+
+                        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-white/95 to-transparent mobile:p-[2rem] pc:p-[3.2rem] h-[50%] flex items-end">
+                            <h6 className="text-[#000000] font-[700] mobile:text-[2.4rem] pc:text-[3.2rem]">{item.title}</h6>
+                        </div>
+                    </article>
+                ),
+            )}
+        </motion.div>
+    );
+
+    if (isMarquee) {
+        return <div className="w-full overflow-hidden">{track}</div>;
+    }
 
     return (
         <motion.section
@@ -83,49 +151,7 @@ export function StudioSlider({ items, touch = false, embedded = false, fullWidth
                       }
             }
         >
-            <motion.div
-                ref={trackRef}
-                className={`flex w-max items-start gap-[0.4rem] ${touch ? "cursor-grab active:cursor-grabbing" : ""}`}
-                animate={touch ? undefined : { x: ["0%", "-50%"] }}
-                drag={touch ? "x" : false}
-                dragElastic={touch ? 0.02 : undefined}
-                dragMomentum={false}
-                onDragStart={() => {
-                    isDraggingRef.current = true;
-                    velocityRef.current = 0;
-                }}
-                onDrag={() => {
-                    const loopWidth = loopWidthRef.current;
-
-                    if (!loopWidth) return;
-
-                    x.set(normalizeX(x.get(), loopWidth));
-                }}
-                onDragEnd={(_, info: PanInfo) => {
-                    isDraggingRef.current = false;
-                    velocityRef.current = info.velocity.x;
-                    x.set(normalizeX(x.get(), loopWidthRef.current));
-                }}
-                transition={touch ? undefined : { duration: 52, ease: "linear", repeat: Infinity }}
-                style={touch ? { x, touchAction: "pan-y" } : undefined}
-            >
-                {sliderItems.map((item, index) => (
-                    <article
-                        className={`${R.root} relative shrink-0 overflow-hidden bg-white`}
-                        key={`${item.title}-${index}`}
-                    >
-                        <img
-                            alt={item.title}
-                            className="block max-h-[50svh] w-auto h-auto object-contain object-top opacity-85 select-none pointer-events-none"
-                            src={item.image}
-                        />
-
-                        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-white/95 to-transparent mobile:p-[2rem] pc:p-[3.2rem] h-[50%] flex items-end">
-                            <h6 className="text-[#000000] font-[700] mobile:text-[2.4rem] pc:text-[3.2rem]">{item.title}</h6>
-                        </div>
-                    </article>
-                ))}
-            </motion.div>
+            {track}
         </motion.section>
     );
 }

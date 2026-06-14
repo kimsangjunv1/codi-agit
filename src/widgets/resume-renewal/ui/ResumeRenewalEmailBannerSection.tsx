@@ -1,16 +1,25 @@
 "use client";
 
 import { renewalContact } from "@/shared/constants/resume/resumeRenewalData";
-import { R } from "./renewalStyles";
+
+import { StudioSlider } from "./StudioSlider";
+
+const FOOTER_EMAIL_SVG = "/images/icon/common/footer-email.svg";
 
 const ResumeRenewalEmailBannerSection = () => {
     return (
-        <section className={`${R.root} w-full overflow-hidden`}>
+        <section className="relative left-1/2 w-[100dvw] -translate-x-1/2 overflow-hidden bg-[#00ff61]">
             <a
                 href={`mailto:${renewalContact.email}`}
-                className="block w-full text-[12.0rem] font-bold uppercase leading-none text-[#000000] hover:opacity-70 transition-opacity"
+                aria-label={`${renewalContact.email}로 이메일 보내기`}
+                className="block hover:opacity-70 transition-opacity"
             >
-                {renewalContact.email}
+                <StudioSlider
+                    variant="marquee"
+                    fullWidth
+                    items={[{ title: renewalContact.email, image: FOOTER_EMAIL_SVG }]}
+                    duration={30}
+                />
             </a>
         </section>
     );

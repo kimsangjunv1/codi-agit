@@ -7,7 +7,10 @@ import { R } from "./renewalStyles";
 
 const ResumeRenewalBuiltWithSection = () => {
     return (
-        <RenewalSplitSection id="renewal-built-with" divider>
+        <RenewalSplitSection
+            id="renewal-built-with"
+            divider
+        >
             <RenewalRightBlocks
                 label={<p className={R.label}>Built With</p>}
                 headline={<h2 className={R.keyline}>{renewalBuiltWith.headline}</h2>}
@@ -28,7 +31,10 @@ const ResumeRenewalBuiltWithSection = () => {
 
                         <ul className={`flex flex-col gap-[0.8rem] ${R.divider} pt-[2.4rem]`}>
                             {renewalBuiltWith.practices.map((practice) => (
-                                <li key={practice} className={R.bodyMuted}>
+                                <li
+                                    key={practice}
+                                    className={R.bodyMuted}
+                                >
                                     {practice}
                                 </li>
                             ))}
