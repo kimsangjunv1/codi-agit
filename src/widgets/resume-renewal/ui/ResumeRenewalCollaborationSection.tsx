@@ -16,7 +16,7 @@ const ResumeRenewalCollaborationSection = () => {
                     <div className="flex flex-col gap-[2.4rem]">
                         {renewalCollaboration.items.map((item, index) => (
                             <div key={item.title} className={index > 0 ? `${R.divider} pt-[2.4rem]` : ""}>
-                                <h3 className="text-[1.8rem] font-bold text-black mb-[0.8rem]">{item.title}</h3>
+                                <h3 className="text-[1.8rem] font-bold text-[#000000] mb-[0.8rem]">{item.title}</h3>
                                 <p className={R.bodyMuted}>{item.description}</p>
                                 <p className={`${R.meta} mt-[1rem]`}>{item.tags.join(" · ")}</p>
                             </div>

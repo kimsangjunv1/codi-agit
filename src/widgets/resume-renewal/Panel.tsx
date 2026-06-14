@@ -6,6 +6,7 @@ import ResumeRenewalCollaborationSection from "./ui/ResumeRenewalCollaborationSe
 import ResumeRenewalContactSection from "./ui/ResumeRenewalContactSection";
 import ResumeRenewalCtaSection from "./ui/ResumeRenewalCtaSection";
 import ResumeRenewalEducationSection from "./ui/ResumeRenewalEducationSection";
+import ResumeRenewalEmailBannerSection from "./ui/ResumeRenewalEmailBannerSection";
 import ResumeRenewalFooter from "./ui/ResumeRenewalFooter";
 import ResumeRenewalHero from "./ui/ResumeRenewalHero";
 import ResumeRenewalProfileSection from "./ui/ResumeRenewalProfileSection";
@@ -36,6 +37,7 @@ const ResumeRenewalPanel = () => {
             {/* <ResumeRenewalContactSection />
             <ResumeRenewalCtaSection /> */}
             <ResumeRenewalFooter />
+            <ResumeRenewalEmailBannerSection />
         </article>
     );
 };

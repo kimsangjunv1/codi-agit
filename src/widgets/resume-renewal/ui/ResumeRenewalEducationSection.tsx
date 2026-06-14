@@ -25,7 +25,7 @@ const ResumeRenewalEducationSection = () => {
                 }
                 details={
                     <div>
-                        <h3 className="text-[1.8rem] font-bold text-black">{renewalEducation.activity.title}</h3>
+                        <h3 className="text-[1.8rem] font-bold text-[#000000]">{renewalEducation.activity.title}</h3>
                         <p className={`${R.meta} mt-[0.4rem]`}>{renewalEducation.activity.period}</p>
                         <p className={`${R.bodyMuted} mt-[1rem]`}>{renewalEducation.activity.description}</p>
                         <ul className="mt-[1.2rem] flex flex-col gap-[0.8rem]">

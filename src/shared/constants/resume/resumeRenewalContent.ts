@@ -1,7 +1,13 @@
 import { resumeActivity, resumeEducation, resumeProfile } from "./resumeData";
 
+export type RenewalSliderItem = {
+    title: string;
+    image: string;
+};
+
 export type RenewalProjectVisual = {
     category: string;
+    sliderItems: RenewalSliderItem[];
 };
 
 export type RenewalGalleryLinkType = "demo" | "github" | "article" | "screenshot" | "internal";
@@ -79,6 +85,30 @@ export type RenewalBuiltWithMetric = {
 };
 
 const THUMB = (n: string) => `/images/picture/img-dummy-thumbnail-${n}.png`;
+
+/** 프로젝트 소개 섹션 StudioSlider용 — image 경로만 교체하면 됩니다 */
+export const renewalProjectSliders: Record<string, RenewalSliderItem[]> = {
+    fandombox: [
+        { title: "게이미피케이션 UI", image: THUMB("01") },
+        { title: "등급 이펙트", image: THUMB("02") },
+        { title: "리워드 플로우", image: THUMB("03") },
+    ],
+    maze: [
+        { title: "랜딩 페이지", image: THUMB("07") },
+        { title: "세부 페이지", image: THUMB("08") },
+        { title: "반응형 UI", image: THUMB("09") },
+    ],
+    "codi-agit": [
+        { title: "홈 화면", image: THUMB("11") },
+        { title: "코디 추천", image: THUMB("12") },
+        { title: "커뮤니티", image: THUMB("13") },
+    ],
+    keepupass: [
+        { title: "대시보드", image: THUMB("03") },
+        { title: "관리 UI", image: THUMB("04") },
+        { title: "데이터 뷰", image: THUMB("05") },
+    ],
+};
 
 export const renewalTocItems: RenewalTocItem[] = [
     { id: "renewal-about", label: "About" },

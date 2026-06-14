@@ -15,7 +15,7 @@ const ResumeRenewalHero = () => {
             id="renewal-about"
             left={
                 <RenewalFadeIn>
-                    <div className="relative w-full aspect-[4/5] max-w-[28rem] mx-auto overflow-hidden bg-[#eee]">
+                    <div className="relative w-full aspect-[4/5] max-w-[28rem] mx-auto overflow-hidden bg-white">
                         <Image
                             src={renewalHero.profileImage}
                             alt={`${renewalHero.title} 프로필 사진`}

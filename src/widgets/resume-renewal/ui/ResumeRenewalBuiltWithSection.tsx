@@ -19,7 +19,7 @@ const ResumeRenewalBuiltWithSection = () => {
                         <div className={`grid grid-cols-2 gap-[2rem] ${R.divider} pt-[2.4rem]`}>
                             {renewalBuiltWith.metrics.map((metric) => (
                                 <div key={metric.label}>
-                                    <p className="text-[2rem] font-bold text-black">{metric.value}</p>
+                                    <p className="text-[2rem] font-bold text-[#000000]">{metric.value}</p>
                                     <p className={`${R.meta} mt-[0.4rem]`}>{metric.label}</p>
                                     {metric.sub && <p className={`${R.meta} mt-[0.2rem]`}>{metric.sub}</p>}
                                 </div>

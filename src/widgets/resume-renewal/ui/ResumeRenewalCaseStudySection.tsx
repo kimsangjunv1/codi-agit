@@ -1,17 +1,34 @@
 "use client";
 
+import type { RenewalProjectEntry } from "@/shared/constants/resume/resumeRenewalData";
 import type { RenewalCaseStudy } from "@/shared/constants/resume/resumeRenewalData";
+import RenewalProjectChartPanel from "./RenewalProjectChartPanel";
 import RenewalRightBlocks from "./RenewalRightBlocks";
 import RenewalSplitSection from "./RenewalSplitSection";
 import { R } from "./renewalStyles";
 
 type ResumeRenewalCaseStudySectionProps = {
     caseStudy: RenewalCaseStudy;
+    project: RenewalProjectEntry;
+    index: number;
 };
 
-const ResumeRenewalCaseStudySection = ({ caseStudy }: ResumeRenewalCaseStudySectionProps) => {
+const ResumeRenewalCaseStudySection = ({ caseStudy, project, index }: ResumeRenewalCaseStudySectionProps) => {
     return (
-        <RenewalSplitSection divider>
+        <RenewalSplitSection
+            divider
+            left={
+                <RenewalProjectChartPanel
+                    index={index}
+                    period={project.period}
+                    projectId={project.id}
+                    highlight={project.highlight}
+                    chartLabel={project.chartLabel}
+                    chartPoints={project.chartPoints}
+                    metrics={project.metrics}
+                />
+            }
+        >
             <RenewalRightBlocks
                 label={<p className={R.label}>Case Study</p>}
                 headline={<p className={R.keyline}>{caseStudy.result}</p>}
@@ -58,17 +75,17 @@ const ResumeRenewalCaseStudySection = ({ caseStudy }: ResumeRenewalCaseStudySect
 
                         {caseStudy.decisions.map((decision) => (
                             <div key={decision.title} className={`${R.divider} pt-[2.4rem]`}>
-                                <p className="text-[1.6rem] font-semibold text-black mb-[1rem]">{decision.title}</p>
+                                <p className="text-[1.6rem] font-semibold text-[#000000] mb-[1rem]">{decision.title}</p>
                                 <p className={R.body}>
-                                    <span className="text-[#888]">Chosen · </span>
+                                    <span className="text-[#000000]">Chosen · </span>
                                     {decision.chosen}
                                 </p>
                                 <p className={`${R.bodyMuted} mt-[0.8rem]`}>
-                                    <span className="text-[#888]">Alternative · </span>
+                                    <span className="text-[#000000]">Alternative · </span>
                                     {decision.alternative}
                                 </p>
                                 <p className={`${R.bodyMuted} mt-[0.8rem]`}>
-                                    <span className="text-[#888]">Why · </span>
+                                    <span className="text-[#000000]">Why · </span>
                                     {decision.reason}
                                 </p>
                             </div>
@@ -80,7 +97,7 @@ const ResumeRenewalCaseStudySection = ({ caseStudy }: ResumeRenewalCaseStudySect
                                 <ul className="flex flex-col gap-[1.2rem]">
                                     {caseStudy.architecture.layers.map((layer) => (
                                         <li key={layer.name}>
-                                            <span className="text-[1.6rem] font-semibold text-black">{layer.name}</span>
+                                            <span className="text-[1.6rem] font-semibold text-[#000000]">{layer.name}</span>
                                             <span className={`${R.bodyMuted} ml-[0.8rem]`}>— {layer.description}</span>
                                         </li>
                                     ))}

@@ -20,14 +20,14 @@ const ResumeRenewalSkillSection = () => {
                 <div className="flex flex-col gap-[4rem] w-full">
                     <div>
                         <p className={R.meta}>{experience.label}</p>
-                        <p className="text-[8rem] font-bold text-black leading-none tracking-[-0.04em]">
+                        <p className="text-[8rem] font-bold text-[#000000] leading-none tracking-[-0.04em]">
                             {experience.value}
                             <span className="text-[4rem]">{experience.suffix}</span>
                         </p>
                     </div>
                     <div>
                         <p className={R.meta}>{skills.label}</p>
-                        <p className="text-[8rem] font-bold text-black leading-none tracking-[-0.04em]">
+                        <p className="text-[8rem] font-bold text-[#000000] leading-none tracking-[-0.04em]">
                             {skills.value}
                             <span className="text-[4rem]">{experience.suffix}</span>
                         </p>
@@ -46,7 +46,7 @@ const ResumeRenewalSkillSection = () => {
                                 key={category.id}
                                 className={categoryIndex > 0 ? `${R.divider} pt-[2.4rem]` : ""}
                             >
-                                <h3 className="text-[1.8rem] font-bold text-black mb-[0.8rem]">{category.label}</h3>
+                                <h3 className="text-[1.8rem] font-bold text-[#000000] mb-[0.8rem]">{category.label}</h3>
                                 <p className={`${R.bodyMuted} mb-[1.6rem]`}>{category.description}</p>
                                 <ul className="flex flex-col gap-[1.2rem]">
                                     {category.items.map((item) => (
@@ -54,7 +54,7 @@ const ResumeRenewalSkillSection = () => {
                                             key={item.name}
                                             className="flex flex-col gap-[0.4rem]"
                                         >
-                                            <span className="text-[1.6rem] font-medium text-[#111]">{item.name}</span>
+                                            <span className="text-[1.6rem] font-medium text-[#000000]">{item.name}</span>
                                             {item.note && <span className={R.meta}>{item.note}</span>}
                                             <div className="flex flex-wrap gap-[0.6rem] mt-[0.4rem]">
                                                 {item.projectIds.map((projectId) => (
@@ -62,7 +62,7 @@ const ResumeRenewalSkillSection = () => {
                                                         key={`${item.name}-${projectId}`}
                                                         type="button"
                                                         onClick={() => scrollToProject(projectId)}
-                                                        className={`${R.meta} hover:text-black transition-colors`}
+                                                        className={`${R.meta} hover:text-[#000000] transition-colors`}
                                                     >
                                                         {projectId}
                                                     </button>

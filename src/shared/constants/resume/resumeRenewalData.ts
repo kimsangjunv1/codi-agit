@@ -8,11 +8,13 @@ import {
     renewalEducation,
     renewalGalleryByProject,
     renewalProfileDetails,
+    renewalProjectSliders,
     renewalProjectLinks,
     renewalSkillCategories,
     renewalTocItems,
     type RenewalGalleryItem,
     type RenewalProjectVisual,
+    type RenewalSliderItem,
 } from "./resumeRenewalContent";
 
 export type {
@@ -24,6 +26,7 @@ export type {
     RenewalProjectLinks,
     RenewalSkillCategory,
     RenewalSkillItem,
+    RenewalSliderItem,
     RenewalTocItem,
 } from "./resumeRenewalContent";
 
@@ -35,6 +38,7 @@ export {
     renewalEducation,
     renewalGalleryByProject,
     renewalProfileDetails,
+    renewalProjectSliders,
     renewalProjectLinks,
     renewalSkillCategories,
     renewalTocItems,
@@ -77,15 +81,15 @@ export type RenewalProjectEntry = ResumeProject &
     };
 
 export const renewalProjectVisuals: Record<string, RenewalProjectVisual> = {
-    fandombox: { category: "Product" },
-    maze: { category: "Corporate" },
-    "codi-agit": { category: "Personal Service" },
-    keepupass: { category: "Admin Dashboard" },
+    fandombox: { category: "Product", sliderItems: renewalProjectSliders.fandombox },
+    maze: { category: "Corporate", sliderItems: renewalProjectSliders.maze },
+    "codi-agit": { category: "Personal Service", sliderItems: renewalProjectSliders["codi-agit"] },
+    keepupass: { category: "Admin Dashboard", sliderItems: renewalProjectSliders.keepupass },
 };
 
 export const renewalProjects: RenewalProjectEntry[] = resumeProjects.map((project) => ({
     ...project,
-    category: renewalProjectVisuals[project.id].category,
+    ...renewalProjectVisuals[project.id],
     gallery: renewalGalleryByProject[project.id] ?? [],
     links: renewalProjectLinks[project.id] ?? {},
     caseStudy: renewalCaseStudies[project.id],

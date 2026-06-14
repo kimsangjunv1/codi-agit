@@ -18,14 +18,14 @@ const ResumeRenewalProfileSection = () => {
                         <div className="grid grid-cols-3 gap-[2rem]">
                             {resumeSummaryStats.map((stat) => (
                                 <div key={stat.label}>
-                                    <p className="text-[2rem] font-bold text-black">{stat.value}</p>
+                                    <p className="text-[2rem] font-bold text-[#000000]">{stat.value}</p>
                                     <p className={`${R.meta} mt-[0.4rem]`}>{stat.label}</p>
                                 </div>
                             ))}
                         </div>
                         <dl className={`${R.divider} pt-[2.4rem] grid grid-cols-[9rem_1fr] gap-y-[1rem] ${R.meta}`}>
                             <dt>경력</dt>
-                            <dd className="text-[#333]">{resumeProfile.experience}</dd>
+                            <dd>{resumeProfile.experience}</dd>
                             <dt>연락처</dt>
                             <dd>
                                 <a href={`tel:${renewalProfileDetails.phone.replace(/-/g, "")}`} className={R.link}>

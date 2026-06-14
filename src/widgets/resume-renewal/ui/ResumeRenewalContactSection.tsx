@@ -13,7 +13,7 @@ const ResumeRenewalContactSection = () => {
                 headline={<p className={R.keyline}>{renewalContact.quote}</p>}
                 description={
                     <div className="flex flex-col gap-[1rem]">
-                        <a href={`mailto:${renewalContact.email}`} className={`${R.link} text-[1.6rem]`}>
+                        <a href={`mailto:${renewalContact.email}`} className={R.link}>
                             {renewalContact.email}
                         </a>
                         <a href={renewalContactExtended.phoneHref} className={R.link}>

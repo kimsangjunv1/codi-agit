@@ -20,7 +20,7 @@ const ResumeRenewalCtaSection = () => {
                     <div className="flex flex-col gap-[2.4rem]">
                         {items.map((item, index) => (
                             <div key={item.headline} className={index > 0 ? `${R.divider} pt-[2.4rem]` : ""}>
-                                <p className="text-[1.8rem] font-bold text-black">{item.headline}</p>
+                                <p className="text-[1.8rem] font-bold text-[#000000]">{item.headline}</p>
                                 <p className={`${R.bodyMuted} mt-[0.8rem]`}>{item.description}</p>
                                 {item.href.startsWith("mailto:") ? (
                                     <a href={item.href} className={`${R.link} mt-[1rem] inline-block`}>

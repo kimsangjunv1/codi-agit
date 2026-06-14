@@ -9,17 +9,13 @@ const ResumeRenewalTocNav = () => {
     const [activeId, setActiveId] = useState(renewalTocItems[0]?.id ?? "");
 
     useEffect(() => {
-        const sections = renewalTocItems
-            .map((item) => document.getElementById(item.id))
-            .filter((el): el is HTMLElement => el !== null);
+        const sections = renewalTocItems.map((item) => document.getElementById(item.id)).filter((el): el is HTMLElement => el !== null);
 
         if (sections.length === 0) return;
 
         const observer = new IntersectionObserver(
             (entries) => {
-                const visible = entries
-                    .filter((entry) => entry.isIntersecting)
-                    .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+                const visible = entries.filter((entry) => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio);
 
                 if (visible[0]?.target.id) {
                     setActiveId(visible[0].target.id);
@@ -40,7 +36,7 @@ const ResumeRenewalTocNav = () => {
     return (
         <nav
             aria-label="페이지 목차"
-            className="hidden pc:block fixed top-[12rem] right-[2.4rem] z-40 w-[12rem]"
+            className="hidden pc:block fixed top-[12rem] right-[0] z-40 bg-black p-[2.4rem]"
         >
             <ul className="flex flex-col gap-[0.2rem]">
                 {renewalTocItems.map((item) => {
@@ -51,9 +47,7 @@ const ResumeRenewalTocNav = () => {
                             <button
                                 type="button"
                                 onClick={() => handleClick(item.id)}
-                                className={`w-full text-left text-[1.2rem] py-[0.4rem] transition-colors ${
-                                    isActive ? "text-black font-medium" : "text-[#999] hover:text-[#666]"
-                                }`}
+                                className={`w-full font-bold uppercase text-left text-[1.8rem] py-[0.4rem] transition-colors ${isActive ? "text-[#ffffff] font-medium" : "text-[#ffffff]/40 hover:text-[#000000]/70"}`}
                             >
                                 {item.label}
                             </button>
