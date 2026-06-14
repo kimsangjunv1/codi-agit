@@ -23,7 +23,12 @@ const ResumeRenewalProject = ({ project, index }: ResumeRenewalProjectProps) => 
             <RenewalSplitSection
                 id={anchorId}
                 divider
-                left={<RenewalProjectLogoPanel alt={`${project.title} 로고`} logo={project.logo} />}
+                left={
+                    <RenewalProjectLogoPanel
+                        alt={`${project.title} 로고`}
+                        logo={project.logo}
+                    />
+                }
             >
                 <RenewalRightBlocks
                     label={<p className={R.category}>{project.category}</p>}
@@ -38,7 +43,10 @@ const ResumeRenewalProject = ({ project, index }: ResumeRenewalProjectProps) => 
                         <div className="flex flex-col gap-[2.4rem]">
                             <ul className="flex flex-col gap-[1.2rem]">
                                 {project.achievements.map((achievement) => (
-                                    <li key={achievement} className={R.bodyMuted}>
+                                    <li
+                                        key={achievement}
+                                        className={R.bodyMuted}
+                                    >
                                         {achievement}
                                     </li>
                                 ))}
@@ -56,34 +64,56 @@ const ResumeRenewalProject = ({ project, index }: ResumeRenewalProjectProps) => 
                             {(project.links.demo || project.links.github || project.links.article) && (
                                 <div className="flex flex-wrap gap-x-[2rem] gap-y-[0.8rem]">
                                     {project.links.demo && (
-                                        <a href={project.links.demo} target="_blank" rel="noopener noreferrer" className={R.link}>
+                                        <a
+                                            href={project.links.demo}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className={R.link}
+                                        >
                                             Live Demo
                                         </a>
                                     )}
                                     {project.links.github && (
-                                        <a href={project.links.github} target="_blank" rel="noopener noreferrer" className={R.link}>
+                                        <a
+                                            href={project.links.github}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className={R.link}
+                                        >
                                             GitHub
                                         </a>
                                     )}
                                     {project.links.article && (
-                                        <a href={project.links.article} target="_blank" rel="noopener noreferrer" className={R.link}>
+                                        <a
+                                            href={project.links.article}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className={R.link}
+                                        >
                                             Article
                                         </a>
                                     )}
                                 </div>
                             )}
-
                         </div>
                     }
                 />
             </RenewalSplitSection>
 
             <section className={`${R.root} w-full`}>
-                <StudioSlider items={project.sliderItems} touch fullWidth />
+                <StudioSlider
+                    items={project.sliderItems}
+                    touch
+                    fullWidth
+                />
             </section>
 
-            <ResumeRenewalCaseStudySection caseStudy={project.caseStudy} project={project} index={index} />
-            <ResumeRenewalGallery items={project.gallery} />
+            <ResumeRenewalCaseStudySection
+                caseStudy={project.caseStudy}
+                project={project}
+                index={index}
+            />
+            {/* <ResumeRenewalGallery items={project.gallery} /> */}
         </>
     );
 };

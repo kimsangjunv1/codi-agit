@@ -59,13 +59,13 @@ export const RENEWAL_GALLERY_VIEWPORT = {
 } as const;
 
 export const renewalHero = {
-    category: "Portfolio",
+    category: "RESUME",
     title: resumeProfile.name,
     subtitle: "프론트엔드 개발자",
     description: resumeProfile.mission,
     body: resumeProfile.introduction,
     role: "Frontend Developer",
-    profileImage: "/images/picture/resume-profile.jpg",
+    profileImage: "/images/picture/resume-profile.png",
     quickLinks: [
         { label: "Live Demo", href: resumeProfile.service, external: true },
         { label: "GitHub", href: resumeProfile.github, external: true },

@@ -17,10 +17,10 @@ import { R } from "./ui/renewalStyles";
 
 const ResumeRenewalPanel = () => {
     return (
-        <article className={`relative w-full bg-white ${R.root}`}>
+        <article className={`relative w-full bg-white max-w-[var(--size-pc)] mx-auto ${R.root}`}>
             <ResumeRenewalTocNav />
             <ResumeRenewalHero />
-            <ResumeRenewalProfileSection />
+            {/* <ResumeRenewalProfileSection /> */}
             <ResumeRenewalSkillSection />
 
             <ResumeRenewalCollaborationSection />

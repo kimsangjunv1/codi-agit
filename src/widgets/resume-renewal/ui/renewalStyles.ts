@@ -3,7 +3,8 @@ export const R = {
     /** 페이지 루트 — CSS reset(1.4rem) 덮어 최소 16px 보장 */
     root: "text-[1.6rem] text-[#000000]",
     /** 2단: 왼쪽 시각 / 오른쪽 텍스트 */
-    split: "grid grid-cols-1 tablet:grid-cols-2 min-h-[100svh]",
+    split: "grid grid-cols-1 tablet:grid-cols-2",
+    // split: "grid grid-cols-1 tablet:grid-cols-2 min-h-[100svh]",
     // split: "grid grid-cols-1 tablet:grid-cols-2",
     left: "hidden tablet:flex tablet:items-center tablet:justify-center tablet:min-h-[48rem] px-[4rem] py-[8rem]",
     leftInner: "w-full max-w-[40rem]",

@@ -1,19 +1,34 @@
 "use client";
 
+import { useMemo } from "react";
+
 import { renewalSkillCategories, renewalSkillStats } from "@/shared/constants/resume/resumeRenewalData";
 import RenewalRightBlocks from "./RenewalRightBlocks";
 import RenewalSplitSection from "./RenewalSplitSection";
+import WaveFlowSlider, { WAVE_FLOW_DEFAULT_LOGO } from "./WaveFlowSlider";
 import { R } from "./renewalStyles";
 
 const ResumeRenewalSkillSection = () => {
     const { experience, skills } = renewalSkillStats;
 
+    const skillSliderItems = useMemo(
+        () =>
+            skills.items.map((name, index) => ({
+                id: `skill-${index}`,
+                image: WAVE_FLOW_DEFAULT_LOGO,
+                alt: name,
+            })),
+        [skills.items],
+    );
+
     return (
         <RenewalSplitSection
             id="renewal-skills"
             divider
+            leftWrapperClassName="!items-stretch !justify-center overflow-hidden w-full"
             left={
-                <div className="flex flex-col gap-[4rem] w-full">
+                <div className="flex w-full flex-col gap-[4rem]">
+                    <WaveFlowSlider items={skillSliderItems} />
                     <div>
                         <p className={R.meta}>{experience.label}</p>
                         <p className="text-[8rem] font-bold text-[#000000] leading-none tracking-[-0.04em]">

@@ -28,19 +28,30 @@ const ResumeRenewalProfileSection = () => {
                             <dd>{resumeProfile.experience}</dd>
                             <dt>연락처</dt>
                             <dd>
-                                <a href={`tel:${renewalProfileDetails.phone.replace(/-/g, "")}`} className={R.link}>
+                                <a
+                                    href={`tel:${renewalProfileDetails.phone.replace(/-/g, "")}`}
+                                    className={R.link}
+                                >
                                     {renewalProfileDetails.phone}
                                 </a>
                             </dd>
                             <dt>이메일</dt>
                             <dd>
-                                <a href={`mailto:${resumeProfile.email}`} className={R.link}>
+                                <a
+                                    href={`mailto:${resumeProfile.email}`}
+                                    className={R.link}
+                                >
                                     {resumeProfile.email}
                                 </a>
                             </dd>
                             <dt>서비스</dt>
                             <dd>
-                                <a href={renewalProfileDetails.service} target="_blank" rel="noopener noreferrer" className={R.link}>
+                                <a
+                                    href={renewalProfileDetails.service}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className={R.link}
+                                >
                                     codi-agit.com
                                 </a>
                             </dd>
