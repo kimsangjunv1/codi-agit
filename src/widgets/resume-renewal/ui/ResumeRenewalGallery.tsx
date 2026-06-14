@@ -1,60 +1,97 @@
 "use client";
 
+import Image from "next/image";
+import Link from "next/link";
 import { motion } from "motion/react";
 
 import type { RenewalGalleryItem } from "@/shared/constants/resume/resumeRenewalData";
-import { RENEWAL_GALLERY_VIEWPORT, RENEWAL_REVEAL_EASE } from "@/shared/constants/resume/resumeRenewalData";
-import ClippedRevealText, { ClippedRevealGroup } from "./ClippedRevealText";
+import { RENEWAL_GALLERY_VIEWPORT } from "@/shared/constants/resume/resumeRenewalData";
+import { useReducedMotion } from "@/shared/hooks/useReducedMotion";
+import ClippedRevealText from "./ClippedRevealText";
+import { R } from "./renewalStyles";
 
 type ResumeRenewalGalleryProps = {
     items: RenewalGalleryItem[];
+};
+
+const GalleryImage = ({ item }: { item: RenewalGalleryItem }) => {
+    const reducedMotion = useReducedMotion();
+    const MotionDiv = reducedMotion ? "div" : motion.div;
+    const motionProps = reducedMotion
+        ? {}
+        : {
+              initial: { opacity: 0 },
+              whileInView: { opacity: 1 },
+              viewport: RENEWAL_GALLERY_VIEWPORT,
+              transition: { duration: 0.6 },
+          };
+
+    const image = (
+        <div className="relative aspect-[16/10] w-full overflow-hidden bg-[#eee]">
+            <Image src={item.imageSrc} alt={item.label} fill className="object-cover" sizes="(max-width:768px) 50vw, 25vw" />
+        </div>
+    );
+
+    const caption = (
+        <div className="mt-[1rem]">
+            <p className="text-[1.4rem] font-medium text-black">{item.label}</p>
+            <p className={`${R.meta} mt-[0.4rem] line-clamp-2`}>{item.description}</p>
+            {item.href && item.linkLabel && <span className={`${R.link} mt-[0.6rem] inline-block`}>{item.linkLabel}</span>}
+        </div>
+    );
+
+    const content = (
+        <>
+            {image}
+            {caption}
+        </>
+    );
+
+    return (
+        <MotionDiv {...motionProps}>
+            {item.href ? (
+                item.href.startsWith("http") ? (
+                    <a href={item.href} target="_blank" rel="noopener noreferrer" className="block">
+                        {content}
+                    </a>
+                ) : (
+                    <Link href={item.href} className="block">
+                        {content}
+                    </Link>
+                )
+            ) : (
+                <div>{content}</div>
+            )}
+        </MotionDiv>
+    );
 };
 
 const ResumeRenewalGallery = ({ items }: ResumeRenewalGalleryProps) => {
     const colCount = items.length <= 4 ? 2 : 3;
 
     return (
-        <div className="w-full border-t border-[#e5e5e5] bg-[#fafafa]">
-            <div className="py-[4.8rem]">
-                <ClippedRevealGroup>
+        <section className={R.divider}>
+            <div className={R.split}>
+                <div className="hidden tablet:block" aria-hidden />
+                <div className={`${R.right} !py-[4rem] tablet:!py-[6rem]`}>
                     <ClippedRevealText>
-                        <h3 className="text-[1.2rem] font-bold tracking-[0.2em] uppercase text-[#111] mb-[3.2rem]">
-                            Related Contents
-                        </h3>
+                        <p className={R.label}>Related Contents</p>
+                        <p className={`${R.bodyMuted} mt-[1rem]`}>스크린샷·데모·GitHub·아티클</p>
                     </ClippedRevealText>
-                </ClippedRevealGroup>
-
-                <div
-                    className="grid"
-                    style={{ gridTemplateColumns: `repeat(${colCount}, minmax(0, 1fr))` }}
-                >
-                    {items.map((item, index) => (
-                        <motion.div
-                            key={item.id}
-                            initial={{ opacity: 0, y: 40 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={RENEWAL_GALLERY_VIEWPORT}
-                            transition={{
-                                duration: 0.8,
-                                ease: RENEWAL_REVEAL_EASE,
-                                delay: index * 0.08,
-                            }}
-                            className="relative aspect-[16/10] overflow-hidden group"
-                        >
-                            <div
-                                className="absolute inset-0 transition-transform duration-700 group-hover:scale-[1.03]"
-                                style={{ background: item.gradient }}
-                            />
-                            <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                            <div className="absolute bottom-0 left-0 right-0 p-[1.6rem] bg-gradient-to-t from-black/60 to-transparent">
-                                <p className="text-[1.2rem] text-white font-medium">{item.label}</p>
-                            </div>
-                            <div className="absolute top-[1.2rem] right-[1.2rem] w-[0.8rem] h-[0.8rem] rounded-full bg-[#111]" />
-                        </motion.div>
-                    ))}
                 </div>
             </div>
-        </div>
+
+            <div className={R.split}>
+                <div className="hidden tablet:block" aria-hidden />
+                <div className={`${R.right} !pt-0 !pb-[6rem] tablet:!pb-[10rem]`}>
+                    <div className="grid gap-[2.4rem]" style={{ gridTemplateColumns: `repeat(${colCount}, minmax(0, 1fr))` }}>
+                        {items.map((item) => (
+                            <GalleryImage key={item.id} item={item} />
+                        ))}
+                    </div>
+                </div>
+            </div>
+        </section>
     );
 };
 

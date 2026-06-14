@@ -1,15 +1,43 @@
 import type { ResumeProject } from "./resumeData";
 import { resumeProfile, resumeProjects, resumeTechStack } from "./resumeData";
+import {
+    renewalBuiltWith,
+    renewalCaseStudies,
+    renewalCollaboration,
+    renewalContactExtended,
+    renewalEducation,
+    renewalGalleryByProject,
+    renewalProfileDetails,
+    renewalProjectLinks,
+    renewalSkillCategories,
+    renewalTocItems,
+    type RenewalGalleryItem,
+    type RenewalProjectVisual,
+} from "./resumeRenewalContent";
 
-export type RenewalGalleryItem = {
-    id: string;
-    label: string;
-    gradient: string;
-};
+export type {
+    RenewalCaseStudy,
+    RenewalCollaborationItem,
+    RenewalDecision,
+    RenewalGalleryItem,
+    RenewalGalleryLinkType,
+    RenewalProjectLinks,
+    RenewalSkillCategory,
+    RenewalSkillItem,
+    RenewalTocItem,
+} from "./resumeRenewalContent";
 
-export type RenewalProjectVisual = {
-    category: string;
-    gallery: RenewalGalleryItem[];
+export {
+    renewalBuiltWith,
+    renewalCaseStudies,
+    renewalCollaboration,
+    renewalContactExtended,
+    renewalEducation,
+    renewalGalleryByProject,
+    renewalProfileDetails,
+    renewalProjectLinks,
+    renewalSkillCategories,
+    renewalTocItems,
 };
 
 export const RENEWAL_REVEAL_EASE = [0.22, 1, 0.36, 1] as const;
@@ -24,15 +52,6 @@ export const RENEWAL_GALLERY_VIEWPORT = {
     margin: "-5%",
 } as const;
 
-const MONO_GRADIENTS = [
-    "linear-gradient(135deg, #111111 0%, #333333 100%)",
-    "linear-gradient(135deg, #1a1a1a 0%, #444444 100%)",
-    "linear-gradient(135deg, #222222 0%, #555555 100%)",
-    "linear-gradient(135deg, #0a0a0a 0%, #2a2a2a 100%)",
-    "linear-gradient(135deg, #333333 0%, #666666 100%)",
-    "linear-gradient(135deg, #1f1f1f 0%, #4a4a4a 100%)",
-];
-
 export const renewalHero = {
     category: "Portfolio",
     title: resumeProfile.name,
@@ -41,56 +60,33 @@ export const renewalHero = {
     body: resumeProfile.introduction,
     role: "Frontend Developer",
     profileImage: "/images/picture/resume-profile.jpg",
+    quickLinks: [
+        { label: "Live Demo", href: resumeProfile.service, external: true },
+        { label: "GitHub", href: resumeProfile.github, external: true },
+        { label: "Email", href: `mailto:${resumeProfile.email}`, external: false },
+    ],
 };
+
+export type RenewalProjectEntry = ResumeProject &
+    RenewalProjectVisual & {
+        gallery: RenewalGalleryItem[];
+        links: (typeof renewalProjectLinks)[string];
+        caseStudy: (typeof renewalCaseStudies)[string];
+    };
 
 export const renewalProjectVisuals: Record<string, RenewalProjectVisual> = {
-    fandombox: {
-        category: "Product",
-        gallery: [
-            { id: "fb-1", label: "게이미피케이션 UI", gradient: MONO_GRADIENTS[0] },
-            { id: "fb-2", label: "등급 이펙트", gradient: MONO_GRADIENTS[1] },
-            { id: "fb-3", label: "리워드 플로우", gradient: MONO_GRADIENTS[2] },
-            { id: "fb-4", label: "API 최적화", gradient: MONO_GRADIENTS[3] },
-            { id: "fb-5", label: "스켈레톤 UI", gradient: MONO_GRADIENTS[4] },
-            { id: "fb-6", label: "모바일 뷰", gradient: MONO_GRADIENTS[5] },
-        ],
-    },
-    maze: {
-        category: "Corporate",
-        gallery: [
-            { id: "mz-1", label: "랜딩 히어로", gradient: MONO_GRADIENTS[0] },
-            { id: "mz-2", label: "세부 페이지", gradient: MONO_GRADIENTS[1] },
-            { id: "mz-3", label: "반응형 레이아웃", gradient: MONO_GRADIENTS[2] },
-            { id: "mz-4", label: "성능 개선", gradient: MONO_GRADIENTS[3] },
-        ],
-    },
-    "codi-agit": {
-        category: "Personal Service",
-        gallery: [
-            { id: "ca-1", label: "홈 아카이브", gradient: MONO_GRADIENTS[0] },
-            { id: "ca-2", label: "게시물 상세", gradient: MONO_GRADIENTS[1] },
-            { id: "ca-3", label: "에디터", gradient: MONO_GRADIENTS[2] },
-            { id: "ca-4", label: "관리자", gradient: MONO_GRADIENTS[3] },
-            { id: "ca-5", label: "로그인", gradient: MONO_GRADIENTS[4] },
-            { id: "ca-6", label: "모바일 메뉴", gradient: MONO_GRADIENTS[5] },
-        ],
-    },
-    keepupass: {
-        category: "Admin Dashboard",
-        gallery: [
-            { id: "kp-1", label: "대시보드", gradient: MONO_GRADIENTS[0] },
-            { id: "kp-2", label: "회원 관리", gradient: MONO_GRADIENTS[1] },
-            { id: "kp-3", label: "콘텐츠 CRUD", gradient: MONO_GRADIENTS[2] },
-            { id: "kp-4", label: "폼 인터랙션", gradient: MONO_GRADIENTS[3] },
-        ],
-    },
+    fandombox: { category: "Product" },
+    maze: { category: "Corporate" },
+    "codi-agit": { category: "Personal Service" },
+    keepupass: { category: "Admin Dashboard" },
 };
-
-export type RenewalProjectEntry = ResumeProject & RenewalProjectVisual;
 
 export const renewalProjects: RenewalProjectEntry[] = resumeProjects.map((project) => ({
     ...project,
-    ...renewalProjectVisuals[project.id],
+    category: renewalProjectVisuals[project.id].category,
+    gallery: renewalGalleryByProject[project.id] ?? [],
+    links: renewalProjectLinks[project.id] ?? {},
+    caseStudy: renewalCaseStudies[project.id],
 }));
 
 export const renewalSkillStats = {
@@ -110,8 +106,8 @@ export const renewalSkillStats = {
 };
 
 export const renewalFooter = {
-    education: "세한대학교 (당진) 정보물류학과 졸업 · 2016.03 ~ 2022.02",
-    activity: "이솔 스튜디오 창업 · 2019.10 ~ 2022.06",
+    education: `${renewalEducation.education.title} · ${renewalEducation.education.period}`,
+    activity: `${renewalEducation.activity.title} · ${renewalEducation.activity.period}`,
 };
 
 export const renewalContact = {
@@ -127,11 +123,45 @@ export const renewalCta = {
         headline: "SEND MAIL",
         description: "지금 바로, 메일내보세요! — 한 통이면 다음 프로젝트의 시작일이 정해질지도 몰라요.",
         href: `mailto:${resumeProfile.email}`,
+        external: false,
+    },
+    demo: {
+        label: "라이브 데모",
+        headline: "LIVE DEMO",
+        description: "Codi Agit — App Router·Auth·Supabase가 돌아가는 실서비스를 직접 확인하세요.",
+        href: resumeProfile.service,
+        external: true,
+    },
+    github: {
+        label: "GitHub",
+        headline: "VIEW CODE",
+        description: "아키텍처·CI·최적화 커밋 히스토리 — 코드로 말합니다.",
+        href: resumeProfile.github,
+        external: true,
     },
     resume: {
-        label: "이력서 보러가기",
+        label: "상세 이력서",
         headline: "VIEW RESUME",
-        description: "말보다 숫자가 먼저 나가는 이력서 — 클릭 한 번이면 바로 열려요.",
+        description: "숫자·프로젝트·학력이 정리된 /resume — 브라우저 인쇄(Ctrl+P)로 PDF 저장 가능.",
         href: "/resume",
+        external: false,
     },
 };
+
+export function getRenewalProjectAnchorId(projectId: string) {
+    return `renewal-project-${projectId}`;
+}
+
+export function buildRenewalPersonJsonLd() {
+    return {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        name: resumeProfile.name,
+        jobTitle: resumeProfile.role,
+        email: resumeProfile.email,
+        url: resumeProfile.service,
+        sameAs: [resumeProfile.github, renewalProfileDetails.linkedin, resumeProfile.portfolio],
+        knowsAbout: resumeTechStack,
+        description: resumeProfile.introduction,
+    };
+}

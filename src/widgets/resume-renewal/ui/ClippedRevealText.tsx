@@ -4,6 +4,7 @@ import { ReactNode } from "react";
 import { motion } from "motion/react";
 
 import { RENEWAL_REVEAL_EASE, RENEWAL_VIEWPORT } from "@/shared/constants/resume/resumeRenewalData";
+import { useReducedMotion } from "@/shared/hooks/useReducedMotion";
 
 type ClippedRevealTextProps = {
     children: ReactNode;
@@ -20,6 +21,12 @@ export const ClippedRevealGroup = ({
     className?: string;
     stagger?: number;
 }) => {
+    const reducedMotion = useReducedMotion();
+
+    if (reducedMotion) {
+        return <div className={className}>{children}</div>;
+    }
+
     return (
         <motion.div
             className={className}
@@ -39,6 +46,12 @@ export const ClippedRevealGroup = ({
 };
 
 const ClippedRevealText = ({ children, className = "", delay = 0 }: ClippedRevealTextProps) => {
+    const reducedMotion = useReducedMotion();
+
+    if (reducedMotion) {
+        return <div className={className}>{children}</div>;
+    }
+
     return (
         <motion.div
             className={`overflow-hidden ${className}`}

@@ -35,9 +35,7 @@ const MiniChart = ({
 
     return (
         <div className="flex flex-col h-full">
-            <p className="text-[1.2rem] text-[#888] mb-[0.8rem] flex items-center gap-[0.4rem]">
-                <span className="text-[#111]">⚡</span> {label}
-            </p>
+            <p className="text-[1.4rem] text-[#888] mb-[0.8rem]">{label}</p>
             <svg
                 viewBox={`0 0 ${width} ${height}`}
                 className="w-full flex-1"

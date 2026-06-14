@@ -1,79 +1,84 @@
 "use client";
 
-import { renewalSkillStats } from "@/shared/constants/resume/resumeRenewalData";
+import {
+    getRenewalProjectAnchorId,
+    renewalSkillCategories,
+    renewalSkillStats,
+} from "@/shared/constants/resume/resumeRenewalData";
 import ClippedRevealText, { ClippedRevealGroup } from "./ClippedRevealText";
+import RenewalSplitSection from "./RenewalSplitSection";
+import { R } from "./renewalStyles";
 
-const DOT_GRID_STYLE = {
-    backgroundImage: "radial-gradient(circle, #111111 1.5px, transparent 1.5px)",
-    backgroundSize: "14px 14px",
-} as const;
+const scrollToProject = (projectId: string) => {
+    document.getElementById(getRenewalProjectAnchorId(projectId))?.scrollIntoView({ behavior: "smooth", block: "start" });
+};
 
 const ResumeRenewalSkillSection = () => {
     const { experience, skills } = renewalSkillStats;
 
     return (
-        <section className="w-full border-b border-[#e5e5e5] bg-white">
-            <div className="grid grid-cols-2 min-h-[28rem] tablet:min-h-[36rem]">
-                <div
-                    className="min-w-0 opacity-[0.12]"
-                    style={DOT_GRID_STYLE}
-                    aria-hidden
-                />
-                <div className="flex flex-col justify-center px-[3.2rem] tablet:px-[6.4rem] py-[4.8rem] tablet:py-[6.4rem] border-r border-[#e5e5e5] min-w-0">
-                    <ClippedRevealGroup className="flex flex-col gap-[1.2rem]">
-                        <ClippedRevealText>
-                            <p className="text-[1.4rem] tablet:text-[1.6rem] font-bold text-[#111] tracking-wide">{experience.label}</p>
-                        </ClippedRevealText>
-
-                        <ClippedRevealText>
-                            <p className="text-[10rem] tablet:text-[14rem] font-bold text-[#111] leading-[0.85] tracking-[-0.04em]">
-                                {experience.value}
-                                {experience.suffix && <span className="text-[6rem] tablet:text-[8rem]">{experience.suffix}</span>}
-                            </p>
-                        </ClippedRevealText>
-
-                        <ClippedRevealText>
-                            <p className="text-[1.4rem] tablet:text-[1.6rem] text-[#444] leading-[1.6]">{experience.description}</p>
-                        </ClippedRevealText>
-                    </ClippedRevealGroup>
+        <RenewalSplitSection
+            id="renewal-skills"
+            divider
+            left={
+                <div className="flex flex-col gap-[4rem] w-full">
+                    <div>
+                        <p className={R.meta}>{experience.label}</p>
+                        <p className="text-[8rem] font-bold text-black leading-none tracking-[-0.04em]">
+                            {experience.value}
+                            <span className="text-[4rem]">{experience.suffix}</span>
+                        </p>
+                    </div>
+                    <div>
+                        <p className={R.meta}>{skills.label}</p>
+                        <p className="text-[8rem] font-bold text-black leading-none tracking-[-0.04em]">{skills.value}</p>
+                    </div>
                 </div>
-            </div>
+            }
+        >
+            <ClippedRevealGroup className="flex flex-col gap-[2.4rem]">
+                <ClippedRevealText>
+                    <p className={R.label}>Skills</p>
+                </ClippedRevealText>
 
-            <div className="grid grid-cols-2 border-t border-[#e5e5e5]">
-                <div
-                    className="min-w-0 bg-white"
-                    aria-hidden
-                />
-                <div className="px-[3.2rem] tablet:px-[6.4rem] py-[4.8rem] tablet:py-[6.4rem] border-r border-[#e5e5e5] min-w-0">
-                    <ClippedRevealGroup className="flex flex-col gap-[1.2rem]">
-                        <ClippedRevealText>
-                            <p className="text-[1.4rem] tablet:text-[1.6rem] font-bold text-[#111] tracking-wide">{skills.label}</p>
-                        </ClippedRevealText>
+                <ClippedRevealText>
+                    <p className={R.body}>{experience.description}</p>
+                </ClippedRevealText>
 
-                        <ClippedRevealText>
-                            <p className="text-[10rem] tablet:text-[14rem] font-bold text-[#111] leading-[0.85] tracking-[-0.04em]">{skills.value}</p>
-                        </ClippedRevealText>
+                <ClippedRevealText>
+                    <p className={R.bodyMuted}>{skills.description}</p>
+                </ClippedRevealText>
 
-                        <ClippedRevealText>
-                            <p className="text-[1.4rem] tablet:text-[1.6rem] text-[#444] leading-[1.6]">{skills.description}</p>
-                        </ClippedRevealText>
-
-                        <ClippedRevealText>
-                            <ul className="flex flex-wrap gap-[0.8rem] mt-[1.6rem]">
-                                {skills.items.map((item) => (
-                                    <li
-                                        key={item}
-                                        className="px-[1.2rem] py-[0.6rem] text-[1.2rem] text-[#333] border border-[#ddd] rounded-full bg-white"
-                                    >
-                                        {item}
+                {renewalSkillCategories.map((category, categoryIndex) => (
+                    <ClippedRevealText key={category.id}>
+                        <div className={categoryIndex > 0 ? `${R.divider} pt-[2.4rem]` : ""}>
+                            <h3 className="text-[1.8rem] font-bold text-black mb-[0.8rem]">{category.label}</h3>
+                            <p className={`${R.bodyMuted} mb-[1.6rem]`}>{category.description}</p>
+                            <ul className="flex flex-col gap-[1.2rem]">
+                                {category.items.map((item) => (
+                                    <li key={item.name} className="flex flex-col gap-[0.4rem]">
+                                        <span className="text-[1.6rem] font-medium text-[#111]">{item.name}</span>
+                                        {item.note && <span className={R.meta}>{item.note}</span>}
+                                        <div className="flex flex-wrap gap-[0.6rem] mt-[0.4rem]">
+                                            {item.projectIds.map((projectId) => (
+                                                <button
+                                                    key={`${item.name}-${projectId}`}
+                                                    type="button"
+                                                    onClick={() => scrollToProject(projectId)}
+                                                    className={`${R.meta} hover:text-black transition-colors`}
+                                                >
+                                                    {projectId}
+                                                </button>
+                                            ))}
+                                        </div>
                                     </li>
                                 ))}
                             </ul>
-                        </ClippedRevealText>
-                    </ClippedRevealGroup>
-                </div>
-            </div>
-        </section>
+                        </div>
+                    </ClippedRevealText>
+                ))}
+            </ClippedRevealGroup>
+        </RenewalSplitSection>
     );
 };
 

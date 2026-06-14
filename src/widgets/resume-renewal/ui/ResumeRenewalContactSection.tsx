@@ -1,45 +1,51 @@
 "use client";
 
-import { renewalContact } from "@/shared/constants/resume/resumeRenewalData";
+import { renewalContact, renewalContactExtended } from "@/shared/constants/resume/resumeRenewalData";
 import ClippedRevealText, { ClippedRevealGroup } from "./ClippedRevealText";
+import RenewalSplitSection from "./RenewalSplitSection";
+import { R } from "./renewalStyles";
 
 const ResumeRenewalContactSection = () => {
     return (
-        <section className="w-full bg-[#111111] text-white">
-            <div className="grid grid-cols-2 min-h-[40rem] tablet:min-h-[48rem]">
-                <div className="border-r border-white/10 min-w-0" aria-hidden />
+        <RenewalSplitSection id="renewal-contact" divider>
+            <ClippedRevealGroup className="flex flex-col gap-[2.4rem]">
+                <ClippedRevealText>
+                    <p className={R.label}>Contact</p>
+                </ClippedRevealText>
 
-                <div className="flex flex-col justify-center px-[3.2rem] tablet:px-[6.4rem] py-[8rem] tablet:py-[12rem] min-w-0">
-                    <ClippedRevealGroup className="flex flex-col gap-[4.8rem]">
-                        <ClippedRevealText>
-                            <p className="text-[2.8rem] tablet:text-[3.6rem] font-bold text-white leading-[1.25] tracking-[-0.02em]">
-                                {renewalContact.quote}
-                            </p>
-                        </ClippedRevealText>
+                <ClippedRevealText>
+                    <p className="text-[2rem] tablet:text-[2.4rem] font-bold text-black leading-[1.35]">{renewalContact.quote}</p>
+                </ClippedRevealText>
 
-                        <ClippedRevealText>
-                            <a
-                                href={`mailto:${renewalContact.email}`}
-                                className="block text-[2rem] tablet:text-[3.2rem] font-semibold text-white/80 hover:text-white transition-colors"
-                            >
-                                {renewalContact.email}
-                            </a>
-                        </ClippedRevealText>
+                <ClippedRevealText>
+                    <div className="flex flex-col gap-[1rem]">
+                        <a href={`mailto:${renewalContact.email}`} className={`${R.link} text-[1.6rem]`}>
+                            {renewalContact.email}
+                        </a>
+                        <a href={renewalContactExtended.phoneHref} className={R.link}>
+                            {renewalContactExtended.phone}
+                        </a>
+                    </div>
+                </ClippedRevealText>
 
-                        <ClippedRevealText>
-                            <a
-                                href={renewalContact.github}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="block text-[2rem] tablet:text-[3.2rem] font-semibold text-white/80 hover:text-white transition-colors"
-                            >
-                                {renewalContact.githubLabel}
-                            </a>
-                        </ClippedRevealText>
-                    </ClippedRevealGroup>
-                </div>
-            </div>
-        </section>
+                <ClippedRevealText>
+                    <div className={`flex flex-col gap-[0.8rem] ${R.divider} pt-[2.4rem]`}>
+                        <a href={renewalContact.github} target="_blank" rel="noopener noreferrer" className={R.link}>
+                            {renewalContact.githubLabel}
+                        </a>
+                        <a href={renewalContactExtended.linkedin} target="_blank" rel="noopener noreferrer" className={R.link}>
+                            {renewalContactExtended.linkedinLabel}
+                        </a>
+                        <a href={renewalContactExtended.service} target="_blank" rel="noopener noreferrer" className={R.link}>
+                            codi-agit.com
+                        </a>
+                        <a href={renewalContactExtended.portfolio} target="_blank" rel="noopener noreferrer" className={R.link}>
+                            portfoliosj-react.netlify.app
+                        </a>
+                    </div>
+                </ClippedRevealText>
+            </ClippedRevealGroup>
+        </RenewalSplitSection>
     );
 };
 
