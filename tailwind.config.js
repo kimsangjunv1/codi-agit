@@ -13,6 +13,19 @@ module.exports = {
     //   mobile: "34.4rem",   // 모바일 추가 fold 기준
     // },
     extend: {
+      fontFamily: {
+        sans: [
+          '"Helvetica Neue"',
+          '"Noto Sans KR"',
+          '"Segoe UI"',
+          "Arial",
+          "sans-serif",
+          '"Apple Color Emoji"',
+          '"Segoe UI Emoji"',
+          '"Segoe UI Symbol"',
+          '"Noto Color Emoji"',
+        ],
+      },
     },
   },
   plugins: [],
