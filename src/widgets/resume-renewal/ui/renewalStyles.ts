@@ -1,10 +1,12 @@
 /** resume-renewal 전용 — 16px(1.6rem) 기준, 흑백만 */
 export const R = {
     /** 2단: 왼쪽 시각 / 오른쪽 텍스트 */
-    split: "grid grid-cols-1 tablet:grid-cols-2",
+    split: "grid grid-cols-1 tablet:grid-cols-2 min-h-[100svh]",
+    // split: "grid grid-cols-1 tablet:grid-cols-2",
     left: "hidden tablet:flex tablet:items-center tablet:justify-center tablet:min-h-[48rem] px-[4rem] py-[8rem]",
     leftInner: "w-full max-w-[40rem]",
-    right: "py-[6rem] tablet:py-[10rem] tablet:col-start-2",
+    right: "py-[6rem] tablet:py-[10rem] tablet:col-start-2 flex items-center justify-start",
+    // right: "py-[6rem] tablet:py-[10rem] tablet:col-start-2",
     // right: "px-[2.4rem] tablet:px-[8rem] py-[6rem] tablet:py-[10rem] tablet:col-start-2",
     rightInner: "max-w-[56rem] flex flex-col gap-[2.4rem]",
     // rightInner: "max-w-[56rem] ml-0 tablet:ml-auto flex flex-col gap-[2.4rem]",

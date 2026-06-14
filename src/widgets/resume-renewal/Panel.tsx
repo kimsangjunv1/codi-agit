@@ -21,15 +21,20 @@ const ResumeRenewalPanel = () => {
             <ResumeRenewalProfileSection />
             <ResumeRenewalSkillSection />
 
-            {renewalProjects.map((project, index) => (
-                <ResumeRenewalProject key={project.id} project={project} index={index} />
-            ))}
-
             <ResumeRenewalCollaborationSection />
             <ResumeRenewalEducationSection />
-            <ResumeRenewalBuiltWithSection />
-            <ResumeRenewalContactSection />
-            <ResumeRenewalCtaSection />
+
+            {renewalProjects.map((project, index) => (
+                <ResumeRenewalProject
+                    key={project.id}
+                    project={project}
+                    index={index}
+                />
+            ))}
+
+            {/* <ResumeRenewalBuiltWithSection /> */}
+            {/* <ResumeRenewalContactSection />
+            <ResumeRenewalCtaSection /> */}
             <ResumeRenewalFooter />
         </article>
     );

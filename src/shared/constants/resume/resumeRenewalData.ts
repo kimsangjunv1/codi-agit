@@ -101,7 +101,7 @@ export const renewalSkillStats = {
     skills: {
         label: "skills",
         value: String(resumeTechStack.length),
-        suffix: "",
+        suffix: "+",
         description: `React·Next.js·TypeScript 등 ${resumeTechStack.length}개의 기술 스택을 활용해 프로젝트를 진행했습니다.`,
         items: resumeTechStack,
     },

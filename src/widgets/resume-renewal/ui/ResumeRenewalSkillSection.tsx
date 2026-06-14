@@ -1,10 +1,6 @@
 "use client";
 
-import {
-    getRenewalProjectAnchorId,
-    renewalSkillCategories,
-    renewalSkillStats,
-} from "@/shared/constants/resume/resumeRenewalData";
+import { getRenewalProjectAnchorId, renewalSkillCategories, renewalSkillStats } from "@/shared/constants/resume/resumeRenewalData";
 import RenewalRightBlocks from "./RenewalRightBlocks";
 import RenewalSplitSection from "./RenewalSplitSection";
 import { R } from "./renewalStyles";
@@ -31,7 +27,10 @@ const ResumeRenewalSkillSection = () => {
                     </div>
                     <div>
                         <p className={R.meta}>{skills.label}</p>
-                        <p className="text-[8rem] font-bold text-black leading-none tracking-[-0.04em]">{skills.value}</p>
+                        <p className="text-[8rem] font-bold text-black leading-none tracking-[-0.04em]">
+                            {skills.value}
+                            <span className="text-[4rem]">{experience.suffix}</span>
+                        </p>
                     </div>
                 </div>
             }
@@ -43,12 +42,18 @@ const ResumeRenewalSkillSection = () => {
                 details={
                     <div className="flex flex-col gap-[2.4rem]">
                         {renewalSkillCategories.map((category, categoryIndex) => (
-                            <div key={category.id} className={categoryIndex > 0 ? `${R.divider} pt-[2.4rem]` : ""}>
+                            <div
+                                key={category.id}
+                                className={categoryIndex > 0 ? `${R.divider} pt-[2.4rem]` : ""}
+                            >
                                 <h3 className="text-[1.8rem] font-bold text-black mb-[0.8rem]">{category.label}</h3>
                                 <p className={`${R.bodyMuted} mb-[1.6rem]`}>{category.description}</p>
                                 <ul className="flex flex-col gap-[1.2rem]">
                                     {category.items.map((item) => (
-                                        <li key={item.name} className="flex flex-col gap-[0.4rem]">
+                                        <li
+                                            key={item.name}
+                                            className="flex flex-col gap-[0.4rem]"
+                                        >
                                             <span className="text-[1.6rem] font-medium text-[#111]">{item.name}</span>
                                             {item.note && <span className={R.meta}>{item.note}</span>}
                                             <div className="flex flex-wrap gap-[0.6rem] mt-[0.4rem]">
