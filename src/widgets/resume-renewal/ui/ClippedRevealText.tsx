@@ -1,22 +1,22 @@
 "use client";
 
-import { ReactNode, useRef } from "react";
-import { motion, useInView } from "motion/react";
+import { ReactNode } from "react";
+import { motion } from "motion/react";
 
-import { RENEWAL_REVEAL_EASE, RENEWAL_VIEWPORT } from "@/shared/constants/resume/resumeRenewalData";
+import { RENEWAL_REVEAL_EASE } from "@/shared/constants/resume/resumeRenewalData";
 import { useReducedMotion } from "@/shared/hooks/useReducedMotion";
 
 type ClippedRevealBlockProps = {
     children: ReactNode;
-    isInView: boolean;
+    revealed: boolean;
     delay?: number;
     className?: string;
 };
 
-/** clip reveal — isInView false 시 hidden 상태로 복구 */
-export const ClippedRevealBlock = ({ children, isInView, delay = 0, className = "" }: ClippedRevealBlockProps) => {
+/** clip reveal — revealed false일 때만 hidden 상태 */
+export const ClippedRevealBlock = ({ children, revealed, delay = 0, className = "" }: ClippedRevealBlockProps) => {
     const reducedMotion = useReducedMotion();
-    const visible = reducedMotion || isInView;
+    const visible = reducedMotion || revealed;
 
     return (
         <div className={`overflow-hidden ${className}`}>

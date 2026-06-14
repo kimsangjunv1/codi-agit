@@ -1,9 +1,9 @@
 "use client";
 
 import { ReactNode, useRef } from "react";
-import { useInView } from "motion/react";
 
 import { RENEWAL_VIEWPORT } from "@/shared/constants/resume/resumeRenewalData";
+import { useDirectionalRevealInView } from "@/shared/hooks/useDirectionalRevealInView";
 import { useReducedMotion } from "@/shared/hooks/useReducedMotion";
 import { ClippedRevealBlock } from "./ClippedRevealText";
 
@@ -20,7 +20,7 @@ type RenewalRightBlocksProps = {
 
 const RenewalRightBlocks = ({ label, headline, description, details, className = "" }: RenewalRightBlocksProps) => {
     const ref = useRef<HTMLDivElement>(null);
-    const isInView = useInView(ref, RENEWAL_VIEWPORT);
+    const revealed = useDirectionalRevealInView(ref, RENEWAL_VIEWPORT);
     const reducedMotion = useReducedMotion();
 
     const blocks = [
@@ -43,7 +43,7 @@ const RenewalRightBlocks = ({ label, headline, description, details, className =
     return (
         <div ref={ref} className={`flex flex-col gap-[3.2rem] ${className}`}>
             {blocks.map(({ key, content }, index) => (
-                <ClippedRevealBlock key={key} isInView={isInView} delay={index * BLOCK_STAGGER}>
+                <ClippedRevealBlock key={key} revealed={revealed} delay={index * BLOCK_STAGGER}>
                     {content}
                 </ClippedRevealBlock>
             ))}
