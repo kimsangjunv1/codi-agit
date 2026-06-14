@@ -1,13 +1,9 @@
 "use client";
 
-import { getRenewalProjectAnchorId, renewalSkillCategories, renewalSkillStats } from "@/shared/constants/resume/resumeRenewalData";
+import { renewalSkillCategories, renewalSkillStats } from "@/shared/constants/resume/resumeRenewalData";
 import RenewalRightBlocks from "./RenewalRightBlocks";
 import RenewalSplitSection from "./RenewalSplitSection";
 import { R } from "./renewalStyles";
-
-const scrollToProject = (projectId: string) => {
-    document.getElementById(getRenewalProjectAnchorId(projectId))?.scrollIntoView({ behavior: "smooth", block: "start" });
-};
 
 const ResumeRenewalSkillSection = () => {
     const { experience, skills } = renewalSkillStats;
@@ -48,29 +44,9 @@ const ResumeRenewalSkillSection = () => {
                             >
                                 <h3 className="text-[1.8rem] font-bold text-[#000000] mb-[0.8rem]">{category.label}</h3>
                                 <p className={`${R.bodyMuted} mb-[1.6rem]`}>{category.description}</p>
-                                <ul className="flex flex-col gap-[1.2rem]">
-                                    {category.items.map((item) => (
-                                        <li
-                                            key={item.name}
-                                            className="flex flex-col gap-[0.4rem]"
-                                        >
-                                            <span className="text-[1.6rem] font-medium text-[#000000]">{item.name}</span>
-                                            {item.note && <span className={R.meta}>{item.note}</span>}
-                                            <div className="flex flex-wrap gap-[0.6rem] mt-[0.4rem]">
-                                                {item.projectIds.map((projectId) => (
-                                                    <button
-                                                        key={`${item.name}-${projectId}`}
-                                                        type="button"
-                                                        onClick={() => scrollToProject(projectId)}
-                                                        className={`${R.meta} hover:text-[#000000] transition-colors`}
-                                                    >
-                                                        {projectId}
-                                                    </button>
-                                                ))}
-                                            </div>
-                                        </li>
-                                    ))}
-                                </ul>
+                                <p className="text-[1.6rem] font-medium text-[#000000] leading-[1.75]">
+                                    {category.items.map((item) => item.name).join(" · ")}
+                                </p>
                             </div>
                         ))}
                     </div>

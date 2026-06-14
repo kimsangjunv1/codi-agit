@@ -56,8 +56,6 @@ export type RenewalProjectLinks = {
 
 export type RenewalSkillItem = {
     name: string;
-    projectIds: string[];
-    note?: string;
 };
 
 export type RenewalSkillCategory = {
@@ -139,10 +137,10 @@ export const renewalSkillCategories: RenewalSkillCategory[] = [
         label: "Core",
         description: "프로덕션에서 반복적으로 사용하며, 아키텍처·성능·UX 의사결정의 중심이 되는 스택입니다.",
         items: [
-            { name: "React", projectIds: ["fandombox", "maze", "codi-agit", "keepupass"], note: "컴포넌트 설계·상태 분리" },
-            { name: "Next.js", projectIds: ["codi-agit"], note: "App Router·SSR·API Route" },
-            { name: "TypeScript", projectIds: ["codi-agit", "keepupass"], note: "타입 기반 API 계약" },
-            { name: "TanStack React Query", projectIds: ["codi-agit"], note: "서버 상태 캐싱·재검증" },
+            { name: "React" },
+            { name: "Next.js" },
+            { name: "TypeScript" },
+            { name: "TanStack React Query" },
         ],
     },
     {
@@ -150,13 +148,13 @@ export const renewalSkillCategories: RenewalSkillCategory[] = [
         label: "Used in Production",
         description: "실무·사이드 프로젝트에서 배포까지 경험한 기술입니다.",
         items: [
-            { name: "REST API", projectIds: ["fandombox", "keepupass"], note: "요청 병합·에러 핸들링" },
-            { name: "Zustand", projectIds: ["codi-agit"], note: "UI·세션 로컬 상태" },
-            { name: "Framer Motion", projectIds: ["fandombox", "keepupass"], note: "페이지·폼 모션" },
-            { name: "SCSS / Tailwind", projectIds: ["fandombox", "maze", "codi-agit"], note: "디자인 시스템·유틸리티" },
-            { name: "Supabase", projectIds: ["codi-agit"], note: "RLS·Auth 연동" },
-            { name: "NextAuth", projectIds: ["codi-agit"], note: "소셜 로그인·세션" },
-            { name: "SEO", projectIds: ["maze", "codi-agit"], note: "메타·OG·JSON-LD" },
+            { name: "REST API" },
+            { name: "Zustand" },
+            { name: "Framer Motion" },
+            { name: "SCSS / Tailwind" },
+            { name: "Supabase" },
+            { name: "NextAuth" },
+            { name: "SEO" },
         ],
     },
     {
@@ -164,9 +162,9 @@ export const renewalSkillCategories: RenewalSkillCategory[] = [
         label: "Exploring",
         description: "프로덕션 도입을 검토하거나 PoC 단계에서 학습 중인 영역입니다.",
         items: [
-            { name: "Vitest", projectIds: ["codi-agit"], note: "유틸·API 단위 테스트" },
-            { name: "Playwright", projectIds: ["codi-agit"], note: "E2E 시나리오 설계" },
-            { name: "Web Vitals", projectIds: ["maze", "codi-agit"], note: "LCP·CLS 모니터링" },
+            { name: "Vitest" },
+            { name: "Playwright" },
+            { name: "Web Vitals" },
         ],
     },
 ];
