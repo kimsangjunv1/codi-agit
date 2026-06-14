@@ -2,12 +2,13 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "motion/react";
+import { motion, useInView } from "motion/react";
+import { useRef } from "react";
 
 import type { RenewalGalleryItem } from "@/shared/constants/resume/resumeRenewalData";
 import { RENEWAL_GALLERY_VIEWPORT } from "@/shared/constants/resume/resumeRenewalData";
 import { useReducedMotion } from "@/shared/hooks/useReducedMotion";
-import ClippedRevealText from "./ClippedRevealText";
+import RenewalRightBlocks from "./RenewalRightBlocks";
 import { R } from "./renewalStyles";
 
 type ResumeRenewalGalleryProps = {
@@ -15,40 +16,31 @@ type ResumeRenewalGalleryProps = {
 };
 
 const GalleryImage = ({ item }: { item: RenewalGalleryItem }) => {
+    const ref = useRef<HTMLDivElement>(null);
+    const isInView = useInView(ref, RENEWAL_GALLERY_VIEWPORT);
     const reducedMotion = useReducedMotion();
-    const MotionDiv = reducedMotion ? "div" : motion.div;
-    const motionProps = reducedMotion
-        ? {}
-        : {
-              initial: { opacity: 0 },
-              whileInView: { opacity: 1 },
-              viewport: RENEWAL_GALLERY_VIEWPORT,
-              transition: { duration: 0.6 },
-          };
-
-    const image = (
-        <div className="relative aspect-[16/10] w-full overflow-hidden bg-[#eee]">
-            <Image src={item.imageSrc} alt={item.label} fill className="object-cover" sizes="(max-width:768px) 50vw, 25vw" />
-        </div>
-    );
-
-    const caption = (
-        <div className="mt-[1rem]">
-            <p className="text-[1.4rem] font-medium text-black">{item.label}</p>
-            <p className={`${R.meta} mt-[0.4rem] line-clamp-2`}>{item.description}</p>
-            {item.href && item.linkLabel && <span className={`${R.link} mt-[0.6rem] inline-block`}>{item.linkLabel}</span>}
-        </div>
-    );
+    const visible = reducedMotion || isInView;
 
     const content = (
         <>
-            {image}
-            {caption}
+            <div className="relative aspect-[16/10] w-full overflow-hidden bg-[#eee]">
+                <Image src={item.imageSrc} alt={item.label} fill className="object-cover" sizes="(max-width:768px) 50vw, 25vw" />
+            </div>
+            <div className="mt-[1rem]">
+                <p className="text-[1.4rem] font-medium text-black">{item.label}</p>
+                <p className={`${R.meta} mt-[0.4rem] line-clamp-2`}>{item.description}</p>
+                {item.href && item.linkLabel && <span className={`${R.link} mt-[0.6rem] inline-block`}>{item.linkLabel}</span>}
+            </div>
         </>
     );
 
     return (
-        <MotionDiv {...motionProps}>
+        <motion.div
+            ref={ref}
+            initial={false}
+            animate={{ opacity: visible ? 1 : 0 }}
+            transition={{ duration: reducedMotion ? 0 : 0.6 }}
+        >
             {item.href ? (
                 item.href.startsWith("http") ? (
                     <a href={item.href} target="_blank" rel="noopener noreferrer" className="block">
@@ -62,7 +54,7 @@ const GalleryImage = ({ item }: { item: RenewalGalleryItem }) => {
             ) : (
                 <div>{content}</div>
             )}
-        </MotionDiv>
+        </motion.div>
     );
 };
 
@@ -73,22 +65,19 @@ const ResumeRenewalGallery = ({ items }: ResumeRenewalGalleryProps) => {
         <section className={R.divider}>
             <div className={R.split}>
                 <div className="hidden tablet:block" aria-hidden />
-                <div className={`${R.right} !py-[4rem] tablet:!py-[6rem]`}>
-                    <ClippedRevealText>
-                        <p className={R.label}>Related Contents</p>
-                        <p className={`${R.bodyMuted} mt-[1rem]`}>스크린샷·데모·GitHub·아티클</p>
-                    </ClippedRevealText>
-                </div>
-            </div>
-
-            <div className={R.split}>
-                <div className="hidden tablet:block" aria-hidden />
-                <div className={`${R.right} !pt-0 !pb-[6rem] tablet:!pb-[10rem]`}>
-                    <div className="grid gap-[2.4rem]" style={{ gridTemplateColumns: `repeat(${colCount}, minmax(0, 1fr))` }}>
-                        {items.map((item) => (
-                            <GalleryImage key={item.id} item={item} />
-                        ))}
-                    </div>
+                <div className={R.right}>
+                    <RenewalRightBlocks
+                        label={<p className={R.label}>Related Contents</p>}
+                        headline={<p className={R.keyline}>프로젝트 실물 근거</p>}
+                        description={<p className={R.bodyMuted}>스크린샷·데모·GitHub·아티클 링크</p>}
+                        details={
+                            <div className="grid gap-[2.4rem]" style={{ gridTemplateColumns: `repeat(${colCount}, minmax(0, 1fr))` }}>
+                                {items.map((item) => (
+                                    <GalleryImage key={item.id} item={item} />
+                                ))}
+                            </div>
+                        }
+                    />
                 </div>
             </div>
         </section>

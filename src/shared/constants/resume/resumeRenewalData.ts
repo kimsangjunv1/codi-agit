@@ -45,11 +45,13 @@ export const RENEWAL_REVEAL_EASE = [0.22, 1, 0.36, 1] as const;
 export const RENEWAL_VIEWPORT = {
     once: false,
     margin: "-10%",
+    amount: 0.2,
 } as const;
 
 export const RENEWAL_GALLERY_VIEWPORT = {
     once: false,
     margin: "-5%",
+    amount: 0.15,
 } as const;
 
 export const renewalHero = {

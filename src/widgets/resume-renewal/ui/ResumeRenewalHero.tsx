@@ -4,8 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { renewalHero } from "@/shared/constants/resume/resumeRenewalData";
-import ClippedRevealText, { ClippedRevealGroup } from "./ClippedRevealText";
 import RenewalFadeIn from "./RenewalFadeIn";
+import RenewalRightBlocks from "./RenewalRightBlocks";
 import RenewalSplitSection from "./RenewalSplitSection";
 import { R } from "./renewalStyles";
 
@@ -28,45 +28,35 @@ const ResumeRenewalHero = () => {
                 </RenewalFadeIn>
             }
         >
-            <ClippedRevealGroup className="flex flex-col gap-[2.4rem]">
-                <ClippedRevealText>
-                    <p className={R.category}>{renewalHero.category}</p>
-                </ClippedRevealText>
-
-                <ClippedRevealText>
-                    <h1 className={R.title}>{renewalHero.description}</h1>
-                </ClippedRevealText>
-
-                <ClippedRevealText>
-                    <p className={R.body}>{renewalHero.body}</p>
-                </ClippedRevealText>
-
-                <ClippedRevealText>
-                    <div className="pt-[2rem]">
-                        <p className={R.role}>{renewalHero.role}</p>
-                        <p className={R.name}>{renewalHero.title}</p>
+            <RenewalRightBlocks
+                label={<p className={R.label}>{renewalHero.category}</p>}
+                headline={<h1 className={R.heroKeyline}>{renewalHero.description}</h1>}
+                description={<p className={R.body}>{renewalHero.body}</p>}
+                details={
+                    <div className="flex flex-col gap-[2rem]">
+                        <div>
+                            <p className={R.role}>{renewalHero.role}</p>
+                            <p className={R.name}>{renewalHero.title}</p>
+                        </div>
+                        <div className="flex flex-wrap gap-x-[2rem] gap-y-[0.8rem]">
+                            {renewalHero.quickLinks.map((link) =>
+                                link.external ? (
+                                    <a key={link.label} href={link.href} target="_blank" rel="noopener noreferrer" className={R.link}>
+                                        {link.label}
+                                    </a>
+                                ) : (
+                                    <a key={link.label} href={link.href} className={R.link}>
+                                        {link.label}
+                                    </a>
+                                ),
+                            )}
+                            <Link href="/resume" className={R.link}>
+                                Resume
+                            </Link>
+                        </div>
                     </div>
-                </ClippedRevealText>
-
-                <ClippedRevealText>
-                    <div className="flex flex-wrap gap-x-[2rem] gap-y-[0.8rem] pt-[0.8rem]">
-                        {renewalHero.quickLinks.map((link) =>
-                            link.external ? (
-                                <a key={link.label} href={link.href} target="_blank" rel="noopener noreferrer" className={R.link}>
-                                    {link.label}
-                                </a>
-                            ) : (
-                                <a key={link.label} href={link.href} className={R.link}>
-                                    {link.label}
-                                </a>
-                            ),
-                        )}
-                        <Link href="/resume" className={R.link}>
-                            Resume
-                        </Link>
-                    </div>
-                </ClippedRevealText>
-            </ClippedRevealGroup>
+                }
+            />
         </RenewalSplitSection>
     );
 };

@@ -1,83 +1,40 @@
 "use client";
 
-import { ReactNode } from "react";
-import { motion } from "motion/react";
+import { ReactNode, useRef } from "react";
+import { motion, useInView } from "motion/react";
 
 import { RENEWAL_REVEAL_EASE, RENEWAL_VIEWPORT } from "@/shared/constants/resume/resumeRenewalData";
 import { useReducedMotion } from "@/shared/hooks/useReducedMotion";
 
-type ClippedRevealTextProps = {
+type ClippedRevealBlockProps = {
     children: ReactNode;
-    className?: string;
+    isInView: boolean;
     delay?: number;
-};
-
-export const ClippedRevealGroup = ({
-    children,
-    className = "",
-    stagger = 0.12,
-}: {
-    children: ReactNode;
     className?: string;
-    stagger?: number;
-}) => {
-    const reducedMotion = useReducedMotion();
-
-    if (reducedMotion) {
-        return <div className={className}>{children}</div>;
-    }
-
-    return (
-        <motion.div
-            className={className}
-            initial="hidden"
-            whileInView="visible"
-            viewport={RENEWAL_VIEWPORT}
-            variants={{
-                hidden: {},
-                visible: {
-                    transition: { staggerChildren: stagger },
-                },
-            }}
-        >
-            {children}
-        </motion.div>
-    );
 };
 
-const ClippedRevealText = ({ children, className = "", delay = 0 }: ClippedRevealTextProps) => {
+/** clip reveal — isInView false 시 hidden 상태로 복구 */
+export const ClippedRevealBlock = ({ children, isInView, delay = 0, className = "" }: ClippedRevealBlockProps) => {
     const reducedMotion = useReducedMotion();
-
-    if (reducedMotion) {
-        return <div className={className}>{children}</div>;
-    }
+    const visible = reducedMotion || isInView;
 
     return (
-        <motion.div
-            className={`overflow-hidden ${className}`}
-            variants={{
-                hidden: {},
-                visible: {},
-            }}
-        >
+        <div className={`overflow-hidden ${className}`}>
             <motion.div
-                variants={{
-                    hidden: { x: "110%", opacity: 0 },
-                    visible: {
-                        x: 0,
-                        opacity: 1,
-                        transition: {
-                            duration: 0.9,
-                            ease: RENEWAL_REVEAL_EASE,
-                            delay,
-                        },
-                    },
+                initial={false}
+                animate={visible ? { x: 0, opacity: 1 } : { x: "110%", opacity: 0 }}
+                transition={{
+                    duration: reducedMotion ? 0 : visible ? 0.85 : 0.45,
+                    ease: RENEWAL_REVEAL_EASE,
+                    delay: visible ? delay : 0,
                 }}
             >
                 {children}
             </motion.div>
-        </motion.div>
+        </div>
     );
 };
+
+const ClippedRevealText = ClippedRevealBlock;
 
 export default ClippedRevealText;

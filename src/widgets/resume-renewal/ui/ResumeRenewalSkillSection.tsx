@@ -5,7 +5,7 @@ import {
     renewalSkillCategories,
     renewalSkillStats,
 } from "@/shared/constants/resume/resumeRenewalData";
-import ClippedRevealText, { ClippedRevealGroup } from "./ClippedRevealText";
+import RenewalRightBlocks from "./RenewalRightBlocks";
 import RenewalSplitSection from "./RenewalSplitSection";
 import { R } from "./renewalStyles";
 
@@ -36,48 +36,41 @@ const ResumeRenewalSkillSection = () => {
                 </div>
             }
         >
-            <ClippedRevealGroup className="flex flex-col gap-[2.4rem]">
-                <ClippedRevealText>
-                    <p className={R.label}>Skills</p>
-                </ClippedRevealText>
-
-                <ClippedRevealText>
-                    <p className={R.body}>{experience.description}</p>
-                </ClippedRevealText>
-
-                <ClippedRevealText>
-                    <p className={R.bodyMuted}>{skills.description}</p>
-                </ClippedRevealText>
-
-                {renewalSkillCategories.map((category, categoryIndex) => (
-                    <ClippedRevealText key={category.id}>
-                        <div className={categoryIndex > 0 ? `${R.divider} pt-[2.4rem]` : ""}>
-                            <h3 className="text-[1.8rem] font-bold text-black mb-[0.8rem]">{category.label}</h3>
-                            <p className={`${R.bodyMuted} mb-[1.6rem]`}>{category.description}</p>
-                            <ul className="flex flex-col gap-[1.2rem]">
-                                {category.items.map((item) => (
-                                    <li key={item.name} className="flex flex-col gap-[0.4rem]">
-                                        <span className="text-[1.6rem] font-medium text-[#111]">{item.name}</span>
-                                        {item.note && <span className={R.meta}>{item.note}</span>}
-                                        <div className="flex flex-wrap gap-[0.6rem] mt-[0.4rem]">
-                                            {item.projectIds.map((projectId) => (
-                                                <button
-                                                    key={`${item.name}-${projectId}`}
-                                                    type="button"
-                                                    onClick={() => scrollToProject(projectId)}
-                                                    className={`${R.meta} hover:text-black transition-colors`}
-                                                >
-                                                    {projectId}
-                                                </button>
-                                            ))}
-                                        </div>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    </ClippedRevealText>
-                ))}
-            </ClippedRevealGroup>
+            <RenewalRightBlocks
+                label={<p className={R.label}>Skills</p>}
+                headline={<p className={R.keyline}>{experience.description}</p>}
+                description={<p className={R.bodyMuted}>{skills.description}</p>}
+                details={
+                    <div className="flex flex-col gap-[2.4rem]">
+                        {renewalSkillCategories.map((category, categoryIndex) => (
+                            <div key={category.id} className={categoryIndex > 0 ? `${R.divider} pt-[2.4rem]` : ""}>
+                                <h3 className="text-[1.8rem] font-bold text-black mb-[0.8rem]">{category.label}</h3>
+                                <p className={`${R.bodyMuted} mb-[1.6rem]`}>{category.description}</p>
+                                <ul className="flex flex-col gap-[1.2rem]">
+                                    {category.items.map((item) => (
+                                        <li key={item.name} className="flex flex-col gap-[0.4rem]">
+                                            <span className="text-[1.6rem] font-medium text-[#111]">{item.name}</span>
+                                            {item.note && <span className={R.meta}>{item.note}</span>}
+                                            <div className="flex flex-wrap gap-[0.6rem] mt-[0.4rem]">
+                                                {item.projectIds.map((projectId) => (
+                                                    <button
+                                                        key={`${item.name}-${projectId}`}
+                                                        type="button"
+                                                        onClick={() => scrollToProject(projectId)}
+                                                        className={`${R.meta} hover:text-black transition-colors`}
+                                                    >
+                                                        {projectId}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        ))}
+                    </div>
+                }
+            />
         </RenewalSplitSection>
     );
 };

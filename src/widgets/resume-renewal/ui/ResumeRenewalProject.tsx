@@ -4,7 +4,7 @@ import type { RenewalProjectEntry } from "@/shared/constants/resume/resumeRenewa
 import { getRenewalProjectAnchorId } from "@/shared/constants/resume/resumeRenewalData";
 import { resumeProfile } from "@/shared/constants/resume/resumeData";
 import MiniChart from "@/widgets/resume/ui/MiniChart";
-import ClippedRevealText, { ClippedRevealGroup } from "./ClippedRevealText";
+import RenewalRightBlocks from "./RenewalRightBlocks";
 import RenewalSplitSection from "./RenewalSplitSection";
 import ResumeRenewalCaseStudySection from "./ResumeRenewalCaseStudySection";
 import ResumeRenewalGallery from "./ResumeRenewalGallery";
@@ -63,73 +63,61 @@ const ResumeRenewalProject = ({ project, index }: ResumeRenewalProjectProps) => 
                     </div>
                 }
             >
-                <ClippedRevealGroup className="flex flex-col gap-[2.4rem]">
-                    <ClippedRevealText>
-                        <p className={R.category}>{project.category}</p>
-                    </ClippedRevealText>
-
-                    <ClippedRevealText>
-                        <h2 className={R.title}>{project.title}</h2>
-                    </ClippedRevealText>
-
-                    <ClippedRevealText>
-                        <p className={R.subtitle}>{project.subtitle}</p>
-                    </ClippedRevealText>
-
-                    <ClippedRevealText>
-                        <p className={R.body}>{project.overview}</p>
-                    </ClippedRevealText>
-
-                    <ClippedRevealText>
-                        <ul className="flex flex-col gap-[1.2rem]">
-                            {project.achievements.map((achievement) => (
-                                <li key={achievement} className={R.bodyMuted}>
-                                    {achievement}
-                                </li>
-                            ))}
-                        </ul>
-                    </ClippedRevealText>
-
-                    <ClippedRevealText>
-                        <dl className={`grid grid-cols-[7rem_1fr] gap-y-[0.8rem] ${R.meta}`}>
-                            <dt>일정</dt>
-                            <dd className="text-[#333]">{project.period}</dd>
-                            <dt>기술</dt>
-                            <dd className="text-[#333]">{project.techStack}</dd>
-                            <dt>인력</dt>
-                            <dd className="text-[#333]">{project.team}</dd>
-                        </dl>
-                    </ClippedRevealText>
-
-                    {(project.links.demo || project.links.github || project.links.article) && (
-                        <ClippedRevealText>
-                            <div className="flex flex-wrap gap-x-[2rem] gap-y-[0.8rem]">
-                                {project.links.demo && (
-                                    <a href={project.links.demo} target="_blank" rel="noopener noreferrer" className={R.link}>
-                                        Live Demo
-                                    </a>
-                                )}
-                                {project.links.github && (
-                                    <a href={project.links.github} target="_blank" rel="noopener noreferrer" className={R.link}>
-                                        GitHub
-                                    </a>
-                                )}
-                                {project.links.article && (
-                                    <a href={project.links.article} target="_blank" rel="noopener noreferrer" className={R.link}>
-                                        Article
-                                    </a>
-                                )}
-                            </div>
-                        </ClippedRevealText>
-                    )}
-
-                    <ClippedRevealText>
-                        <div className={`${R.divider} pt-[2.4rem] mt-[1.6rem]`}>
-                            <p className={R.role}>Frontend Developer</p>
-                            <p className={R.name}>{resumeProfile.name}</p>
+                <RenewalRightBlocks
+                    label={<p className={R.category}>{project.category}</p>}
+                    headline={
+                        <div>
+                            <h2 className={R.keyline}>{project.title}</h2>
+                            <p className={`${R.subtitle} mt-[1.2rem]`}>{project.subtitle}</p>
                         </div>
-                    </ClippedRevealText>
-                </ClippedRevealGroup>
+                    }
+                    description={<p className={R.body}>{project.overview}</p>}
+                    details={
+                        <div className="flex flex-col gap-[2.4rem]">
+                            <ul className="flex flex-col gap-[1.2rem]">
+                                {project.achievements.map((achievement) => (
+                                    <li key={achievement} className={R.bodyMuted}>
+                                        {achievement}
+                                    </li>
+                                ))}
+                            </ul>
+
+                            <dl className={`grid grid-cols-[7rem_1fr] gap-y-[0.8rem] ${R.meta}`}>
+                                <dt>일정</dt>
+                                <dd className="text-[#333]">{project.period}</dd>
+                                <dt>기술</dt>
+                                <dd className="text-[#333]">{project.techStack}</dd>
+                                <dt>인력</dt>
+                                <dd className="text-[#333]">{project.team}</dd>
+                            </dl>
+
+                            {(project.links.demo || project.links.github || project.links.article) && (
+                                <div className="flex flex-wrap gap-x-[2rem] gap-y-[0.8rem]">
+                                    {project.links.demo && (
+                                        <a href={project.links.demo} target="_blank" rel="noopener noreferrer" className={R.link}>
+                                            Live Demo
+                                        </a>
+                                    )}
+                                    {project.links.github && (
+                                        <a href={project.links.github} target="_blank" rel="noopener noreferrer" className={R.link}>
+                                            GitHub
+                                        </a>
+                                    )}
+                                    {project.links.article && (
+                                        <a href={project.links.article} target="_blank" rel="noopener noreferrer" className={R.link}>
+                                            Article
+                                        </a>
+                                    )}
+                                </div>
+                            )}
+
+                            <div className={`${R.divider} pt-[2.4rem]`}>
+                                <p className={R.role}>Frontend Developer</p>
+                                <p className={R.name}>{resumeProfile.name}</p>
+                            </div>
+                        </div>
+                    }
+                />
             </RenewalSplitSection>
 
             <ResumeRenewalCaseStudySection caseStudy={project.caseStudy} />

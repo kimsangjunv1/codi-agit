@@ -13,6 +13,10 @@ export const R = {
     /** typography */
     label: "text-[1.2rem] tracking-[0.12em] uppercase text-[#888]",
     category: "text-[1.4rem] text-[#666]",
+    /** ResumeHeroSection h1과 동일 계열 — 섹션 핵심 문장 */
+    keyline: "text-[2.4rem] tablet:text-[3.6rem] font-bold text-black leading-[1.35] tracking-[-0.02em]",
+    heroKeyline: "text-[2.8rem] tablet:text-[2.8rem] font-bold text-black leading-[1.35] tracking-[-0.02em]",
+    // heroKeyline: "text-[2.8rem] tablet:text-[4.8rem] font-bold text-black leading-[1.35] tracking-[-0.02em]",
     title: "text-[2.4rem] tablet:text-[3.2rem] font-bold text-black leading-[1.25] tracking-[-0.02em]",
     subtitle: "text-[1.8rem] font-semibold text-[#111] leading-[1.4]",
     body: "text-[1.6rem] leading-[1.75] text-[#333]",
