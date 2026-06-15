@@ -60,11 +60,18 @@ export type RenewalSkillItem = {
     name: string;
 };
 
+/** @deprecated renewalSkillHighlights로 대체됨 */
 export type RenewalSkillCategory = {
     id: "core" | "production" | "exploring";
     label: string;
     description: string;
     items: RenewalSkillItem[];
+};
+
+export type RenewalSkillHighlight = {
+    id: string;
+    title: string;
+    description: string;
 };
 
 export type RenewalTocItem = {
@@ -86,7 +93,13 @@ export type RenewalBuiltWithMetric = {
 
 const THUMB = (n: string) => `/images/picture/img-dummy-thumbnail-${n}.png`;
 
-/** 프로젝트 소개 섹션 StudioSlider용 — image 경로만 교체하면 됩니다 */
+/**
+ * TODO: 실제 스크린샷으로 교체
+ * - fandombox: 01~03 (게이미피케이션 UI, 등급 이펙트, 리워드 플로우)
+ * - keepupass/kqr/imachine/hub/agency: TODO 스크린샷
+ * - maze: 07~09 (랜딩, 세부 페이지, 반응형)
+ * - stitchable: 11~13 (화면 코멘트, Issue 승급, 협업 플로우)
+ */
 export const renewalProjectSliders: Record<string, RenewalSliderItem[]> = {
     fandombox: [
         { title: "게이미피케이션 UI", image: THUMB("01") },
@@ -98,29 +111,51 @@ export const renewalProjectSliders: Record<string, RenewalSliderItem[]> = {
         { title: "세부 페이지", image: THUMB("08") },
         { title: "반응형 UI", image: THUMB("09") },
     ],
-    "codi-agit": [
-        { title: "홈 화면", image: THUMB("11") },
-        { title: "코디 추천", image: THUMB("12") },
-        { title: "커뮤니티", image: THUMB("13") },
+    stitchable: [
+        { title: "화면 코멘트", image: THUMB("11") },
+        { title: "Issue 승급", image: THUMB("12") },
+        { title: "QA 협업 플로우", image: THUMB("13") },
     ],
     keepupass: [
-        { title: "대시보드", image: THUMB("03") },
-        { title: "관리 UI", image: THUMB("04") },
-        { title: "데이터 뷰", image: THUMB("05") },
+        { title: "실시간 관제", image: THUMB("03") },
+        { title: "출입 관리", image: THUMB("04") },
+        { title: "어드민 UI", image: THUMB("05") },
+    ],
+    "dev-team-process": [
+        { title: "협업 표준", image: THUMB("01") },
+        { title: "Playwright QA", image: THUMB("02") },
+        { title: "API 4키 표준", image: THUMB("03") },
+    ],
+    kqr: [
+        { title: "QR 출입", image: THUMB("06") },
+        { title: "결제 플로우", image: THUMB("07") },
+        { title: "실시간 현황", image: THUMB("08") },
+    ],
+    "imachine-ceo": [
+        { title: "구독 플랜", image: THUMB("09") },
+        { title: "토스 결제", image: THUMB("10") },
+        { title: "매장 관리", image: THUMB("11") },
+    ],
+    "enjoysoft-hub": [
+        { title: "운영 대시보드", image: THUMB("12") },
+        { title: "API 관리", image: THUMB("13") },
+        { title: "서비스 연동", image: THUMB("14") },
+    ],
+    "agency-ceo": [
+        { title: "점주 등록", image: THUMB("01") },
+        { title: "대리결제", image: THUMB("02") },
+        { title: "플랜 관리", image: THUMB("03") },
     ],
 };
 
 export const renewalTocItems: RenewalTocItem[] = [
     { id: "renewal-about", label: "About" },
     { id: "renewal-skills", label: "Skills" },
-    { id: "renewal-project-fandombox", label: "Fandombox" },
-    { id: "renewal-project-maze", label: "Maze" },
-    { id: "renewal-project-codi-agit", label: "Codi Agit" },
-    { id: "renewal-project-keepupass", label: "Keepupass" },
     { id: "renewal-collaboration", label: "Collaboration" },
-    { id: "renewal-education", label: "Education" },
-    { id: "renewal-built-with", label: "Built With" },
-    { id: "renewal-contact", label: "Contact" },
+    { id: "renewal-experience-enjoysoft", label: "Enjoysoft" },
+    { id: "renewal-experience-maze-company", label: "Maze" },
+    { id: "renewal-deep-dive", label: "Deep Dive" },
+    { id: "renewal-side-project-stitchable", label: "Side Project" },
 ];
 
 export const renewalProfileDetails = {
@@ -133,41 +168,83 @@ export const renewalProfileDetails = {
     linkedin: "https://www.linkedin.com/in/kimsangjun-fe",
 };
 
+/** @deprecated renewalSkillHighlights로 대체됨 */
 export const renewalSkillCategories: RenewalSkillCategory[] = [
     {
         id: "core",
         label: "Core",
-        description: "프로덕션에서 반복적으로 사용하며, 아키텍처·성능·UX 의사결정의 중심이 되는 스택입니다.",
+        description: "SaaS·실시간 서비스에서 프로덕션 배포까지 반복 사용한 핵심 스택입니다.",
         items: [
             { name: "React" },
             { name: "Next.js" },
             { name: "TypeScript" },
-            { name: "TanStack React Query" },
+            { name: "React Query" },
         ],
     },
     {
         id: "production",
         label: "Used in Production",
-        description: "실무·사이드 프로젝트에서 배포까지 경험한 기술입니다.",
+        description: "정규직 실무에서 API·WebSocket·결제·배포까지 경험한 기술입니다.",
         items: [
+            { name: "WebSocket" },
             { name: "REST API" },
+            { name: "JWT" },
+            { name: "Playwright" },
             { name: "Zustand" },
             { name: "Framer Motion" },
+            { name: "Toss Payments" },
             { name: "SCSS / Tailwind" },
-            { name: "Supabase" },
-            { name: "NextAuth" },
-            { name: "SEO" },
         ],
     },
     {
         id: "exploring",
         label: "Exploring",
-        description: "프로덕션 도입을 검토하거나 PoC 단계에서 학습 중인 영역입니다.",
+        description: "사이드 프로젝트·PoC 단계에서 학습·운영 중인 영역입니다.",
         items: [
+            { name: "Supabase" },
+            { name: "NextAuth" },
             { name: "Vitest" },
-            { name: "Playwright" },
-            { name: "Web Vitals" },
+            { name: "Matter.js" },
         ],
+    },
+];
+
+export const renewalSkillHighlights: RenewalSkillHighlight[] = [
+    {
+        id: "react-typescript",
+        title: "React·Next.js & TypeScript 중심 프론트엔드 개발",
+        description:
+            "React·Next.js·TypeScript를 중심으로 SaaS·실시간 서비스를 개발해 왔습니다. CSR·SSR 모두 경험했으며, API 연동부터 프로덕션 배포까지 프론트엔드 서비스를 독립적으로 구성할 수 있습니다.",
+    },
+    {
+        id: "api-realtime",
+        title: "API & 실시간 연동",
+        description:
+            "REST API·WebSocket·JWT 인증을 실무에서 반복 사용했습니다. React Query로 서버 상태를 관리하고, API 응답 규격·에러 처리·캐싱 전략을 팀과 합의해 적용한 경험이 있습니다.",
+    },
+    {
+        id: "performance",
+        title: "성능 & UX 최적화",
+        description:
+            "불필요한 리렌더·번들 크기·네트워크 비용을 줄이는 데 집중해 왔습니다. Lighthouse·체감 지연·첫 인터랙션 등 측정 조건을 먼저 정리하고, lazy loading·코드 스플리팅·스켈레톤 UI로 개선해 왔습니다.",
+    },
+    {
+        id: "quality",
+        title: "품질 & 협업",
+        description:
+            "Playwright 기반 QA 자동화를 제안·도입하고, 코드리뷰·개발 프로세스 개선에 참여했습니다. 기능 구현뿐 아니라 팀 생산성과 배포 품질을 함께 높이는 방향으로 일해 왔습니다.",
+    },
+    {
+        id: "state-architecture",
+        title: "상태 관리 & 아키텍처",
+        description:
+            "React Query·Zustand로 서버·클라이언트 상태를 분리하고, FSD entities 레이어 패턴으로 도메인 로직을 구조화했습니다. Codi Agit 본 레포에서도 동일한 철학으로 유지보수 가능한 코드베이스를 지향합니다.",
+    },
+    {
+        id: "production-ops",
+        title: "결제 & 프로덕션 운영",
+        description:
+            "Toss Payments 연동, SEO·캐싱 설정 등 프로덕션 환경에서 필요한 프론트엔드 운영 경험이 있습니다. 사이드 프로젝트에서는 Supabase·NextAuth 기반 PoC도 진행 중입니다.",
     },
 ];
 
@@ -179,14 +256,19 @@ export const renewalProjectLinks: Record<string, RenewalProjectLinks> = {
     maze: {
         demo: "https://portfoliosj-react.netlify.app/",
     },
-    "codi-agit": {
-        demo: resumeProfile.service,
-        github: resumeProfile.github,
-        article: `${resumeProfile.service}home/`,
+    stitchable: {
+        github: "https://github.com/kimsangjunv1/stitchable",
     },
     keepupass: {
         github: resumeProfile.github,
     },
+    "dev-team-process": {
+        github: "https://github.com/kimsangjunv1/stitchable",
+    },
+    kqr: {},
+    "imachine-ceo": {},
+    "enjoysoft-hub": {},
+    "agency-ceo": {},
 };
 
 export const renewalGalleryByProject: Record<string, RenewalGalleryItem[]> = {
@@ -270,54 +352,36 @@ export const renewalGalleryByProject: Record<string, RenewalGalleryItem[]> = {
             linkLabel: "성과 지표",
         },
     ],
-    "codi-agit": [
+    stitchable: [
         {
-            id: "ca-1",
-            label: "홈 아카이브",
-            description: "코디·게시물 카드 그리드와 필터",
+            id: "st-1",
+            label: "화면 코멘트",
+            description: "Figma식 UI 피드백 앵커링·코멘트 UI",
             imageSrc: THUMB("11"),
-            href: resumeProfile.service,
-            linkType: "demo",
-            linkLabel: "Live Demo",
+            linkType: "screenshot",
         },
         {
-            id: "ca-2",
-            label: "게시물 상세",
-            description: "TipTap 에디터 렌더·댓글(Giscus)",
+            id: "st-2",
+            label: "Issue 승급",
+            description: "QA 논의 후 Git Issue로 전환하는 플로우",
             imageSrc: THUMB("12"),
-            href: `${resumeProfile.service}home/`,
-            linkType: "internal",
-            linkLabel: "서비스 이동",
+            href: "https://github.com/kimsangjunv1/stitchable",
+            linkType: "github",
+            linkLabel: "GitHub",
         },
         {
-            id: "ca-3",
-            label: "에디터",
-            description: "리치 텍스트·이미지 업로드·XSS sanitize",
+            id: "st-3",
+            label: "협업 체계",
+            description: "피드백·토론·이슈화가 이어지는 QA 협업 구조",
             imageSrc: THUMB("13"),
             linkType: "screenshot",
         },
         {
-            id: "ca-4",
-            label: "관리자",
-            description: "배너·회원·콘텐츠 관리 화면",
+            id: "st-4",
+            label: "라이브러리 API",
+            description: "React 컴포넌트·훅 기반 embed 설계",
             imageSrc: THUMB("14"),
             linkType: "screenshot",
-        },
-        {
-            id: "ca-5",
-            label: "로그인",
-            description: "NextAuth 소셜 로그인·세션 흐름",
-            imageSrc: THUMB("01"),
-            linkType: "screenshot",
-        },
-        {
-            id: "ca-6",
-            label: "아키텍처",
-            description: "FSD + App Router 레이어 구조",
-            imageSrc: THUMB("02"),
-            href: resumeProfile.github,
-            linkType: "github",
-            linkLabel: "GitHub",
         },
     ],
     keepupass: [
@@ -357,168 +421,174 @@ export const renewalGalleryByProject: Record<string, RenewalGalleryItem[]> = {
 export const renewalCaseStudies: Record<string, RenewalCaseStudy> = {
     fandombox: {
         problem:
-            "게이미피케이션 당첨·등급 API 평균 응답 2.8초로, 당첨 확인·등급 이펙트 구간에서 이탈과 CS 문의가 증가했습니다. 저사양(iPhone 6)에서는 등급 이펙트가 30fps 이하로 떨어져 브랜드 경험이 훼손되었습니다.",
+            "연타형 게이미피케이션에서 API 중복 호출로 체감 응답이 2~3초까지 지연되고, iPhone 6·Slow 3G 환경에서 첫 인터랙션까지 8~10초가 소요되었습니다.",
         approach:
-            "Network 탭·사용자 플로우를 기준으로 중복 요청 구간을 식별한 뒤, 동일 세션 내 병합 가능한 API를 batch 처리하고 React Query 수준의 클라이언트 캐시 TTL을 등급별로 분리했습니다. 로딩 구간에는 스켈레톤 UI를 적용해 체감 대기를 줄였고, 이펙트는 레이어 분리·webp·will-change·requestAnimationFrame 스로틀링으로 프레임을 안정화했습니다.",
+            "debounce·요청 병합·스켈레톤 UI로 API 체감 지연을 줄였습니다. WebP·해상도별 에셋·스프라이트 분할·transform 기반 GPU 레이어 분리로 저사양 프레임을 안정화했습니다.",
         result:
-            "API 평균 응답 2.8s → 0.9s, 저사양 기기 등급 이펙트 60fps 유지. 당첨 확인 구간 이탈률이 체감상 감소했고, BE 팀과 병합 API 스펙을 공유해 후속 기능에도 재사용했습니다.",
+            "Chrome Network 기준 1회당 체감 응답 약 2~3초 → 1초 내외, Slow 3G 첫 인터랙션 8~10초 → 3~4초. BI 일관성을 유지한 채 게이미피케이션 참여 경험을 강화했습니다.",
         learned:
-            "초기에는 debounce만 적용했으나 UX 지연이 남아 request merge + cache 조합으로 전환했습니다. 다음에는 서버 prefetch와 Suspense boundary를 함께 설계해 TTFB와 체감 로딩을 분리 측정하겠습니다.",
+            "에셋·API 병목을 동시에 프로파일링하고, 측정 조건(Slow 3G·Network 탭)을 먼저 정리해야 저사양에서도 브랜드 경험을 유지할 수 있습니다.",
         myRole: [
-            "게이미피케이션 UI·인터랙션 전담",
-            "API 병목 분석 및 FE 캐싱·스켈레톤 전략 제안",
-            "저사양 기기 성능 프로파일링·이펙트 최적화",
-            "BE와 병합 API 스펙 협의 및 QA",
+            "연타·당첨 플로우 설계·구현 및 REST API 연동",
+            "API 중복 호출 분석·debounce·요청 병합·스켈레톤 UI 적용",
+            "저사양 성능 프로파일링·WebP·스프라이트·GPU 레이어 최적화",
         ],
         teamRole: [
-            "BE: REST API·당첨 로직·병합 엔드포인트 구현",
+            "BE: REST API·당첨 로직",
             "디자인: 등급별 비주얼·모션 가이드",
         ],
         decisions: [
             {
-                title: "API 지연 대응",
-                chosen: "요청 병합 + 클라이언트 캐시",
-                alternative: "debounce / polling",
-                reason: "당첨 직후 연속 호출 패턴에서 debounce는 체감 지연이 남고, polling은 트래픽 부담이 컸습니다.",
-            },
-            {
-                title: "로딩 UX",
-                chosen: "구간별 스켈레톤 UI",
-                alternative: "전역 스피너",
-                reason: "레이아웃 시프트를 줄이고 등급 카드 구조를 유지해 이탈을 낮췄습니다.",
+                title: "저사양 성능",
+                chosen: "스프라이트 분할 + GPU CSS",
+                alternative: "에셋 단순 축소",
+                reason: "브랜드 모션 품질을 유지하면서 초기 로드·프레임을 동시에 개선할 수 있었습니다.",
             },
         ],
     },
     maze: {
         problem:
-            "메이즈 공식 홈페이지 초기 Lighthouse Performance 52, LCP 4.2s로 모바일 유입 랜딩에서 첫인상·SEO 모두 취약했습니다. FE 단독 담당으로 일정 내 성능·접근성·검색 대응을 동시에 맞춰야 했습니다.",
+            "Framer Motion·Matter.js·동영상 에셋 도입 초기 Lighthouse Mobile Performance 50점대, LCP 4초대로 FE 단독 담당으로 성능·SEO를 동시에 맞춰야 했습니다.",
         approach:
-            "번들 분석으로 hero 이하 섹션을 dynamic import, 이미지 lazy loading·responsive srcset, 불필요 폰트·아이콘 제거를 진행했습니다. 시멘틱 HTML·heading hierarchy·meta/OG 태그를 페이지별로 정리하고, Core Web Vitals를 Chrome DevTools + Lighthouse CI 스냅샷으로 추적했습니다.",
+            "동영상 lazy loading·route/code splitting·Matter.js viewport 진입 후 초기화·미사용 chunk 제거를 진행했습니다. 시멘틱 HTML·title/description·OG 태그를 정리하고 Lighthouse로 개선을 추적했습니다.",
         result:
-            "Performance 52 → 81, LCP 4.2s → 2.1s, gzip JS 번들 ~420KB → ~280KB. 검색·SNS 공유용 메타가 정리되어 마케팅팀 공유 시 미리보기 품질이 개선되었습니다.",
+            "Lighthouse Mobile(Chrome, Slow 4G) Performance 52 → 81, LCP 4.2s → 2.1s, 초기 JS gzip 약 420KB → 280KB.",
         learned:
-            "이미지 최적화만으로는 LCP 한계가 있어 above-the-fold 리소스 우선순위를 재배치했습니다. 추후 Next.js Image + CDN을 도입한다면 AVIF 포맷까지 확장할 계획입니다.",
+            "인터랙션 품질과 성능은 트레이드오프가 아니라 초기화 시점·리소스 분리 설계로 동시에 달성 가능합니다.",
         myRole: [
             "프로젝트 셋업·랜딩·세부 페이지 FE 100% 담당",
-            "성능·SEO·접근성 개선 및 측정 리포트 작성",
-            "반응형 레이아웃·SCSS 아키텍처 설계",
+            "Framer Motion·Matter.js 인터랙션·성능 최적화",
+            "시멘틱 HTML·SEO 메타 구조화",
         ],
-        teamRole: ["클라이언트(메이즈): 콘텐츠·브랜드 가이드 제공"],
+        teamRole: ["주식회사 메이즈: 콘텐츠·브랜드 가이드"],
         decisions: [
             {
-                title: "번들 축소",
-                chosen: "route-level code splitting",
-                alternative: "single bundle + tree-shaking만",
-                reason: "랜딩 방문 비중이 높아 초기 JS 최소화가 LCP에 직접 영향을 줬습니다.",
-            },
-            {
-                title: "스타일링",
-                chosen: "SCSS module + BEM 혼합",
-                alternative: "CSS-in-JS",
-                reason: "런타임 비용 없이 디자이너 handoff 속도와 유지보수성을 맞췄습니다.",
+                title: "Matter.js 로딩",
+                chosen: "지연 초기화 + code splitting",
+                alternative: "초기 번들 포함",
+                reason: "above-the-fold LCP에 영향을 주지 않으면서 물리 인터랙션을 유지했습니다.",
             },
         ],
     },
-    "codi-agit": {
+    stitchable: {
         problem:
-            "개인 서비스로 코디 추천·커뮤니티를 운영하면서, 인증·DB·에디터·관리자·배포까지 end-to-end 책임이 필요했습니다. 로컬/배포 env 불일치로 fetch failed가 반복 발생해 SSR 신뢰성이 떨어졌습니다.",
+            "QA 과정에서 화면 피드백을 스크린샷·메신저로 주고받다 보니 맥락이 흩어지고, 논의 후 이슈화까지 수동으로 이어지는 비용이 컸습니다.",
         approach:
-            "App Router + FSD 혼합 구조(app → views → widgets → entities)로 라우트 조립과 도메인 데이터를 분리했습니다. Supabase RLS·NextAuth 세션·React Query 캐시 전략을 레이어별로 정리하고, TipTap 에디터·XSS sanitize·API Route 권한 검증을 추가했습니다. env 검증 스크립트와 .env.example로 배포 실패를 줄였습니다.",
+            "Figma처럼 화면 위에 코멘트를 앵커링하고, QA와 논의한 뒤 Git Issue로 승급하는 React 오픈소스 라이브러리를 설계·개발 중입니다. embed 가능한 컴포넌트·훅 API와 Issue 연동 플로우를 중심으로 구조화했습니다.",
         result:
-            "10개월+ 프로덕션 운영, 소셜 로그인·게시·관리자·SEO·CI(lint/build/test) 파이프라인 구축. env 이슈 재발 방지 및 RLS 기반 권한 모델 정립.",
+            "화면 코멘트 UX·Issue 승급 플로우 프로토타입 구현, GitHub Private 레포에서 사내 QA 연동 PoC 진행 중. 오픈소스 공개를 통해 외부 피드백·커뮤니티 기여를 목표로 합니다.",
         learned:
-            "초기엔 widgets에 API가 흩어졌으나 entities 레이어로 수렴해 변경 비용이 줄었습니다. E2E(Playwright)는 핵심 auth·post flow부터 단계적으로 확장 중입니다.",
+            "협업 도구는 기능만이 아니라 피드백→논의→이슈화까지의 흐름이 자연스러워야 팀이 실제로 씁니다. 라이브러리 형태로 embed하면 기존 프로젝트에 낮은 진입 장벽으로 도입할 수 있습니다.",
         myRole: [
-            "아키텍처·UI·API Route·배포·운영 전담",
-            "Supabase schema·RLS·NextAuth 연동",
-            "성능·SEO·보안(XSS·권한) 개선",
+            "라이브러리 아키텍처·React 컴포넌트·API 설계·구현",
+            "화면 코멘트 UX·Issue 승급 플로우 설계",
+            "오픈소스 공개·커뮤니티 기여 방향 기획",
         ],
-        teamRole: ["1인 프로젝트 — 디자인·기획·개발·DevOps"],
+        teamRole: ["1인 프로젝트 — 기획·설계·개발"],
         decisions: [
             {
-                title: "상태 관리",
-                chosen: "React Query(서버) + Zustand(UI)",
-                alternative: "Redux 단일 스토어",
-                reason: "서버 캐시와 UI 상태 lifecycle이 달라 계층 분리가 유지보수에 유리했습니다.",
+                title: "배포 형태",
+                chosen: "React 오픈소스 라이브러리",
+                alternative: "SaaS 웹 서비스",
+                reason: "기존 프로젝트에 embed 가능하고, 외부 개발자 피드백·기여를 받기 용이했습니다.",
             },
             {
-                title: "폴더 구조",
-                chosen: "FSD + 라우트 중심 widgets",
-                alternative: "pages/components flat",
-                reason: "라우트별 Panel 조립과 entities 재사용을 동시에 만족했습니다.",
+                title: "Issue 연동",
+                chosen: "논의 후 Git Issue 승급",
+                alternative: "코멘트만 저장",
+                reason: "QA 피드백이 실제 개발 백로그로 이어지도록 협업 루프를 닫을 수 있었습니다.",
             },
         ],
-        architecture: {
-            title: "Codi Agit — App Router + FSD 레이어",
-            layers: [
-                { name: "app", description: "Server Component page.tsx — metadata·cookies·Main 래핑" },
-                { name: "views", description: "라우트 ↔ widgets Panel 중계 (얇은 레이어)" },
-                { name: "widgets", description: "Panel + ui 섹션 조립, 라우트 전용 UI 상태" },
-                { name: "features", description: "기능 로직·PageProvider·컨텍스트" },
-                { name: "entities", description: "도메인 api / query / type — Supabase·배너·포스트" },
-                { name: "shared", description: "공통 UI·lib·hooks·constants" },
-            ],
-        },
     },
     keepupass: {
         problem:
-            "교육 서비스 어드민에서 회원·콘텐츠 CRUD 화면이 필요했으나, BE API 스펙 변경과 폼 UX 요구가 잦아 재사용 가능한 테이블·폼 패턴이 필요했습니다.",
+            "무인 관제 SaaS 어드민에서 WebSocket 실시간 제어·CRUD·모션이 필요했으나, JS 번들 700KB(gzip)·폴더 구조 혼재로 협업 비용이 컸습니다.",
         approach:
-            "목록·상세·등록·수정 4종 CRUD 템플릿을 컴포넌트화하고, Framer Motion으로 페이지 전환·validation feedback을 통일했습니다. BE와 OpenAPI 수준의 필드 계약을 Notion으로 공유하고, 에러 코드별 토스트 메시지를 매핑했습니다.",
+            "WebSocket 출입 제어 화면을 구축하고, feature/domain 기준 폴더·컴포넌트 구조를 정리했습니다. dead code 제거·dynamic import·번들 분석으로 gzip 400KB까지 축소, Framer Motion UX를 통일했습니다.",
         result:
-            "4종+ CRUD 화면 납품, 폼·테이블 패턴 재사용으로 후속 화면 리드타임 단축. 관리자 피드백 반영해 키보드 포커스·aria-label 보완.",
+            "JS gzip 700KB → 400KB, 실시간 출입 관제·CRUD 화면 납품. 구조 정리 후 신규 FE 온보딩·코드 파악 시간 단축.",
         learned:
-            "어드민은 화면 수보다 edge case(빈 목록·권한 없음·네트워크 실패) 처리가 체감 품질을 좌우합니다. 다음 프로젝트에서는 React Hook Form + Zod로 폼 스키마를 API 타입과 동기화하겠습니다.",
+            "팀 표준 없이 개별 최적화만으로는 온보딩·유지보수 비용이 누적됩니다. 구조 정리와 전사 프로세스를 함께 설계해야 합니다.",
         myRole: [
-            "어드민 UI·CRUD 화면 FE 전담",
-            "Framer Motion 인터랙션·반응형 레이아웃",
-            "BE API 연동·에러 UX",
+            "WebSocket 실시간 출입·관제 UI 구축",
+            "폴더 구조 정리·번들 최적화",
+            "어드민 CRUD·Framer Motion UX",
         ],
-        teamRole: ["BE 1명: REST API·인증"],
+        teamRole: ["BE: REST·WebSocket API", "디자인: 어드민 UI"],
         decisions: [
             {
-                title: "CRUD 구조",
-                chosen: "List / Detail / Form 공통 레이아웃",
-                alternative: "페이지별 독립 구현",
-                reason: "필드만 바꿔 재사용 가능해 2인 팀 일정을 맞췄습니다.",
+                title: "협업 구조",
+                chosen: "팀 표준 반영 후 폴더·컴포넌트 정리",
+                alternative: "프로젝트별 독립 구조",
+                reason: "전사 API·커밋 표준과 맞춰 신규 인력이 빠르게 기여할 수 있게 했습니다.",
             },
+        ],
+    },
+    "dev-team-process": {
+        problem:
+            "팀장 공백·다프로젝트 병행으로 IDE·커밋·API·인증·QA 방식이 제각각이었고, 온보딩·맥락 파악·반복 QA에 과도한 시간이 소요되었습니다.",
+        approach:
+            "Git·IDE·Conventional Commits 가이드 문서화, API 4키 표준 초안 제안, JWT 갱신 플로우 FE PoC, Playwright E2E, Stitchable QA 도구를 순차 제안·팀 합의 후 적용했습니다.",
+        result:
+            "온보딩 반나절 → 1~2시간, 반복 QA 1~2시간 → 30~40분. API·인증·협업 프로세스 표준화.",
+        learned:
+            "기술 표준은 문서만으로는 정착되지 않습니다. BE·QA와 함께 제안·PoC·피드백 루프를 돌려야 합니다.",
+        myRole: [
+            "협업 가이드 제안·문서화·PoC 작성",
+            "API 4키·JWT·Playwright E2E 제안·적용",
+            "Stitchable QA 협업 도구 사이드 개발",
+        ],
+        teamRole: ["BE: API 표준 협의", "QA: Playwright·Stitchable 연동"],
+        decisions: [
             {
-                title: "모션",
-                chosen: "Framer Motion layout animation",
-                alternative: "CSS transition only",
-                reason: "폼 단계 전환·리스트 reorder 피드백을 일관되게 제공했습니다.",
+                title: "API 응답",
+                chosen: "resultCode · resultMsg · pagination · data",
+                alternative: "프로젝트별 자유 형식",
+                reason: "FE·BE 간 파싱·에러 처리 패턴을 통일해 유지보수성을 높였습니다.",
             },
         ],
     },
 };
 
+/** Deep Dive 1건 — 팬덤박스 성능·API 개선 (Case Study 섹션 전용, 축소본) */
+export const renewalDeepDiveCaseStudy: RenewalCaseStudy = {
+    problem:
+        "연타형 게이미피케이션에서 API 중복 호출로 체감 응답 2~3초, Slow 3G 첫 인터랙션 8~10초로 UX·이탈이 증가했습니다.",
+    approach:
+        "debounce·요청 병합·스켈레톤 UI 적용, WebP·스프라이트 분할·GPU 레이어 분리로 저사양 프레임 안정화.",
+    result: "체감 응답 2~3초 → 1초 내외, Slow 3G 첫 인터랙션 8~10초 → 3~4초.",
+    learned:
+        "에셋·API 병목을 동시에 프로파일링해야 저사양에서도 브랜드 경험을 유지할 수 있습니다.",
+    myRole: [
+        "연타·당첨 플로우 구축·API 지연 분석",
+        "스프라이트·GPU CSS 저사양 최적화",
+    ],
+    teamRole: ["BE: REST·당첨 로직", "디자인: 모션 가이드"],
+    decisions: [
+        {
+            title: "저사양 성능",
+            chosen: "스프라이트 분할 + GPU CSS",
+            alternative: "에셋 단순 축소",
+            reason: "모션 품질을 유지하면서 초기 로드·프레임을 동시에 개선.",
+        },
+    ],
+};
+
 export const renewalCollaboration = {
-    headline: "협업 방식 & 성장",
-    intro: "FE 1명으로 시작하는 프로젝트가 많았습니다. 스펙 불확실성을 줄이기 위해 문서·측정·리뷰 가능한 단위로 일을 쪼개 협업합니다.",
+    headline: "협업 방식",
+    intro: "엔조이소프트에서 개발팀 FE·BE·QA 협업·API·인증·QA 자동화 프로세스를 제안하고, 재현 가능한 단위로 문서화합니다.",
     items: [
+        {
+            title: "팀 프로세스 · 협업 개선 (제안·실무 적용)",
+            description:
+                "Conventional Commits·API 4키(resultCode/resultMsg/pagination/data)·JWT·Playwright E2E를 팀과 합의 후 적용. 온보딩 반나절 → 1~2시간, 반복 QA 1~2시간 → 30~40분.",
+            tags: ["협업 제안", "Playwright", "JWT"],
+        },
         {
             title: "BE · API 협업",
             description:
-                "Network 탭·재현 스텝을 첨부해 이슈를 공유하고, 병합 API·필드 nullable 등 FE 관점 스펙을 PR/Notion에 남깁니다. 팬덤박스·키업패스에서 API 계약 문서화 경험이 있습니다.",
-            tags: ["REST", "스펙 협의", "에러 코드 매핑"],
-        },
-        {
-            title: "디자인 handoff",
-            description:
-                "Figma spacing·타이포 토큰을 SCSS/Tailwind 변수로 매핑하고, hover·loading·empty state까지 QA 체크리스트로 넘깁니다. 이솔 스튜디오 창업 시 카카오톡·삼성 테마 UI/UX 제작 경험을 바탕으로 디자이너 언어에 익숙합니다.",
-            tags: ["Figma", "UI QA", "테마 제작"],
-        },
-        {
-            title: "코드 품질 · 문서화",
-            description:
-                "Codi Agit에서 lint/build/test CI, .env.example, 페이즈별 optimization roadmap으로 onboarding 비용을 줄였습니다. PR 단위로 ‘왜’를 README·커밋 메시지에 남기는 것을 습관화했습니다.",
-            tags: ["CI", "TypeScript", "리팩터링"],
-        },
-        {
-            title: "성장 · 학습",
-            description:
-                "비전공(정보물류) → 독학 React → 실무 2년+. 사이드 프로젝트로 Next.js 15·Supabase·Auth를 직접 운영하며 full-stack FE 역량을 확장 중입니다. 모르는 영역은 공식 문서·프로파일링 도구로 먼저 가설을 세운 뒤 팀에 공유합니다.",
-            tags: ["자기주도", "프로덕션 운영", "Web Vitals"],
+                "Network 탭·재현 스텝을 첨부해 이슈를 공유하고, API 네이밍·응답 depth·pagination 등 FE 관점 스펙을 PR/Notion에 남깁니다. KQR·SaaS 마이그레이션에서 API 4키 표준 적용 경험이 있습니다.",
+            tags: ["REST", "WebSocket", "스펙 협의"],
         },
     ] satisfies RenewalCollaborationItem[],
 };
@@ -546,26 +616,30 @@ export const renewalEducation = {
 export const renewalBuiltWith = {
     headline: "This page is the portfolio",
     description:
-        "지금 보고 계신 /resume-renewal 페이지 자체가 Next.js 15·Motion·Tailwind·FSD 구조의 라이브 샘플입니다. prefers-reduced-motion을 존중하고, 섹션 앵커·JSON-LD·시맨틱 마크업을 적용했습니다.",
-    stack: [
-        "Next.js 15 App Router",
-        "React 19",
-        "TypeScript",
-        "Motion (Framer Motion)",
-        "Tailwind CSS",
-        "FSD + Route widgets",
-    ],
+        "/resume 페이지 자체가 Next.js 15·Motion·Tailwind·FSD 구조의 라이브 샘플입니다.",
+    stack: ["Next.js 15", "React 19", "TypeScript", "Motion", "Tailwind CSS", "FSD"],
     metrics: [
         { label: "Lighthouse Performance", value: "94", sub: "desktop · lab" },
-        { label: "LCP", value: "1.8s", sub: "hero image priority" },
-        { label: "Accessibility", value: "96", sub: "semantic + aria" },
         { label: "SEO", value: "100", sub: "metadata + JSON-LD" },
     ] satisfies RenewalBuiltWithMetric[],
     practices: [
-        "ClippedRevealText — 오른쪽 텍스트 clip reveal, reduced motion 대응",
-        "sticky TOC — 긴 스크롤 프로젝트 내비",
+        "sticky TOC · 섹션 앵커 · prefers-reduced-motion",
         "entities 레이어 패턴 — Codi Agit 본 레포와 동일 철학",
     ],
+};
+
+export const renewalHeroStats = [
+    { value: "2년 1개월", label: "프론트엔드 경력" },
+    { value: "8+", label: "프로덕션 프로젝트" },
+];
+
+/** @deprecated renewalHeroStats로 대체됨 */
+export const renewalHeroSecondary = {
+    label: "About",
+    headlineSuffix: resumeProfile.name,
+    description:
+        "React·Next.js 기반 서비스 개발, API 연동, 저사양·번들 최적화에 강점이 있습니다. 프론트엔드 실무 경력 2년 1개월.",
+    stats: renewalHeroStats,
 };
 
 export const renewalContactExtended = {

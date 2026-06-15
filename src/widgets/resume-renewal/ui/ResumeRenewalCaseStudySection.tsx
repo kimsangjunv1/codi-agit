@@ -1,6 +1,6 @@
 "use client";
 
-import type { RenewalProjectEntry } from "@/shared/constants/resume/resumeRenewalData";
+import type { RenewalProjectEntry, RenewalSectionEntry } from "@/shared/constants/resume/resumeRenewalData";
 import type { RenewalCaseStudy } from "@/shared/constants/resume/resumeRenewalData";
 import RenewalProjectChartPanel from "./RenewalProjectChartPanel";
 import RenewalRightBlocks from "./RenewalRightBlocks";
@@ -9,11 +9,16 @@ import { R } from "./renewalStyles";
 
 type ResumeRenewalCaseStudySectionProps = {
     caseStudy: RenewalCaseStudy;
-    project: RenewalProjectEntry;
+    project: RenewalProjectEntry | RenewalSectionEntry;
     index: number;
+    compact?: boolean;
 };
 
-const ResumeRenewalCaseStudySection = ({ caseStudy, project, index }: ResumeRenewalCaseStudySectionProps) => {
+const ResumeRenewalCaseStudySection = ({ caseStudy, project, index, compact = false }: ResumeRenewalCaseStudySectionProps) => {
+    if (!project.highlight || !project.chartLabel || !project.chartPoints || !project.metrics) {
+        return null;
+    }
+
     return (
         <RenewalSplitSection
             divider
@@ -30,7 +35,7 @@ const ResumeRenewalCaseStudySection = ({ caseStudy, project, index }: ResumeRene
             }
         >
             <RenewalRightBlocks
-                label={<p className={R.label}>Case Study</p>}
+                label={<p className={R.label}>{compact ? "Deep Dive" : "Case Study"}</p>}
                 headline={<p className={R.keyline}>{caseStudy.result}</p>}
                 description={
                     <div className="flex flex-col gap-[1.6rem]">
@@ -55,27 +60,38 @@ const ResumeRenewalCaseStudySection = ({ caseStudy, project, index }: ResumeRene
                             <p className={`${R.label} mb-[1.2rem]`}>My Role</p>
                             <ul className="flex flex-col gap-[0.8rem]">
                                 {caseStudy.myRole.map((item) => (
-                                    <li key={item} className={R.body}>
+                                    <li
+                                        key={item}
+                                        className={R.body}
+                                    >
                                         {item}
                                     </li>
                                 ))}
                             </ul>
                         </div>
 
-                        <div className={`${R.divider} pt-[2.4rem]`}>
-                            <p className={`${R.label} mb-[1.2rem]`}>Team Role</p>
-                            <ul className="flex flex-col gap-[0.8rem]">
-                                {caseStudy.teamRole.map((item) => (
-                                    <li key={item} className={R.bodyMuted}>
-                                        {item}
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
+                        {!compact && (
+                            <div className={`${R.divider} pt-[2.4rem]`}>
+                                <p className={`${R.label} mb-[1.2rem]`}>Team Role</p>
+                                <ul className="flex flex-col gap-[0.8rem]">
+                                    {caseStudy.teamRole.map((item) => (
+                                        <li
+                                            key={item}
+                                            className={R.bodyMuted}
+                                        >
+                                            {item}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
 
                         {caseStudy.decisions.map((decision) => (
-                            <div key={decision.title} className={`${R.divider} pt-[2.4rem]`}>
-                                <p className="text-[1.6rem] font-semibold text-[#000000] mb-[1rem]">{decision.title}</p>
+                            <div
+                                key={decision.title}
+                                className={`${R.divider} pt-[2.4rem]`}
+                            >
+                                <p className="text-[1.8rem] font-semibold text-[#000000] mb-[1rem]">{decision.title}</p>
                                 <p className={R.body}>
                                     <span className="text-[#000000]">Chosen · </span>
                                     {decision.chosen}
@@ -97,7 +113,7 @@ const ResumeRenewalCaseStudySection = ({ caseStudy, project, index }: ResumeRene
                                 <ul className="flex flex-col gap-[1.2rem]">
                                     {caseStudy.architecture.layers.map((layer) => (
                                         <li key={layer.name}>
-                                            <span className="text-[1.6rem] font-semibold text-[#000000]">{layer.name}</span>
+                                            <span className="text-[1.8rem] font-semibold text-[#000000]">{layer.name}</span>
                                             <span className={`${R.bodyMuted} ml-[0.8rem]`}>— {layer.description}</span>
                                         </li>
                                     ))}

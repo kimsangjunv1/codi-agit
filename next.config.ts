@@ -6,6 +6,16 @@ const withBundleAnalyzer = bundleAnalyzer({
 });
 
 const nextConfig: NextConfig = {
+    async redirects() {
+        return [
+            {
+                source: "/resume-renewal",
+                destination: "/resume",
+                permanent: true,
+            },
+        ];
+    },
+
     async headers() {
         return [
             {

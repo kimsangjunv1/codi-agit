@@ -7,6 +7,7 @@ export const resumeSkillIconMap: Record<string, string> = {
     JavaScript: `${SKILL_ICON_BASE}/ico-common-javascript.svg`,
     "REST API": `${SKILL_ICON_BASE}/ico-common-rest-api.svg`,
     Zustand: `${SKILL_ICON_BASE}/ico-common-zustand.svg`,
+    "React Query": `${SKILL_ICON_BASE}/ico-common-tanstack-query.svg`,
     "TanStack React Query": `${SKILL_ICON_BASE}/ico-common-tanstack-query.svg`,
     SCSS: `${SKILL_ICON_BASE}/ico-common-scss.svg`,
     "Tailwind CSS": `${SKILL_ICON_BASE}/ico-common-tailwindcss.svg`,

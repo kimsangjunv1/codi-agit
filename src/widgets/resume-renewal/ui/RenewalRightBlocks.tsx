@@ -7,18 +7,29 @@ import { useDirectionalRevealInView } from "@/shared/hooks/useDirectionalRevealI
 import { useReducedMotion } from "@/shared/hooks/useReducedMotion";
 import { ClippedRevealBlock } from "./ClippedRevealText";
 
-/** 블록 간 순차 delay — 4덩이 각각 구분되도록 */
+/** 블록 간 순차 delay — 각 블록이 구분되도록 */
 const BLOCK_STAGGER = 0.14;
 
 type RenewalRightBlocksProps = {
-    label: ReactNode;
-    headline: ReactNode;
-    description: ReactNode;
-    details: ReactNode;
+    label?: ReactNode;
+    headline?: ReactNode;
+    description?: ReactNode;
+    details?: ReactNode;
+    /** details 대신 항목별 ClippedReveal + stagger 적용 */
+    detailItems?: ReactNode[];
+    detailItemsClassName?: string;
     className?: string;
 };
 
-const RenewalRightBlocks = ({ label, headline, description, details, className = "" }: RenewalRightBlocksProps) => {
+const RenewalRightBlocks = ({
+    label,
+    headline,
+    description,
+    details,
+    detailItems,
+    detailItemsClassName = "flex flex-col gap-[2rem]",
+    className = "",
+}: RenewalRightBlocksProps) => {
     const ref = useRef<HTMLDivElement>(null);
     const revealed = useDirectionalRevealInView(ref, RENEWAL_VIEWPORT);
     const reducedMotion = useReducedMotion();
@@ -27,8 +38,28 @@ const RenewalRightBlocks = ({ label, headline, description, details, className =
         { key: "label", content: label },
         { key: "headline", content: headline },
         { key: "description", content: description },
-        { key: "details", content: details },
-    ];
+    ].filter(({ content }) => content != null && content !== false);
+
+    const hasDetailItems = detailItems != null && detailItems.length > 0;
+    const hasDetails = details != null && details !== false;
+
+    const renderDetailItems = (startIndex: number) => {
+        if (!hasDetailItems) return null;
+
+        return (
+            <div className={detailItemsClassName}>
+                {detailItems.map((item, index) => (
+                    <ClippedRevealBlock
+                        key={index}
+                        revealed={revealed}
+                        delay={(startIndex + index) * BLOCK_STAGGER}
+                    >
+                        {item}
+                    </ClippedRevealBlock>
+                ))}
+            </div>
+        );
+    };
 
     if (reducedMotion) {
         return (
@@ -36,6 +67,8 @@ const RenewalRightBlocks = ({ label, headline, description, details, className =
                 {blocks.map(({ key, content }) => (
                     <div key={key}>{content}</div>
                 ))}
+                {hasDetailItems ? <div className={detailItemsClassName}>{detailItems}</div> : null}
+                {hasDetails && !hasDetailItems ? <div>{details}</div> : null}
             </div>
         );
     }
@@ -47,6 +80,12 @@ const RenewalRightBlocks = ({ label, headline, description, details, className =
                     {content}
                 </ClippedRevealBlock>
             ))}
+            {hasDetailItems ? renderDetailItems(blocks.length) : null}
+            {hasDetails && !hasDetailItems ? (
+                <ClippedRevealBlock revealed={revealed} delay={blocks.length * BLOCK_STAGGER}>
+                    {details}
+                </ClippedRevealBlock>
+            ) : null}
         </div>
     );
 };

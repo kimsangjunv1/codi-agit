@@ -1,42 +1,36 @@
 "use client";
 
-import { renewalProjects } from "@/shared/constants/resume/resumeRenewalData";
-import ResumeRenewalBuiltWithSection from "./ui/ResumeRenewalBuiltWithSection";
+import { renewalExperiences } from "@/shared/constants/resume/resumeRenewalData";
+import { getRenewalExperienceAnchorId } from "@/shared/constants/resume/resumeRenewalData";
 import ResumeRenewalCollaborationSection from "./ui/ResumeRenewalCollaborationSection";
-import ResumeRenewalContactSection from "./ui/ResumeRenewalContactSection";
-import ResumeRenewalCtaSection from "./ui/ResumeRenewalCtaSection";
-import ResumeRenewalEducationSection from "./ui/ResumeRenewalEducationSection";
+import ResumeRenewalDeepDive from "./ui/ResumeRenewalDeepDive";
 import ResumeRenewalEmailBannerSection from "./ui/ResumeRenewalEmailBannerSection";
 import ResumeRenewalFooter from "./ui/ResumeRenewalFooter";
 import ResumeRenewalHero from "./ui/ResumeRenewalHero";
-import ResumeRenewalProfileSection from "./ui/ResumeRenewalProfileSection";
-import ResumeRenewalProject from "./ui/ResumeRenewalProject";
+import ResumeRenewalExperience from "./ui/ResumeRenewalExperience";
+import ResumeRenewalSideProject from "./ui/ResumeRenewalSideProject";
 import ResumeRenewalSkillSection from "./ui/ResumeRenewalSkillSection";
 import ResumeRenewalTocNav from "./ui/ResumeRenewalTocNav";
 import { R } from "./ui/renewalStyles";
 
 const ResumeRenewalPanel = () => {
     return (
-        <article className={`relative w-full bg-white max-w-[var(--size-pc)] mx-auto ${R.root}`}>
+        <article className={`relative w-full bg-white ${R.root}`}>
             <ResumeRenewalTocNav />
             <ResumeRenewalHero />
-            {/* <ResumeRenewalProfileSection /> */}
             <ResumeRenewalSkillSection />
+            {/* <ResumeRenewalCollaborationSection /> */}
 
-            <ResumeRenewalCollaborationSection />
-            <ResumeRenewalEducationSection />
-
-            {renewalProjects.map((project, index) => (
-                <ResumeRenewalProject
-                    key={project.id}
-                    project={project}
-                    index={index}
+            {renewalExperiences.map((experience) => (
+                <ResumeRenewalExperience
+                    key={experience.id}
+                    experience={experience}
+                    anchorId={getRenewalExperienceAnchorId(experience.id)}
                 />
             ))}
 
-            {/* <ResumeRenewalBuiltWithSection /> */}
-            {/* <ResumeRenewalContactSection />
-            <ResumeRenewalCtaSection /> */}
+            {/* <ResumeRenewalDeepDive /> */}
+            <ResumeRenewalSideProject />
             <ResumeRenewalFooter />
             <ResumeRenewalEmailBannerSection />
         </article>

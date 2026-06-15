@@ -8,7 +8,7 @@ import RenewalSplitSection from "./RenewalSplitSection";
 import { R } from "./renewalStyles";
 
 const ResumeRenewalCtaSection = () => {
-    const items = [renewalCta.mail, renewalCta.demo, renewalCta.github, renewalCta.resume];
+    const items = [renewalCta.mail, renewalCta.demo, renewalCta.github];
 
     return (
         <RenewalSplitSection divider>

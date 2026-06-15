@@ -13,14 +13,14 @@ type RenewalProjectChartPanelProps = {
 const RenewalProjectChartPanel = ({ index, highlight, chartLabel, metrics }: RenewalProjectChartPanelProps) => {
     return (
         <div className="w-full">
-            <p className="mb-[1.6rem] text-[1.4rem] font-medium text-[#666666]">
+            <p className="mb-[1.6rem] text-[1.8rem] font-medium text-[#666666]">
                 Project {String(index + 1).padStart(2, "0")}
             </p>
 
             <div className="w-full overflow-hidden rounded-[0.8rem] border border-[#E5E5E5] bg-white">
                 <div className="grid grid-cols-1 border-b border-[#E5E5E5] tablet:grid-cols-2">
                     <div className="flex flex-col justify-between gap-[2.4rem] border-b border-[#E5E5E5] p-[2.4rem] tablet:min-h-[16rem] tablet:border-b-0 tablet:border-r tablet:p-[3.2rem]">
-                        <p className="text-[1.4rem] text-[#666666]">{highlight.label}</p>
+                        <p className="text-[1.8rem] text-[#666666]">{highlight.label}</p>
                         <div className="flex items-center gap-[1.2rem]">
                             <span className="text-[2.4rem] font-bold leading-none tracking-[-0.04em] text-[#666666] tablet:text-[3.2rem]">
                                 {highlight.before}
@@ -41,11 +41,11 @@ const RenewalProjectChartPanel = ({ index, highlight, chartLabel, metrics }: Ren
                     </div>
 
                     <div className="flex flex-col p-[2.4rem] tablet:min-h-[16rem] tablet:p-[3.2rem]">
-                        <div className="inline-flex items-center gap-[0.6rem] self-start rounded-full border border-[#E5E5E5] px-[1.2rem] py-[0.6rem] text-[1.4rem] text-[#000000]">
+                        <div className="inline-flex items-center gap-[0.6rem] self-start rounded-full border border-[#E5E5E5] px-[1.2rem] py-[0.6rem] text-[1.8rem] text-[#000000]">
                             <span aria-hidden>⚡</span>
                             {chartLabel}
                             <span
-                                className="text-[1.2rem] text-[#666666]"
+                                className="text-[1.8rem] text-[#666666]"
                                 aria-hidden
                             >
                                 ⌵
@@ -65,7 +65,7 @@ const RenewalProjectChartPanel = ({ index, highlight, chartLabel, metrics }: Ren
                             <p className="text-[1.8rem] font-bold leading-tight text-[#000000] tablet:text-[2rem]">
                                 {metric.value}
                             </p>
-                            <p className="text-[1.4rem] leading-snug text-[#666666]">{metric.label}</p>
+                            <p className="text-[1.8rem] leading-snug text-[#666666]">{metric.label}</p>
                         </div>
                     ))}
                 </div>

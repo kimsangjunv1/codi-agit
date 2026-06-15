@@ -27,7 +27,7 @@ const GalleryImage = ({ item }: { item: RenewalGalleryItem }) => {
                 <Image src={item.imageSrc} alt={item.label} fill className="object-cover" sizes="(max-width:768px) 50vw, 25vw" />
             </div>
             <div className="mt-[1rem]">
-                <p className="text-[1.6rem] font-medium text-[#000000]">{item.label}</p>
+                <p className="text-[1.8rem] font-medium text-[#000000]">{item.label}</p>
                 <p className={`${R.meta} mt-[0.4rem] line-clamp-2`}>{item.description}</p>
                 {item.href && item.linkLabel && <span className={`${R.link} mt-[0.6rem] inline-block`}>{item.linkLabel}</span>}
             </div>
