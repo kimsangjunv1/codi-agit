@@ -2,8 +2,6 @@
 
 import { renewalExperiences } from "@/shared/constants/resume/resumeRenewalData";
 import { getRenewalExperienceAnchorId } from "@/shared/constants/resume/resumeRenewalData";
-import ResumeRenewalCollaborationSection from "./ui/ResumeRenewalCollaborationSection";
-import ResumeRenewalDeepDive from "./ui/ResumeRenewalDeepDive";
 import ResumeRenewalEmailBannerSection from "./ui/ResumeRenewalEmailBannerSection";
 import ResumeRenewalFooter from "./ui/ResumeRenewalFooter";
 import ResumeRenewalHero from "./ui/ResumeRenewalHero";
@@ -19,8 +17,6 @@ const ResumeRenewalPanel = () => {
             <ResumeRenewalTocNav />
             <ResumeRenewalHero />
             <ResumeRenewalSkillSection />
-            {/* <ResumeRenewalCollaborationSection /> */}
-
             {renewalExperiences.map((experience) => (
                 <ResumeRenewalExperience
                     key={experience.id}
@@ -28,8 +24,6 @@ const ResumeRenewalPanel = () => {
                     anchorId={getRenewalExperienceAnchorId(experience.id)}
                 />
             ))}
-
-            {/* <ResumeRenewalDeepDive /> */}
             <ResumeRenewalSideProject />
             <ResumeRenewalFooter />
             <ResumeRenewalEmailBannerSection />

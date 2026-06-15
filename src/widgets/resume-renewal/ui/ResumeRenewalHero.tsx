@@ -1,6 +1,6 @@
 "use client";
 
-import { renewalHero, renewalHeroStats, renewalProfileDetails } from "@/shared/constants/resume/resumeRenewalData";
+import { renewalHero, renewalProfileDetails } from "@/shared/constants/resume/resumeRenewalData";
 import RenewalRightBlocks from "./RenewalRightBlocks";
 import RenewalSplitSection from "./RenewalSplitSection";
 import { resumeProfile } from "@/shared/constants/resume/resumeData";

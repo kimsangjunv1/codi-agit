@@ -1,59 +1,18 @@
 import type { ResumeProject } from "./resumeData";
 import { resumeExperiences, resumeProfile, resumeProjects, resumeSideProject, resumeTechStack } from "./resumeData";
 import {
-    renewalBuiltWith,
-    renewalCaseStudies,
-    renewalCollaboration,
     renewalContactExtended,
-    renewalDeepDiveCaseStudy,
-    renewalEducation,
-    renewalGalleryByProject,
-    renewalHeroSecondary,
-    renewalHeroStats,
     renewalProfileDetails,
-    renewalProjectSliders,
     renewalProjectLinks,
-    renewalSkillCategories,
     renewalSkillHighlights,
-    renewalTocItems,
-    type RenewalCaseStudy,
-    type RenewalGalleryItem,
     type RenewalProjectLinks,
-    type RenewalProjectVisual,
-    type RenewalSliderItem,
+    type RenewalSkillHighlight,
+    type RenewalTocItem,
 } from "./resumeRenewalContent";
 
-export type {
-    RenewalCaseStudy,
-    RenewalCollaborationItem,
-    RenewalDecision,
-    RenewalGalleryItem,
-    RenewalGalleryLinkType,
-    RenewalProjectLinks,
-    RenewalSkillCategory,
-    RenewalSkillHighlight,
-    RenewalSkillItem,
-    RenewalSliderItem,
-    RenewalTocItem,
-} from "./resumeRenewalContent";
+export type { RenewalProjectLinks, RenewalSkillHighlight, RenewalTocItem } from "./resumeRenewalContent";
 
-export {
-    renewalBuiltWith,
-    renewalCaseStudies,
-    renewalCollaboration,
-    renewalContactExtended,
-    renewalDeepDiveCaseStudy,
-    renewalEducation,
-    renewalGalleryByProject,
-    renewalHeroSecondary,
-    renewalHeroStats,
-    renewalProfileDetails,
-    renewalProjectSliders,
-    renewalProjectLinks,
-    renewalSkillCategories,
-    renewalSkillHighlights,
-    renewalTocItems,
-};
+export { renewalContactExtended, renewalProfileDetails, renewalProjectLinks, renewalSkillHighlights };
 
 export const RENEWAL_REVEAL_EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -61,12 +20,6 @@ export const RENEWAL_VIEWPORT = {
     once: false,
     margin: "-10%",
     amount: 0.2,
-} as const;
-
-export const RENEWAL_GALLERY_VIEWPORT = {
-    once: false,
-    margin: "-5%",
-    amount: 0.15,
 } as const;
 
 export const renewalHero = {
@@ -95,31 +48,30 @@ const EMPLOYMENT_CATEGORY: Record<"full-time" | "client", string> = {
 
 const SIDE_PROJECT_CATEGORY = "Personal Project";
 
+const EXPERIENCE_TOC_LABELS: Record<string, string> = {
+    enjoysoft: "Enjoysoft",
+    "maze-company": "Maze",
+};
+
 export type RenewalSectionEntry = Pick<
     ResumeProject,
     "id" | "title" | "subtitle" | "period" | "techStack" | "team" | "overview" | "achievements"
-> &
-    Partial<Pick<ResumeProject, "highlight" | "chartLabel" | "chartPoints" | "metrics">> &
-    RenewalProjectVisual & {
-        gallery: RenewalGalleryItem[];
-        links: RenewalProjectLinks;
-        caseStudy?: RenewalCaseStudy;
-    };
-
-export type RenewalProjectEntry = RenewalSectionEntry & {
-    caseStudy: RenewalCaseStudy;
+> & {
+    category: string;
+    logo?: string;
+    links: RenewalProjectLinks;
 };
 
-export const renewalProjectVisuals: Record<string, RenewalProjectVisual> = {
-    fandombox: { category: "Product", sliderItems: renewalProjectSliders.fandombox },
-    maze: { category: "Corporate", sliderItems: renewalProjectSliders.maze },
-    stitchable: { category: "Open Source", sliderItems: renewalProjectSliders.stitchable },
-    keepupass: { category: "SaaS Admin", sliderItems: renewalProjectSliders.keepupass },
-    "dev-team-process": { category: "Team Lead", sliderItems: renewalProjectSliders["dev-team-process"] },
-    kqr: { category: "SaaS", sliderItems: renewalProjectSliders.kqr },
-    "imachine-ceo": { category: "SaaS", sliderItems: renewalProjectSliders["imachine-ceo"] },
-    "enjoysoft-hub": { category: "Internal SaaS", sliderItems: renewalProjectSliders["enjoysoft-hub"] },
-    "agency-ceo": { category: "SaaS", sliderItems: renewalProjectSliders["agency-ceo"] },
+export const renewalProjectVisuals: Record<string, { category: string; logo?: string }> = {
+    fandombox: { category: "Product" },
+    maze: { category: "Corporate" },
+    stitchable: { category: "Open Source" },
+    keepupass: { category: "SaaS Admin" },
+    "dev-team-process": { category: "Team Lead" },
+    kqr: { category: "SaaS" },
+    "imachine-ceo": { category: "SaaS" },
+    "enjoysoft-hub": { category: "Internal SaaS" },
+    "agency-ceo": { category: "SaaS" },
 };
 
 function getProjectById(projectId: string): ResumeProject {
@@ -139,11 +91,6 @@ function mergeProjectLinks(projectIds: string[]): RenewalProjectLinks {
             article: acc.article ?? links.article,
         };
     }, {});
-}
-
-function mergeSliderItems(projectIds: string[], maxItems = 3): RenewalSliderItem[] {
-    const items = projectIds.flatMap((projectId) => renewalProjectSliders[projectId] ?? []);
-    return items.slice(0, maxItems);
 }
 
 function mergeTechStack(projectIds: string[]): string {
@@ -192,71 +139,33 @@ function buildExperienceEntry(experienceId: string): RenewalSectionEntry {
         overview: experience.overview,
         achievements: buildExperienceAchievements(experience.id),
         category: EMPLOYMENT_CATEGORY[experience.employmentType],
-        sliderItems: mergeSliderItems(experience.projectIds),
-        gallery: experience.projectIds.flatMap((projectId) => renewalGalleryByProject[projectId] ?? []),
         links: mergeProjectLinks(experience.projectIds),
     };
 }
 
 function buildProjectSectionEntry(project: ResumeProject, categoryOverride?: string): RenewalSectionEntry {
-    const visual = renewalProjectVisuals[project.id] ?? { category: "Product", sliderItems: [] };
+    const visual = renewalProjectVisuals[project.id] ?? { category: "Product" };
 
     return {
-        ...project,
-        ...visual,
+        id: project.id,
+        title: project.title,
+        subtitle: project.subtitle,
+        period: project.period,
+        techStack: project.techStack,
+        team: project.team,
+        overview: project.overview,
+        achievements: project.achievements,
         category: categoryOverride ?? visual.category,
-        gallery: renewalGalleryByProject[project.id] ?? [],
+        logo: visual.logo,
         links: renewalProjectLinks[project.id] ?? {},
     };
-}
-
-function buildProjectSectionEntryById(projectId: string, categoryOverride?: string): RenewalSectionEntry {
-    const project = projectId === "stitchable" ? resumeSideProject : getProjectById(projectId);
-    return buildProjectSectionEntry(project, categoryOverride);
 }
 
 export const renewalExperiences: RenewalSectionEntry[] = resumeExperiences.map((experience) =>
     buildExperienceEntry(experience.id),
 );
 
-export const renewalDeepDiveProject: RenewalSectionEntry = {
-    ...buildProjectSectionEntryById("fandombox"),
-    caseStudy: renewalDeepDiveCaseStudy,
-};
-
 export const renewalSideProject: RenewalSectionEntry = buildProjectSectionEntry(resumeSideProject, SIDE_PROJECT_CATEGORY);
-
-/** @deprecated Experience/Side Project 구조로 대체됨. Deep Dive 등 legacy 참조용 */
-export const renewalProjects: RenewalProjectEntry[] = resumeProjects
-    .filter((project) => renewalCaseStudies[project.id])
-    .map((project) => ({
-        ...project,
-        ...renewalProjectVisuals[project.id],
-        gallery: renewalGalleryByProject[project.id] ?? [],
-        links: renewalProjectLinks[project.id] ?? {},
-        caseStudy: renewalCaseStudies[project.id],
-    }));
-
-export const renewalSkillStats = {
-    experience: {
-        label: "경력",
-        value: "2",
-        suffix: "+",
-        description: `프론트엔드 개발 실무 경력 ${resumeProfile.experience}을 보유하고 있습니다.`,
-    },
-    skills: {
-        label: "skills",
-        value: String(resumeTechStack.length),
-        suffix: "+",
-        description: "실무 프로젝트에서 검증한 역량입니다.",
-        items: resumeTechStack,
-    },
-};
-
-export const renewalFooter = {
-    education: `${renewalEducation.education.title} · ${renewalEducation.education.period}`,
-    activity: `${renewalEducation.activity.title} · ${renewalEducation.activity.period}`,
-};
 
 export const renewalContact = {
     email: resumeProfile.email,
@@ -265,46 +174,27 @@ export const renewalContact = {
     quote: '"저를 필요로 하는 기업과 함께 다양하고 재미난 일들을 벌이고 싶습니다."',
 };
 
-export const renewalCta = {
-    mail: {
-        label: "메일 보내기",
-        headline: "SEND MAIL",
-        description: "지금 바로, 메일내보세요! — 한 통이면 다음 프로젝트의 시작일이 정해질지도 몰라요.",
-        href: `mailto:${resumeProfile.email}`,
-        external: false,
-    },
-    demo: {
-        label: "라이브 데모",
-        headline: "LIVE DEMO",
-        description: "Codi Agit — App Router·Auth·Supabase가 돌아가는 실서비스를 직접 확인하세요.",
-        href: resumeProfile.service,
-        external: true,
-    },
-    github: {
-        label: "GitHub",
-        headline: "VIEW CODE",
-        description: "아키텍처·CI·최적화 커밋 히스토리 — 코드로 말합니다.",
-        href: resumeProfile.github,
-        external: true,
-    },
-};
-
 export function getRenewalExperienceAnchorId(experienceId: string) {
     return `renewal-experience-${experienceId}`;
-}
-
-export function getRenewalDeepDiveAnchorId() {
-    return "renewal-deep-dive";
 }
 
 export function getRenewalSideProjectAnchorId(projectId: string) {
     return `renewal-side-project-${projectId}`;
 }
 
-/** @deprecated renewalExperiences / renewalSideProject 앵커 사용 */
-export function getRenewalProjectAnchorId(projectId: string) {
-    return `renewal-project-${projectId}`;
-}
+/** 실제 렌더링 섹션과 동기화된 TOC — 경력·사이드 프로젝트는 데이터에서 자동 생성 */
+export const renewalTocItems: RenewalTocItem[] = [
+    { id: "renewal-about", label: "About" },
+    { id: "renewal-skills", label: "Skills" },
+    ...renewalExperiences.map((experience) => ({
+        id: getRenewalExperienceAnchorId(experience.id),
+        label: EXPERIENCE_TOC_LABELS[experience.id] ?? experience.title,
+    })),
+    {
+        id: getRenewalSideProjectAnchorId(renewalSideProject.id),
+        label: "Side Project",
+    },
+];
 
 export function buildRenewalPersonJsonLd() {
     return {

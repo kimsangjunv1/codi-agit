@@ -317,23 +317,6 @@ export const resumeSideProject: ResumeProject = {
     ],
 };
 
-export const resumeEducation = {
-    school: "세한대학교 (당진) 정보물류학과 졸업",
-    period: "2016.03 ~ 2022.02",
-};
-
-export const resumeActivity = {
-    title: "이솔 스튜디오 창업",
-    period: "2019.10 ~ 2022.06",
-    description: "카카오톡·삼성 테마 제작·배포, UI/UX",
-};
-
-export const resumeSummaryStats = [
-    { value: "2년+", label: "프론트엔드 경력" },
-    { value: "8+", label: "프로덕션 프로젝트" },
-    { value: "16+", label: "기술 스택" },
-];
-
 export type ResumeExperience = {
     id: string;
     /** 회사명 */
