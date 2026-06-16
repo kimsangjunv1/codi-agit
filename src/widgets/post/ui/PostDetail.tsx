@@ -15,6 +15,8 @@ import UI from "@/shared/ui/common/UIComponent";
 import IconComponent from "@/shared/ui/common/IconComponent";
 import { BLOCK_COLUMN_CLASS, BLOCK_ROW_CLASS, POST_TIPTAP_CONTENT_CLASS } from "@/widgets/post/ui/blockEditor/blockEditorStyles";
 import { isMainBlock } from "@/widgets/post/lib/blockMode";
+import { getPostTocAnchorId } from "@/widgets/post/lib/postToc";
+import PostTocPanel from "@/widgets/post/ui/PostTocPanel";
 import GiscusComments from "@/shared/ui/common/GiscusComments";
 import AsyncErrorState from "@/shared/ui/common/AsyncErrorState";
 import PostHero from "@/widgets/post/ui/PostHero";
@@ -108,6 +110,8 @@ const RenderContents = ({ id, initialData }: { id: string; initialData: GetPostD
                 next={DATA?.next}
                 postId={id}
             />
+
+            <PostTocPanel contents={DATA?.contents ?? []} />
         </>
     );
 };
@@ -131,7 +135,10 @@ const ContentColumn = memo(({ col, rowLength, onCopySentence }: { col: SectionCo
     const columnClassName = `${BLOCK_COLUMN_CLASS} ${rowLength !== 0 ? "flex gap-[2.4rem]" : ""} ${rowLength === 1 ? "tablet:col-span-2" : "tablet:min-h-[36.0rem]"} ${col.type === 0 ? "flex flex-col gap-[1.6rem]" : ""} ${col.type === 1 || col.type === 2 ? "rounded-[2.4rem] overflow-hidden" : ""} ${col.type === 2 ? "flex-col" : ""}`;
 
     return (
-        <section className={columnClassName}>
+        <section
+            id={col.type === 0 ? getPostTocAnchorId(col.id) : undefined}
+            className={`${columnClassName} ${col.type === 0 ? "scroll-mt-[12rem]" : ""}`}
+        >
             {col.type === 0 ? (
                 <Fragment>
                     {showHeading ? (

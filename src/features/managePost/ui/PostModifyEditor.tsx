@@ -12,6 +12,7 @@ import { collectImagesFromPost } from "@/features/managePost/lib/preparePostSave
 import { SectionContent } from "@/entities/post/model/post.type";
 import { useCreatePostStore } from "@/shared/stores/useCreatePostStore";
 import { usePostDraftImageStore } from "@/shared/stores/usePostDraftImageStore";
+import PostTocPanel from "@/widgets/post/ui/PostTocPanel";
 
 const PostModifyEditor = ({ id }: { id: string }) => {
     const { setPostIdx } = useCreatePostStore();
@@ -25,6 +26,8 @@ const PostModifyEditor = ({ id }: { id: string }) => {
             <section className="mx-auto post-inner flex flex-col gap-[5.2rem] w-full items-center">
                 <RenderContents id={id} />
             </section>
+
+            <PostTocPanel />
         </section>
     );
 };

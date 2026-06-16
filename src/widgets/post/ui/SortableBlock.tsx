@@ -11,6 +11,7 @@ import IconComponent from "@/shared/ui/common/IconComponent";
 import { MaterialIcon } from "@/shared/ui/common/MaterialIcon";
 import { blockContentToHtml } from "@/widgets/post/lib/blockContent";
 import { isMainBlock } from "@/widgets/post/lib/blockMode";
+import { getPostTocAnchorId } from "@/widgets/post/lib/postToc";
 
 import { usePostDraftImageStore } from "@/shared/stores/usePostDraftImageStore";
 import { useToastStore } from "@/shared/stores/useToastStore";
@@ -301,9 +302,10 @@ const Block = ({
     return (
         <motion.div
             ref={containerRef}
+            id={block.type === 0 ? getPostTocAnchorId(block.id) : undefined}
             tabIndex={0}
             layout="position"
-            className={`${columnClassName} relative  ${isSelected ? "" : ""}`}
+            className={`${columnClassName} relative ${block.type === 0 ? "scroll-mt-[12rem]" : ""} ${isSelected ? "" : ""}`}
             // className={`${columnClassName} relative outline-none ring-offset-2 ${isSelected ? "ring-2 ring-[var(--color-brand-500)] rounded-[2.4rem]" : "hover:ring-1 hover:ring-[var(--color-gray-300)] rounded-[2.4rem]"}`}
             onClick={() => {
                 selectBlock(rowIndex, blockIndex);

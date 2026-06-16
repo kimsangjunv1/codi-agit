@@ -11,6 +11,7 @@ import { useGetCategoryListQuery } from "@/entities/category/api/category.query"
 import { useBlockStore } from "@/widgets/post/model/useEditorBlockStore";
 import { useCreatePostStore } from "@/shared/stores/useCreatePostStore";
 import { usePostDraftImageStore } from "@/shared/stores/usePostDraftImageStore";
+import PostTocPanel from "@/widgets/post/ui/PostTocPanel";
 
 const PostCreateEditor = () => {
     const { reset: resetBlocks } = useBlockStore();
@@ -41,6 +42,8 @@ const PostCreateEditor = () => {
                     onCategoryChange={setCategoryIdx}
                 />
             </section>
+
+            <PostTocPanel />
         </section>
     );
 };
