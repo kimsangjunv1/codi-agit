@@ -1,24 +1,27 @@
 "use client";
 
-import { useEditor, EditorContent } from "@tiptap/react";
+import { useEditor, EditorContent, type Editor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Bold from "@tiptap/extension-bold";
 import Italic from "@tiptap/extension-italic";
 import Underline from "@tiptap/extension-underline";
 import { TextStyle } from "@tiptap/extension-text-style";
-import { Image } from "@tiptap/extension-image";
 import { TaskItem, TaskList } from "@tiptap/extension-list";
 import { Highlight } from "@tiptap/extension-highlight";
 import { Selection } from "@tiptap/extensions";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import TipTapBubbleMenu from "@/shared/ui/layout/TipTapBubbleMenu";
+import TipTapImageBubbleMenu from "@/shared/ui/layout/TipTapImageBubbleMenu";
 import TipTapToolbar from "@/shared/ui/layout/TipTapToolbar";
+import { ResizableImage } from "@/shared/ui/common/richText/extensions/resizableImage";
 
 type Props = {
     content?: string;
     onChange?: (html: string) => void;
     showToolbar?: boolean;
+    onEditorFocus?: (editor: Editor) => void;
+    onEditorBlur?: () => void;
 };
 
 const CustomTextStyle = TextStyle.extend({
@@ -45,7 +48,7 @@ const CustomTextStyle = TextStyle.extend({
     },
 });
 
-const Normal = ({ content = "", onChange, showToolbar = true }: Props) => {
+const Normal = ({ content = "", onChange, showToolbar = true, onEditorFocus, onEditorBlur }: Props) => {
     const editor = useEditor({
         immediatelyRender: false,
         shouldRerenderOnTransaction: false,
@@ -55,7 +58,7 @@ const Normal = ({ content = "", onChange, showToolbar = true }: Props) => {
                 autocorrect: "off",
                 autocapitalize: "off",
                 "aria-label": "본문 입력",
-                class: "tiptap-editor-content min-h-[12rem] px-[0.4rem] py-[0.8rem] outline-none focus:outline-none",
+                class: "tiptap-editor-content min-h-[12rem] px-[0.4rem] py-[0.8rem] outline-none focus:outline-none [&_.rich-text-image-node]:w-full",
             },
         },
         extensions: [
@@ -73,7 +76,10 @@ const Normal = ({ content = "", onChange, showToolbar = true }: Props) => {
             TaskList,
             TaskItem.configure({ nested: true }),
             Highlight.configure({ multicolor: true }),
-            Image,
+            ResizableImage.configure({
+                allowBase64: true,
+                inline: false,
+            }),
             Selection,
         ],
         content,
@@ -82,15 +88,31 @@ const Normal = ({ content = "", onChange, showToolbar = true }: Props) => {
         },
     });
 
+    useEffect(() => {
+        if (!editor) return;
+
+        const handleFocus = () => onEditorFocus?.(editor);
+        const handleBlur = () => onEditorBlur?.();
+
+        editor.on("focus", handleFocus);
+        editor.on("blur", handleBlur);
+
+        return () => {
+            editor.off("focus", handleFocus);
+            editor.off("blur", handleBlur);
+        };
+    }, [editor, onEditorFocus, onEditorBlur]);
+
     if (!editor) return null;
 
     return (
         <div className="w-full h-full rounded-[1.2rem]" onClick={(e) => e.stopPropagation()}>
             {showToolbar ? <TipTapToolbar editor={editor} /> : null}
             <TipTapBubbleMenu editor={editor} />
+            <TipTapImageBubbleMenu editor={editor} />
             <EditorContent
                 editor={editor}
-                className="min-h-[12rem] h-full rounded-[1.6rem] outline-none [&_.tiptap-editor-content]:min-h-[12rem] [&_.tiptap-editor-content_p]:my-[0.4rem] [&_.tiptap-editor-content_ul]:list-disc [&_.tiptap-editor-content_ul]:pl-[2rem] [&_.tiptap-editor-content_ol]:list-decimal [&_.tiptap-editor-content_ol]:pl-[2rem] [&_.tiptap-editor-content_blockquote]:border-l-[0.4rem] [&_.tiptap-editor-content_blockquote]:border-[var(--color-gray-300)] [&_.tiptap-editor-content_blockquote]:pl-[1.2rem] [&_.tiptap-editor-content_blockquote]:text-[var(--color-gray-600)]"
+                className="min-h-[12rem] h-full rounded-[1.6rem] outline-none [&_.tiptap-editor-content]:min-h-[12rem] [&_.tiptap-editor-content_p]:my-[0.4rem] [&_.tiptap-editor-content_ul]:list-disc [&_.tiptap-editor-content_ul]:pl-[2rem] [&_.tiptap-editor-content_ol]:list-decimal [&_.tiptap-editor-content_ol]:pl-[2rem] [&_.tiptap-editor-content_blockquote]:border-l-[0.4rem] [&_.tiptap-editor-content_blockquote]:border-[var(--color-gray-300)] [&_.tiptap-editor-content_blockquote]:pl-[1.2rem] [&_.tiptap-editor-content_blockquote]:text-[var(--color-gray-600)] [&_.rich-text-image-node]:w-full"
             />
         </div>
     );

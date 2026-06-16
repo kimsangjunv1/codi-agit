@@ -42,7 +42,8 @@ const initialRow: Row[] = [
         subtitle: "",
         summary: "",
         content: "",
-        imageUrl: ""
+        imageUrl: "",
+        blockMode: "sub",
     }],
 ];
 
@@ -65,6 +66,7 @@ export const useBlockStore = create<BlockStore>((set, get) => ({
             summary: "",
             content: "",
             imageUrl: "",
+            blockMode: "sub",
         };
         set((state) => {
             const newRows = state.rows.map((row, i) =>

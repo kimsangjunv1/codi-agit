@@ -33,8 +33,7 @@ const RenderContents = ({ id }: { id: string }) => {
     const { data: getPostListData } = useGetPostDetailQuery(parseInt(id));
     const data = getPostListData?.result;
 
-    const { title, summary, thumbnail, category_idx, setTitle, setSummary, setCategoryIdx, setThumbnail } =
-        useCreatePostStore();
+    const { title, summary, thumbnail, category_idx, setTitle, setSummary, setCategoryIdx, setThumbnail } = useCreatePostStore();
     const { reset: resetDraftImages, addFromUrl } = usePostDraftImageStore();
     const initializedRef = useRef(false);
 
@@ -83,8 +82,8 @@ const RenderContents = ({ id }: { id: string }) => {
 
 const Contents = ({ contents }: { contents: SectionContent[][] }) => {
     return (
-        <article className="flex gap-[0.4rem] w-full max-w-[var(--size-tablet)] px-[1.2rem] [content-visibility:auto]">
-            <section className="flex flex-col gap-[7.2rem] flex-1">
+        <article className="flex gap-[0.4rem] w-full max-w-[var(--size-tablet)] min-w-0">
+            <section className="flex flex-col gap-[7.2rem] flex-1 min-w-0">
                 <SortableBlock contents={contents} />
                 <PostAttachedImageList />
             </section>

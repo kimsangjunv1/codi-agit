@@ -7,6 +7,7 @@ export const FONT_SIZES = [14, 16, 18, 20, 24] as const;
 export const LINE_HEIGHTS = ["1", "1.2", "1.5", "1.8", "2"] as const;
 
 export type HeadingValue = "paragraph" | "h1" | "h2" | "h3";
+export type ToolbarVariant = "default" | "glass";
 
 export const useTipTapToolbarState = (editor: Editor) =>
     useEditorState({
@@ -43,8 +44,23 @@ export const getActiveHeading = (state: ReturnType<typeof useTipTapToolbarState>
     return "paragraph";
 };
 
-export const iconButtonClass = (active: boolean, disabled = false, compact = false) => {
+export const iconButtonClass = (
+    active: boolean,
+    disabled = false,
+    compact = false,
+    variant: ToolbarVariant = "default",
+) => {
     const size = compact ? "w-[3.2rem] h-[3.2rem] text-[1.3rem]" : "w-[3.6rem] h-[3.6rem] text-[1.4rem]";
+
+    if (variant === "glass") {
+        return `shrink-0 flex items-center justify-center rounded-[1.2rem] transition-colors ${size} ${
+            disabled
+                ? "cursor-not-allowed text-white/40"
+                : active
+                  ? "bg-white/25 text-white"
+                  : "text-white hover:bg-white/15"
+        }`;
+    }
 
     return `shrink-0 flex items-center justify-center rounded-[1.2rem] font-semibold transition-colors ${size} ${
         disabled
@@ -65,8 +81,11 @@ export const preventEditorBlur = (e: React.MouseEvent) => {
     e.preventDefault();
 };
 
-export const ToolbarDivider = () => (
-    <span className="shrink-0 w-[0.1rem] h-[2.4rem] bg-[var(--color-gray-200)] mx-[0.2rem]" aria-hidden />
+export const ToolbarDivider = ({ variant = "default" }: { variant?: ToolbarVariant }) => (
+    <span
+        className={`shrink-0 w-[0.1rem] h-[2.4rem] mx-[0.2rem] ${variant === "glass" ? "bg-white/20" : "bg-[var(--color-gray-200)]"}`}
+        aria-hidden
+    />
 );
 
 export const ToolbarIconButton = ({
@@ -75,6 +94,7 @@ export const ToolbarIconButton = ({
     active,
     disabled,
     compact,
+    variant = "default",
     className,
     onClick,
     children,
@@ -84,6 +104,7 @@ export const ToolbarIconButton = ({
     active?: boolean;
     disabled?: boolean;
     compact?: boolean;
+    variant?: ToolbarVariant;
     className?: string;
     onClick: () => void;
     children?: React.ReactNode;
@@ -94,7 +115,7 @@ export const ToolbarIconButton = ({
         aria-label={label}
         aria-pressed={active}
         disabled={disabled}
-        className={`${iconButtonClass(!!active, disabled, compact)} ${className ?? ""}`}
+        className={`${iconButtonClass(!!active, disabled, compact, variant)} ${className ?? ""}`}
         onMouseDown={preventEditorBlur}
         onClick={onClick}
     >
@@ -107,11 +128,13 @@ export const ToolbarSelect = ({
     value,
     onChange,
     options,
+    variant = "default",
 }: {
     label: string;
     value: string;
     onChange: (value: string) => void;
     options: { label: string; value: string }[];
+    variant?: ToolbarVariant;
 }) => (
     <label className="shrink-0 relative flex items-center">
         <span className="sr-only">{label}</span>
@@ -121,7 +144,11 @@ export const ToolbarSelect = ({
             onMouseDown={(e) => e.stopPropagation()}
             onClick={(e) => e.stopPropagation()}
             onChange={(e) => onChange(e.target.value)}
-            className="relative z-20 h-[3.6rem] pl-[1rem] pr-[2.4rem] rounded-[1.2rem] text-[1.2rem] font-semibold text-[var(--color-gray-1000)] bg-[var(--color-gray-100)] hover:bg-[var(--color-gray-200)] border border-[var(--color-gray-200)] outline-none cursor-pointer appearance-none"
+            className={`relative z-20 h-[3.6rem] pl-[1rem] pr-[2.4rem] rounded-[1.2rem] text-[1.2rem] font-semibold outline-none cursor-pointer appearance-none ${
+                variant === "glass"
+                    ? "text-white bg-white/10 hover:bg-white/15 border border-white/20"
+                    : "text-[var(--color-gray-1000)] bg-[var(--color-gray-100)] hover:bg-[var(--color-gray-200)] border border-[var(--color-gray-200)]"
+            }`}
         >
             {options.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -129,7 +156,11 @@ export const ToolbarSelect = ({
                 </option>
             ))}
         </select>
-        <span className="pointer-events-none absolute right-[0.8rem] text-[1rem] text-[var(--color-gray-500)]">▾</span>
+        <span
+            className={`pointer-events-none absolute right-[0.8rem] text-[1rem] ${variant === "glass" ? "text-white/70" : "text-[var(--color-gray-500)]"}`}
+        >
+            ▾
+        </span>
     </label>
 );
 
