@@ -14,6 +14,7 @@ import {
 } from "@/features/managePost/hooks/usePostMutations";
 import { preparePostPayloadForSave } from "@/features/managePost/lib/preparePostSave";
 import { canManagePost, getVisiblePostNavActions } from "@/features/managePost/lib/postPermissions";
+import { util } from "@/shared/lib/util";
 import { useCreatePostStore } from "@/shared/stores/useCreatePostStore";
 import { useModalStore } from "@/shared/stores/useModalStore";
 import { useToastStore } from "@/shared/stores/useToastStore";
@@ -130,6 +131,12 @@ export const usePostNavigationActions = ({
     };
 
     const handleNavAction = (action: (typeof visibleActions)[number]["action"]) => {
+        if (action === "share") {
+            util.dom.setCopyOnClipboard(window.location.href);
+            setToast({ msg: "링크를 복사했어요", time: 2 });
+            return;
+        }
+
         if (action === "like") {
             if (!session?.user?.id) {
                 setToast({ msg: "로그인이 필요합니다", time: 2 });

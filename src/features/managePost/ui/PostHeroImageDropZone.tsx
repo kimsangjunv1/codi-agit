@@ -1,22 +1,20 @@
 "use client";
 
-import { useId, useRef, useState } from "react";
+import { useId, useRef } from "react";
 
 import { usePostDraftImageStore } from "@/shared/stores/usePostDraftImageStore";
 import { useToastStore } from "@/shared/stores/useToastStore";
 
 type PostHeroImageDropZoneProps = {
     onImageSelected: (previewUrl: string) => void;
+    isDragging?: boolean;
 };
 
-const PostHeroImageDropZone = ({ onImageSelected }: PostHeroImageDropZoneProps) => {
-    const inputId = useId();
-    const inputRef = useRef<HTMLInputElement>(null);
-    const [isDragging, setIsDragging] = useState(false);
+export const useHeroThumbnailFileHandler = (onImageSelected: (previewUrl: string) => void) => {
     const { setToast } = useToastStore();
     const addFromFile = usePostDraftImageStore((state) => state.addFromFile);
 
-    const handleFile = (file: File) => {
+    return (file: File) => {
         if (!file.type.startsWith("image/")) {
             setToast({ msg: "이미지 파일만 추가할 수 있어요", time: 2 });
             return;
@@ -32,31 +30,21 @@ const PostHeroImageDropZone = ({ onImageSelected }: PostHeroImageDropZoneProps) 
             setToast({ msg: "썸네일 이미지를 추가했어요", time: 2 });
         }
     };
+};
 
-    const openFilePicker = () => {
-        inputRef.current?.click();
-    };
+const PostHeroImageDropZone = ({ onImageSelected, isDragging = false }: PostHeroImageDropZoneProps) => {
+    const inputId = useId();
+    const inputRef = useRef<HTMLInputElement>(null);
+    const handleFile = useHeroThumbnailFileHandler(onImageSelected);
 
     return (
         <>
-            <section
-                className={`absolute inset-0 z-[5] rounded-[2.4rem] transition-colors ${
-                    isDragging ? "bg-[#00000040] ring-2 ring-white/60" : "bg-transparent"
-                }`}
-                onDragOver={(e) => {
-                    e.preventDefault();
-                    setIsDragging(true);
-                }}
-                onDragLeave={() => setIsDragging(false)}
-                onDrop={(e) => {
-                    e.preventDefault();
-                    setIsDragging(false);
-
-                    const file = e.dataTransfer.files?.[0];
-                    if (file) handleFile(file);
-                }}
-                onClick={openFilePicker}
-            />
+            {isDragging ? (
+                <div
+                    aria-hidden
+                    className="pointer-events-none absolute inset-0 z-[5] rounded-[2.4rem] bg-[#00000040] ring-2 ring-white/60"
+                />
+            ) : null}
 
             <label
                 htmlFor={inputId}

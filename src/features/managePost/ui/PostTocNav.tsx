@@ -21,20 +21,39 @@ const PostTocNav = ({ items }: PostTocNavProps) => {
 
         if (sections.length === 0) return;
 
+        let rafId = 0;
+        let pendingId: string | null = null;
+
+        const flushActiveId = () => {
+            rafId = 0;
+
+            if (pendingId) {
+                setActiveId((prev) => (prev === pendingId ? prev : pendingId!));
+                pendingId = null;
+            }
+        };
+
         const observer = new IntersectionObserver(
             (entries) => {
                 const visible = entries.filter((entry) => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio);
 
                 if (visible[0]?.target.id) {
-                    setActiveId(visible[0].target.id);
+                    pendingId = visible[0].target.id;
+
+                    if (!rafId) {
+                        rafId = requestAnimationFrame(flushActiveId);
+                    }
                 }
             },
-            { rootMargin: "-35% 0px -45% 0px", threshold: [0, 0.25, 0.5, 0.75, 1] },
+            { rootMargin: "-35% 0px -45% 0px", threshold: [0, 1] },
         );
 
         sections.forEach((section) => observer.observe(section));
 
-        return () => observer.disconnect();
+        return () => {
+            cancelAnimationFrame(rafId);
+            observer.disconnect();
+        };
     }, [items]);
 
     const handleClick = (id: string) => {

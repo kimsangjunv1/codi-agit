@@ -1,42 +1,9 @@
-"use client"
+"use client";
 
-import { motion } from 'motion/react'
-import { ReactNode, useEffect, useRef } from "react";
-
-import useNavigate from "@/shared/hooks/useNavigate";
-import { useLayoutStore } from '@/shared/stores/useLayoutStore';
+import { ReactNode } from "react";
 
 const TransitionOverlay = ({ children }: { children: ReactNode }) => {
-    const { currentPathName } = useNavigate();
-    const { isRouteChange, setIsRouteChange } = useLayoutStore();
+    return children;
+};
 
-    const prevPathName = useRef( currentPathName );
-
-    useEffect(() => {
-        if ( isRouteChange === 1 ) {
-            if ( prevPathName.current !== currentPathName ) {
-                prevPathName.current = currentPathName;
-            }
-    
-            // 페이지 경로가 바뀔 때마다 전환 완료 처리
-            const timeout = setTimeout(() => { setIsRouteChange(0) }, 500); // 렌더 직후 살짝 기다렸다가
-    
-            return () => clearTimeout( timeout ); // 클린업
-        }
-	}, [ currentPathName, isRouteChange, setIsRouteChange ]);
-
-    return (
-        <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{
-                opacity: isRouteChange === 1 ? 0.6 : 1,
-                scale: isRouteChange === 1 ? 0.98 : 1,
-            }}
-            transition={{ duration: 0.35, ease: [0.25, 0.8, 0.25, 1] }}
-        >
-            { children }
-        </motion.div>
-    )
-}
-
-export default TransitionOverlay
+export default TransitionOverlay;

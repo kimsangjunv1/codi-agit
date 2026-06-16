@@ -1,7 +1,6 @@
 "use client";
 
 import { useLayoutEffect, useRef } from "react";
-import { AnimatePresence } from "motion/react";
 
 import { useGetPostListQuery } from "@/entities/post/api/post.query";
 import { useLayoutStore } from "@/shared/stores/useLayoutStore";
@@ -11,6 +10,7 @@ import ArchiveListDefaultItem from "./ArchiveListDefaultItem";
 import ArchiveListGridItem from "./ArchiveListGridItem";
 import { FeedEmpty, FeedError, FeedLoading } from "./FeedStatus";
 import ListViewModeToggle from "./ListViewModeToggle";
+import { AnimatePresence } from "motion/react";
 
 const ArchiveList = () => {
     const { data, isLoading, isError, error, refetch } = useGetPostListQuery();
@@ -39,11 +39,21 @@ const ArchiveList = () => {
     }
 
     if (isError) {
-        return <FeedError message={error?.message} onRetry={() => refetch()} />;
+        return (
+            <FeedError
+                message={error?.message}
+                onRetry={() => refetch()}
+            />
+        );
     }
 
     if (data?.resultCode === "ERROR") {
-        return <FeedError message={data.resultMessage} onRetry={() => refetch()} />;
+        return (
+            <FeedError
+                message={data.resultMessage}
+                onRetry={() => refetch()}
+            />
+        );
     }
 
     if (posts.length === 0) {
@@ -60,20 +70,27 @@ const ArchiveList = () => {
                 ref={listRef}
                 className={
                     listViewMode === "grid"
-                        ? "grid grid-cols-4 gap-[4px] px-[1.2rem] mx-auto max-w-[var(--size-tablet)]"
-                        : "flex flex-col gap-6"
+                        ? "relative grid grid-cols-4 gap-[4px] px-[1.2rem] mx-auto max-w-[var(--size-tablet)]"
+                        : "relative flex flex-col gap-6"
                 }
             >
                 <AnimatePresence mode="popLayout">
                     {filtered.map((post) =>
                         listViewMode === "grid" ? (
-                            <ArchiveListGridItem key={post.idx} post={post} />
+                            <ArchiveListGridItem
+                                key={post.idx + post.title}
+                                post={post}
+                            />
                         ) : (
-                            <ArchiveListDefaultItem key={post.idx} post={post} />
+                            <ArchiveListDefaultItem
+                                key={post.idx + post.title}
+                                post={post}
+                            />
                         ),
                     )}
                 </AnimatePresence>
             </article>
+
             <ListViewModeToggle />
         </>
     );

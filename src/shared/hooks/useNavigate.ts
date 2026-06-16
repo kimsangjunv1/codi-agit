@@ -6,15 +6,17 @@ import { useDirtyStore } from "@/shared/stores/useDirtyStore";
 import { useModalStore } from "@/shared/stores/useModalStore";
 import { useLayoutStore } from "@/shared/stores/useLayoutStore";
 
-const useNavigate = (fallbackUrl = "/new-home") => {
+const useNavigate = (_fallbackUrl = "/new-home") => {
     const router = useRouter();
     const pathName = usePathname();
 
     const { setModal } = useModalStore();
     const { isDirty, resetDirty } = useDirtyStore();
-    const { isRouteChange, setIsRouteChange, setIsRouteChangeType } = useLayoutStore();
+    const { transitionPhase, beginRouteTransition } = useLayoutStore();
 
     const DEFENCE_ROUTE = ["/", "/new-home", "/check", "/password", "/exit/receipt", "/exit/payment"];
+
+    const isTransitioning = transitionPhase !== "idle";
 
     const setPreventModal = ({ onClick }: { onClick: () => void }) =>
         setModal({
@@ -32,13 +34,15 @@ const useNavigate = (fallbackUrl = "/new-home") => {
             isOpen: true,
         });
 
-    const pushToUrl = (url: string, delay?: number) => {
-        const MOVE = () => {
-            setIsRouteChange(1);       // 애니메이션 시작
-            setIsRouteChangeType(1);
-            NProgress.start();          // NProgress 시작
+    const pushToUrl = (url: string) => {
+        if (isTransitioning) return;
 
-            setTimeout(() => router.push(url), delay ?? 300);
+        const MOVE = () => {
+            NProgress.start();
+            beginRouteTransition({
+                direction: "forward",
+                navigation: { type: "push", url },
+            });
         };
 
         if (isDirty) {
@@ -49,10 +53,20 @@ const useNavigate = (fallbackUrl = "/new-home") => {
     };
 
     const replaceToUrl = (url: string, animation: boolean = true) => {
+        if (isTransitioning) return;
+
         const MOVE = () => {
-            setIsRouteChange(animation ? 1 : 0);
-            setIsRouteChangeType(animation ? 1 : 0);
             NProgress.start();
+
+            if (animation) {
+                beginRouteTransition({
+                    direction: "forward",
+                    navigation: { type: "replace", url },
+                });
+                return;
+            }
+
+            NProgress.done();
             router.replace(url);
         };
 
@@ -64,11 +78,14 @@ const useNavigate = (fallbackUrl = "/new-home") => {
     };
 
     const backToUrl = () => {
+        if (isTransitioning) return;
+
         const MOVE = () => {
-            setIsRouteChange(99);
-            setIsRouteChangeType(2);
             NProgress.start();
-            setTimeout(() => router.back(), 500);
+            beginRouteTransition({
+                direction: "back",
+                navigation: { type: "back" },
+            });
         };
 
         if (isDirty) {
@@ -78,13 +95,12 @@ const useNavigate = (fallbackUrl = "/new-home") => {
         }
     };
 
-    // 페이지 경로가 바뀌면 NProgress 완료 & 애니메이션 종료
     useEffect(() => {
-        NProgress.done();
-        if (isRouteChange !== 0) setIsRouteChange(0);
-    }, [pathName]);
+        if (transitionPhase === "idle") {
+            NProgress.done();
+        }
+    }, [pathName, transitionPhase]);
 
-    // 브라우저 새로고침 / 탭 닫기 경고
     useEffect(() => {
         const handleBeforeUnload = (e: BeforeUnloadEvent) => {
             if (isDirty) {

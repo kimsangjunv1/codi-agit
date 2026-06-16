@@ -13,7 +13,8 @@ import Toast from "@/shared/ui/layout/Toast";
 import PageProgress from "@/shared/ui/common/PageProgress";
 import PathCheckComponent from "@/shared/ui/common/PathCheckComponent";
 import ClientPageProgress from "@/shared/ui/common/ClientComponent";
-import TransitionOverlay from "@/shared/ui/common/TransitionOverlay";
+import PageRevealOverlay from "@/shared/ui/common/PageRevealOverlay";
+import PageContentGate from "@/shared/ui/common/PageContentGate";
 import RootChromeView from "@/views/layout/RootChromeView";
 
 import "@/shared/styles/scss/global.css";
@@ -45,30 +46,28 @@ export const metadata: Metadata = {
     },
 };
 
-export default function RootLayout({
-    children,
-    modal,
-}: Readonly<{ children: React.ReactNode; modal: React.ReactNode }>) {
+export default function RootLayout({ children, modal }: Readonly<{ children: React.ReactNode; modal: React.ReactNode }>) {
     return (
         <html lang="ko">
             <body>
                 <GlobalErrorBoundary>
                     <QueryProvider>
                         <AuthProvider>
-                                <PopupProvider>
-                                    <PageProgress />
-                                    <LenisProvider />
+                            <PopupProvider>
+                                <PageProgress />
+                                {/* <LenisProvider /> */}
+                                <PageRevealOverlay />
+                                <PageContentGate>
                                     <RootChromeView>
                                         <PathCheckComponent>
-                                            <TransitionOverlay>
-                                                {children}
-                                                {modal}
-                                            </TransitionOverlay>
+                                            {children}
+                                            {modal}
                                         </PathCheckComponent>
                                     </RootChromeView>
-                                    <ClientPageProgress />
-                                </PopupProvider>
-                                <Toast />
+                                </PageContentGate>
+                                <ClientPageProgress />
+                            </PopupProvider>
+                            <Toast />
                         </AuthProvider>
                     </QueryProvider>
                 </GlobalErrorBoundary>

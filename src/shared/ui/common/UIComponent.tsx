@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { AnimatePresence, motion, Reorder, useDragControls } from 'motion/react';
-import React, { forwardRef, Fragment, ReactNode, Suspense, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from 'react';
+import { AnimatePresence, motion, Reorder, useDragControls } from "motion/react";
+import React, { forwardRef, Fragment, ReactNode, Suspense, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from "react";
 
 import {
     ButtonProps,
@@ -20,51 +20,55 @@ import {
     SelectProps,
     SwitchProps,
     TabComponentProps,
-    TextAreaProps
-} from '@/shared/types/ui.type';
+    TextAreaProps,
+} from "@/shared/types/ui.type";
 import useNavigate from "@/shared/hooks/useNavigate";
 import { useToastStore } from "@/shared/stores/useToastStore";
-import IconComponent from '@/shared/ui/common/IconComponent';
-import { util } from '@/shared/lib/util';
-import { useDirtyStore } from '@/shared/stores/useDirtyStore';
-import { useModalStore } from '@/shared/stores/useModalStore';
-import { QueryErrorResetBoundary } from '@tanstack/react-query';
-import { ErrorBoundary, type FallbackProps, getErrorMessage } from 'react-error-boundary';
+import IconComponent from "@/shared/ui/common/IconComponent";
+import { util } from "@/shared/lib/util";
+import { useDirtyStore } from "@/shared/stores/useDirtyStore";
+import { useModalStore } from "@/shared/stores/useModalStore";
+import { QueryErrorResetBoundary } from "@tanstack/react-query";
+import { ErrorBoundary, type FallbackProps, getErrorMessage } from "react-error-boundary";
 
 const CheckBox = ({ defaultState = false, className, checked, guide, desc_no, preventClick = false, onChange }: CheckBoxProps) => {
-    const [ currentState, setCurrentState ] = useState<boolean>( defaultState );
+    const [currentState, setCurrentState] = useState<boolean>(defaultState);
 
     useEffect(() => {
-        setCurrentState( defaultState )
-    }, [ defaultState ])
+        setCurrentState(defaultState);
+    }, [defaultState]);
 
     return (
-        <div className={`flex items-center justify-center ${ className?.container ? className.container : "" }`}>
+        <div className={`flex items-center justify-center ${className?.container ? className.container : ""}`}>
             <UI.Button
-                className={`flex items-center gap-[0.4rem] ${ className?.button ? className.button : "" }`}
+                className={`flex items-center gap-[0.4rem] ${className?.button ? className.button : ""}`}
                 onClick={() => {
-                    onChange( !currentState )
-                    
-                    if ( !preventClick ) {
-                        setCurrentState( !currentState )
+                    onChange(!currentState);
+
+                    if (!preventClick) {
+                        setCurrentState(!currentState);
                     }
                 }}
             >
                 <div
-                    className={`w-[2.0rem] h-[2.0rem] rounded-[0.6rem] m-[0.4rem] relative transition-colors ${ currentState ? "bg-[var(--color-brand-500)] shadow-[var(--shadow-normal)]" : "bg-[var(--color-gray-200)] border-[0.15rem] border-[var(--color-gray-300)] hover:bg-[var(--color-gray-200)]" }`}
-                    data-description={ desc_no }
+                    className={`w-[2.0rem] h-[2.0rem] rounded-[0.6rem] m-[0.4rem] relative transition-colors ${currentState ? "bg-[var(--color-brand-500)] shadow-[var(--shadow-normal)]" : "bg-[var(--color-gray-200)] border-[0.15rem] border-[var(--color-gray-300)] hover:bg-[var(--color-gray-200)]"}`}
+                    data-description={desc_no}
                 >
-                    <p className={`absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%] font-bold text-[1.4rem] pointer-events-none ${ currentState ? "text-white" : "hidden" }`}>✓</p>
+                    <p
+                        className={`absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%] font-bold text-[1.4rem] pointer-events-none ${currentState ? "text-white" : "hidden"}`}
+                    >
+                        ✓
+                    </p>
                 </div>
-                { guide ? <p>{ guide }</p> : "" }
+                {guide ? <p>{guide}</p> : ""}
             </UI.Button>
         </div>
-    )
-}
+    );
+};
 
 const Radio = ({ list, defaultValue = 0, className, desc_no, onChange }: RadioProps) => {
-    const [ currentSelected, setCurrentSelected ] = useState<number>( defaultValue );
-    
+    const [currentSelected, setCurrentSelected] = useState<number>(defaultValue);
+
     const DEFAULT_LIST = [
         {
             title: "사용함",
@@ -74,45 +78,45 @@ const Radio = ({ list, defaultValue = 0, className, desc_no, onChange }: RadioPr
             title: "사용 안함",
             value: 0,
         },
-    ]
+    ];
     return (
         <section
-            className={`flex gap-[1.2rem] ${ className?.container ?? "" }`}
-            data-description={ desc_no }
+            className={`flex gap-[1.2rem] ${className?.container ?? ""}`}
+            data-description={desc_no}
         >
-            {( list ?? DEFAULT_LIST ).map((e, i) =>
+            {(list ?? DEFAULT_LIST).map((e, i) => (
                 <motion.button
                     key={i}
                     type="button"
-                    className={`item flex items-center gap-[0.8rem] p-[0.4rem] hover:bg-[var(--color-gray-200)] rounded-[0.8rem] transition-colors ${ className?.button ?? "" }`}
+                    className={`item flex items-center gap-[0.8rem] p-[0.4rem] hover:bg-[var(--color-gray-200)] rounded-[0.8rem] transition-colors ${className?.button ?? ""}`}
                     onClick={() => {
-                        setCurrentSelected( e.value );
-                        onChange( e.value );
+                        setCurrentSelected(e.value);
+                        onChange(e.value);
                     }}
                     whileTap={{ scale: 0.9 }}
-                    data-description={ desc_no }
+                    data-description={desc_no}
                 >
-                    <div className={`w-[1.8rem] h-[1.8rem] relative rounded-full ${ currentSelected === e.value ? "bg-[var(--color-blue-1000)]" : "border border-[var(--color-gray-400)]" }`}>
-                        <div className={`absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%] rounded-full w-[0.6rem] h-[0.6rem] ${ currentSelected === e.value ? "bg-white" : "bg-transparent" }`} />
+                    <div className={`w-[1.8rem] h-[1.8rem] relative rounded-full ${currentSelected === e.value ? "bg-[var(--color-blue-1000)]" : "border border-[var(--color-gray-400)]"}`}>
+                        <div
+                            className={`absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%] rounded-full w-[0.6rem] h-[0.6rem] ${currentSelected === e.value ? "bg-white" : "bg-transparent"}`}
+                        />
                     </div>
-                    <p className="font-medium pointer-events-none">{ e.title }</p>
+                    <p className="font-medium pointer-events-none">{e.title}</p>
                 </motion.button>
-            )}
+            ))}
         </section>
-    )
-}
+    );
+};
 
 const Switch = ({ states, onChange, desc_no }: SwitchProps) => {
     return (
         <motion.section
-            className={`switch w-[calc(1.6rem*2+0.4rem)] h-[2.0rem] p-[0.2rem] rounded-full flex cursor-pointer ${
-                states ? "justify-end" : "justify-start"
-            }`}
+            className={`switch w-[calc(1.6rem*2+0.4rem)] h-[2.0rem] p-[0.2rem] rounded-full flex cursor-pointer ${states ? "justify-end" : "justify-start"}`}
             animate={{
                 background: states ? "var(--color-blue-1000)" : "var(--color-gray-400)",
             }}
             onClick={() => onChange(!states)}
-            data-description={ desc_no }
+            data-description={desc_no}
         >
             <motion.div
                 layout
@@ -126,180 +130,194 @@ const Switch = ({ states, onChange, desc_no }: SwitchProps) => {
     );
 };
 
-const Input = forwardRef<{ reset: () => void }, InputProps & { phoneNumber?: boolean; validationPattern?: RegExp }>(({
-    disabled = false,
-    name = "input",
-    desc_no,
-    defaultValue,
-    icon = false,
-    type = "text",
-    placeholder = "placeholder 지정이 필요해요",
-    validationPattern,
-    guide,
-    className,
-    autoComplete = "on",
-    phoneNumber = false, // 새 옵션
-    onChange,
-    onInput,
-    onBlur
-}, ref ) => {
-    const [ value, setValue ] = useState(defaultValue || "");
+const Input = forwardRef<{ reset: () => void }, InputProps & { phoneNumber?: boolean; validationPattern?: RegExp }>(
+    (
+        {
+            disabled = false,
+            name = "input",
+            desc_no,
+            defaultValue,
+            icon = false,
+            type = "text",
+            placeholder = "placeholder 지정이 필요해요",
+            validationPattern,
+            guide,
+            className,
+            autoComplete = "on",
+            phoneNumber = false, // 새 옵션
+            onChange,
+            onInput,
+            onBlur,
+        },
+        ref,
+    ) => {
+        const [value, setValue] = useState(defaultValue || "");
 
-    useImperativeHandle(ref, () => ({
-        reset() {
-            setValue("");
-            if (onChange) {
-                onChange({ target: { value: "" } } as React.ChangeEvent<HTMLInputElement>);
+        useImperativeHandle(ref, () => ({
+            reset() {
+                setValue("");
+                if (onChange) {
+                    onChange({ target: { value: "" } } as React.ChangeEvent<HTMLInputElement>);
+                }
+            },
+        }));
+
+        useEffect(() => {
+            if (defaultValue !== undefined) {
+                setValue(defaultValue);
             }
-        }
-    }));
+        }, [defaultValue]);
 
-    useEffect(() => {
-        if (defaultValue !== undefined) {
-            setValue(defaultValue);
-        }
-    }, [defaultValue]);
+        const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+            let val = e.target.value;
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        let val = e.target.value;
-        
-        if (phoneNumber) {
-            // 숫자만 허용
-            val = val.replace(/\D/g, "");
-        }
+            if (phoneNumber) {
+                // 숫자만 허용
+                val = val.replace(/\D/g, "");
+            }
 
-        if (validationPattern) {
-            // val에서 패턴에 맞지 않는 문자 제거
-            val = val.split("").filter(char => validationPattern.test(char)).join("");
-        }
+            if (validationPattern) {
+                // val에서 패턴에 맞지 않는 문자 제거
+                val = val
+                    .split("")
+                    .filter((char) => validationPattern.test(char))
+                    .join("");
+            }
 
-        setValue(val);
+            setValue(val);
 
-        if (onChange) {
-            onChange({ ...e, target: { ...e.target, value: val } });
-        }
-    };
+            if (onChange) {
+                onChange({ ...e, target: { ...e.target, value: val } });
+            }
+        };
 
-    return (
-        <section
-            className={`flex items-center gap-[0.8rem] max-h-[var(--input-height)] h-full transition-colors bg-[#ffffff28] border border-[var(--color-gray-200)] rounded-[1.2rem] hover:border-[var(--color-brand-500)] relative ${className?.container ? className?.container : "px-[1.2rem] border border-[var(--color-gray-200)] hover:border-[var(--color-gray-500)] focus:border-[var(--color-gray-500)]"}`}
-            data-description={desc_no}
-        >
-            {guide && <p className="absolute top-[50%] right-[1.6rem] transform -translate-y-1/2">{guide}</p>}
-            <input
-                name={name}
-                disabled={disabled}
-                type={type}
-                placeholder={placeholder}
-                onInput={onInput}
-                onChange={handleChange} // 여기서 숫자 필터 적용
-                onBlur={onBlur}
-                value={value}
-                autoComplete={autoComplete}
+        return (
+            <section
+                className={`flex items-center gap-[0.8rem] max-h-[var(--input-height)] h-full transition-colors bg-[#ffffff28] border border-[var(--color-gray-200)] rounded-[1.2rem] hover:border-[var(--color-brand-500)] relative ${className?.container ? className?.container : "px-[1.2rem] border border-[var(--color-gray-200)] hover:border-[var(--color-gray-500)] focus:border-[var(--color-gray-500)]"}`}
                 data-description={desc_no}
-                className={`w-full ${ className?.input ? className.input : "" } `}
-            />
-            {icon && <IconComponent type="colored-lens" alt="돋보기" />}
-        </section>
-    );
-});
+            >
+                {guide && <p className="absolute top-[50%] right-[1.6rem] transform -translate-y-1/2">{guide}</p>}
+                <input
+                    name={name}
+                    disabled={disabled}
+                    type={type}
+                    placeholder={placeholder}
+                    onInput={onInput}
+                    onChange={handleChange} // 여기서 숫자 필터 적용
+                    onBlur={onBlur}
+                    value={value}
+                    autoComplete={autoComplete}
+                    data-description={desc_no}
+                    className={`w-full ${className?.input ? className.input : ""} `}
+                />
+                {icon && (
+                    <IconComponent
+                        type="colored-lens"
+                        alt="돋보기"
+                    />
+                )}
+            </section>
+        );
+    },
+);
 
 Input.displayName = "Input";
 
 const NumberInput = ({
-	disabled = false,
-	name = "number-input",
-	desc_no,
-	defaultValue = 0,
-	icon = false,
-	placeholder = "숫자를 입력하세요",
-	guide,
-	className,
-	autoComplete = "off",
-	max = 1_000_000, // 기본 상한 10억
+    disabled = false,
+    name = "number-input",
+    desc_no,
+    defaultValue = 0,
+    icon = false,
+    placeholder = "숫자를 입력하세요",
+    guide,
+    className,
+    autoComplete = "off",
+    max = 1_000_000, // 기본 상한 10억
     comma = true,
-	onChange,
-	onInput,
-	onBlur,
+    onChange,
+    onInput,
+    onBlur,
 }: NumberInputProps) => {
-    const inputValueRef = useRef<HTMLInputElement>( null );
+    const inputValueRef = useRef<HTMLInputElement>(null);
 
-	const handleChange = (e: any) => {
-		let value = e.target.value.replace(/,/g, "");
+    const handleChange = (e: any) => {
+        let value = e.target.value.replace(/,/g, "");
 
-		// 숫자만 허용
-		value = value.replace(/[^0-9]/g, "");
+        // 숫자만 허용
+        value = value.replace(/[^0-9]/g, "");
 
-		// 빈 값 처리
-		if (value === "") value = "0";
+        // 빈 값 처리
+        if (value === "") value = "0";
 
-		// 정수 변환
-		let numValue = parseInt(value, 10);
+        // 정수 변환
+        let numValue = parseInt(value, 10);
 
-		// 음수 방지
-		if (numValue < 0) numValue = 0;
+        // 음수 방지
+        if (numValue < 0) numValue = 0;
 
-		// 상한 제한
-		if (numValue > max) numValue = max;
+        // 상한 제한
+        if (numValue > max) numValue = max;
 
-		// input 값 강제 업데이트
-        const FINAL_VALUE = parseInt( value ) >= max ? max : numValue;
+        // input 값 강제 업데이트
+        const FINAL_VALUE = parseInt(value) >= max ? max : numValue;
 
-		e.target.value = `${ comma ? util.string.getCommaOnPrice( FINAL_VALUE ) : FINAL_VALUE }`;
+        e.target.value = `${comma ? util.string.getCommaOnPrice(FINAL_VALUE) : FINAL_VALUE}`;
 
-		onChange?.({ target: { value: numValue.toString() } });
-	};
+        onChange?.({ target: { value: numValue.toString() } });
+    };
 
-	const handleBlur = (e: any) => {
-		let value = parseInt(e.target.value, 10);
+    const handleBlur = (e: any) => {
+        let value = parseInt(e.target.value, 10);
 
-		// blur 시점에서도 최소 0 보장
-		if (isNaN(value) || value < 0) {
-			value = 0;
-			e.target.value = "0";
-			onChange?.({ target: { value: "0" } });
-		}
+        // blur 시점에서도 최소 0 보장
+        if (isNaN(value) || value < 0) {
+            value = 0;
+            e.target.value = "0";
+            onChange?.({ target: { value: "0" } });
+        }
 
-		onBlur?.(e);
-	};
+        onBlur?.(e);
+    };
 
     useEffect(() => {
-        if ( inputValueRef.current ) {
-            const INIT_VALUE = comma ? util.string.getCommaOnPrice( defaultValue ) : defaultValue;
+        if (inputValueRef.current) {
+            const INIT_VALUE = comma ? util.string.getCommaOnPrice(defaultValue) : defaultValue;
 
-            inputValueRef.current.value = `${ INIT_VALUE }`
+            inputValueRef.current.value = `${INIT_VALUE}`;
         }
-	}, [defaultValue]);
+    }, [defaultValue]);
 
-	return (
-		<section
-			className={`flex items-center gap-[0.8rem] px-[1.6rem] transition-colors rounded-[0.8rem] relative ${className?.container ? className.container : "border border-[var(--color-gray-200)] hover:border-[var(--color-blue-1000)] focus:border-[var(--color-blue-1000)]"}`}
-			data-description={desc_no}
-		>
-			{guide && (
-				<p className="absolute top-[50%] right-[1.6rem] transform translate-y-[-50%] translate-x-0">
-					{guide}
-				</p>
-			)}
-			{icon && <IconComponent type="colored-lens" alt="돋보기" />}
-			<input
-                ref={ inputValueRef }
-				type="text"
-				inputMode="numeric" // 모바일 키패드 숫자 전용
-				name={ name }
-				disabled={ disabled }
-				placeholder={ placeholder }
-				onInput={ onInput }
-				onChange={ handleChange }
-				onBlur={ handleBlur }
+    return (
+        <section
+            className={`flex items-center gap-[0.8rem] px-[1.6rem] transition-colors rounded-[0.8rem] relative ${className?.container ? className.container : "border border-[var(--color-gray-200)] hover:border-[var(--color-blue-1000)] focus:border-[var(--color-blue-1000)]"}`}
+            data-description={desc_no}
+        >
+            {guide && <p className="absolute top-[50%] right-[1.6rem] transform translate-y-[-50%] translate-x-0">{guide}</p>}
+            {icon && (
+                <IconComponent
+                    type="colored-lens"
+                    alt="돋보기"
+                />
+            )}
+            <input
+                ref={inputValueRef}
+                type="text"
+                inputMode="numeric" // 모바일 키패드 숫자 전용
+                name={name}
+                disabled={disabled}
+                placeholder={placeholder}
+                onInput={onInput}
+                onChange={handleChange}
+                onBlur={handleBlur}
                 // value={ `${ defaultValue }` }
-                className={`w-full ${ className?.input ? className.input : "" }`}
-				defaultValue={ defaultValue }
-				autoComplete={ autoComplete }
-				data-description={ desc_no }
-			/>
-		</section>
-	);
+                className={`w-full ${className?.input ? className.input : ""}`}
+                defaultValue={defaultValue}
+                autoComplete={autoComplete}
+                data-description={desc_no}
+            />
+        </section>
+    );
 };
 
 const PasswordInput = ({
@@ -325,7 +343,7 @@ const PasswordInput = ({
         let value = e.target.value;
 
         // 숫자만 허용
-		value = value.replace(/[^0-9]/g, "");
+        value = value.replace(/[^0-9]/g, "");
 
         // digit 제한 적용
         if (digit && value.length > digit) {
@@ -354,11 +372,7 @@ const PasswordInput = ({
             className={`flex items-center gap-[0.8rem] px-[1.6rem] border border-[var(--color-gray-200)] hover:border-[var(--color-blue-1000)] focus-within:border-[var(--color-blue-1000)] transition-colors rounded-[0.8rem] relative ${className?.container ?? ""}`}
             data-description={desc_no}
         >
-            {guide && (
-                <p className="absolute top-[50%] right-[1.6rem] transform -translate-y-1/2">
-                    {guide}
-                </p>
-            )}
+            {guide && <p className="absolute top-[50%] right-[1.6rem] transform -translate-y-1/2">{guide}</p>}
             <input
                 ref={inputRef}
                 type={visible ? "text" : "password"}
@@ -372,9 +386,9 @@ const PasswordInput = ({
                     if (!digit) return;
 
                     const input = e.currentTarget;
-                    
+
                     if (input.value.length > digit) {
-                        setToast({ msg: `최대 ${ digit }자리까지 입력이 가능해요`, time: 2 })
+                        setToast({ msg: `최대 ${digit}자리까지 입력이 가능해요`, time: 2 });
                         input.value = input.value.slice(0, digit);
                     }
                 }}
@@ -394,32 +408,25 @@ const PasswordInput = ({
     );
 };
 
-const TextArea = ({
-    onChange,
-    maxLength,
-    placeholder = "내용을 입력하세요.",
-    className,
-    defaultValue = "",
-    desc_no,
-}: TextAreaProps) => {
-    const [ currentValue, setCurrentValue ] = useState( defaultValue );
-    
+const TextArea = ({ onChange, maxLength, placeholder = "내용을 입력하세요.", className, defaultValue = "", desc_no }: TextAreaProps) => {
+    const [currentValue, setCurrentValue] = useState(defaultValue);
+
     return (
         <div
-            className={`relative w-full ${ className?.container }`}
-            data-description={ desc_no }
+            className={`relative w-full ${className?.container}`}
+            data-description={desc_no}
         >
             <textarea
-                value={ currentValue }
+                value={currentValue}
                 onChange={(e) => {
-                    setCurrentValue( e.target.value );
-                    onChange( e );
+                    setCurrentValue(e.target.value);
+                    onChange(e);
                 }}
-                maxLength={ maxLength }
-                placeholder={ placeholder }
+                maxLength={maxLength}
+                placeholder={placeholder}
                 className={`w-full border rounded resize-none tab-size-[4] ${className?.textarea}`}
             />
-            { maxLength && (
+            {maxLength && (
                 <span className="absolute text-[var(--color-gray-600)] bottom-[1.6rem] right-[1.6rem]">
                     {defaultValue.length}/{maxLength}자
                 </span>
@@ -429,25 +436,25 @@ const TextArea = ({
 };
 
 const Select = ({ list = [], trackingData, defaultValue, className, desc_no, onChange }: SelectProps) => {
-    const containerRef = useRef<HTMLElement>( null );
-    const buttonRef = useRef<HTMLButtonElement>( null );
+    const containerRef = useRef<HTMLElement>(null);
+    const buttonRef = useRef<HTMLButtonElement>(null);
 
-    const [ showMenu, setShowMenu ] = useState( false );
-    const [ currentValue, setCurrentValue ] = useState();
+    const [showMenu, setShowMenu] = useState(false);
+    const [currentValue, setCurrentValue] = useState();
     // const [ currentValue, setCurrentValue ] = useState( defaultValue ? defaultValue : INIT_VALUE?.value );
-    const [ positionStyle, setPositionStyle ] = useState<{ left?: number; right?: number; top?: number; bottom?: number }>({ left: 0 });
+    const [positionStyle, setPositionStyle] = useState<{ left?: number; right?: number; top?: number; bottom?: number }>({ left: 0 });
 
     const detectOutsideClick = (e: MouseEvent) => {
-        if ( containerRef.current && !containerRef.current.contains(e.target as Node) ) {
+        if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
             setShowMenu(false);
         }
     };
 
     useEffect(() => {
-        if ( showMenu ) {
+        if (showMenu) {
             document.addEventListener("click", detectOutsideClick);
 
-            if ( buttonRef.current ) {
+            if (buttonRef.current) {
                 const rect = buttonRef.current.getBoundingClientRect();
                 const dropdownWidth = buttonRef.current.offsetWidth;
                 const dropdownHeight = 200; // 예상 높이 (필요하면 동적 측정 가능)
@@ -472,48 +479,46 @@ const Select = ({ list = [], trackingData, defaultValue, className, desc_no, onC
         return () => {
             document.removeEventListener("click", detectOutsideClick);
         };
-    }, [ showMenu ]);
+    }, [showMenu]);
 
     useEffect(() => {
-        setCurrentValue( defaultValue );
-    }, [ trackingData, defaultValue ])
+        setCurrentValue(defaultValue);
+    }, [trackingData, defaultValue]);
 
     useEffect(() => {
         onChange(defaultValue);
-    }, [ defaultValue ])
+    }, [defaultValue]);
 
     return (
         <section
-            ref={ containerRef }
-            className={`switch rounded-[0.8rem] relative ${
-                className?.container ? className.container : ""
-            }`}
+            ref={containerRef}
+            className={`switch rounded-[0.8rem] relative ${className?.container ? className.container : ""}`}
         >
             <button
-                ref={ buttonRef }
+                ref={buttonRef}
                 className={`${
                     className?.button ? className.button : "min-w-[12.8rem] h-[var(--input-height)] rounded-[0.8rem] bg-[var(--color-gray-100)] hover:bg-[var(--color-gray-200)] px-[1.2rem]"
                     // className?.button ? className.button : "h-full"
                 } flex justify-between items-center text-left transition-colors`}
-                onClick={() => setShowMenu( !showMenu )}
-                data-description={ desc_no }
+                onClick={() => setShowMenu(!showMenu)}
+                data-description={desc_no}
             >
-                <p className='pointer-events-none'>{ list.find((e) => e.value === currentValue)?.title }</p>
-                
+                <p className="pointer-events-none">{list.find((e) => e.value === currentValue)?.title}</p>
+
                 <IconComponent
                     type="colored-arrow-below"
                     alt="더보기"
-                    className={`${ showMenu ? "rotate-180" : ""} transition-transform`}
+                    className={`${showMenu ? "rotate-180" : ""} transition-transform`}
                 />
             </button>
 
             <AnimatePresence>
-                { showMenu && (
+                {showMenu && (
                     <motion.section
                         className="absolute bg-[#ffffff90] backdrop-blur-sm max-h-[23.0rem] min-w-[calc(1.6rem*5)] overflow-y-auto flex flex-col gap-[0.4rem] shadow-[var(--shadow-normal)] p-[0.4rem] rounded-[1.2rem] z-1 overflow-hidden"
                         style={{
                             width: buttonRef.current?.offsetWidth,
-                            ...positionStyle
+                            ...positionStyle,
                         }}
                         initial={{ opacity: 0, transform: "scale(0.99)", height: "0px" }}
                         animate={{ opacity: 1, transform: "scale(1)", height: "auto" }}
@@ -523,7 +528,7 @@ const Select = ({ list = [], trackingData, defaultValue, className, desc_no, onC
                             type: "spring",
                             mass: 0.1,
                             stiffness: 100,
-                            damping: 10
+                            damping: 10,
                         }}
                     >
                         <AnimatePresence>
@@ -533,12 +538,10 @@ const Select = ({ list = [], trackingData, defaultValue, className, desc_no, onC
                                     type="button"
                                     className={`text-left hover:bg-[#ffffff90] text-[var(--color-gray-700)] rounded-[1.2rem] p-[1.2rem] transition-colors ${
                                         // e.value === defaultValue
-                                        e.value === currentValue
-                                            ? "bg-white shadow-[var(--shadow-normal)]"
-                                            : "bg-transparent"
+                                        e.value === currentValue ? "bg-white shadow-[var(--shadow-normal)]" : "bg-transparent"
                                     }`}
                                     onClick={() => {
-                                        console.log("click 발생")
+                                        console.log("click 발생");
                                         setCurrentValue(e.value);
                                         onChange(e.value);
                                         setShowMenu(false);
@@ -551,7 +554,7 @@ const Select = ({ list = [], trackingData, defaultValue, className, desc_no, onC
                                         type: "spring",
                                         mass: 0.1,
                                         stiffness: 100,
-                                        damping: 10
+                                        damping: 10,
                                     }}
                                 >
                                     {e.title}
@@ -565,327 +568,321 @@ const Select = ({ list = [], trackingData, defaultValue, className, desc_no, onC
     );
 };
 
-const Filter = forwardRef<{ reset: () => void }, FilterProps>(
-    ({ list = [], defaultValue, className, style, desc_no, elementRef, onChange, onConfirm, onCancel }, ref) => {
-        const [ showMenu, setShowMenu ] = useState(false);
-        const [ currentIndex, setCurrentIndex ] = useState(0);
-        const [ containerHeight, setContainerHeight ] = useState<number>(0);
-        const [ initList, setInitList ] = useState<{ title: string, state: boolean, value?: any }[]>([]);
-        const [ currentList, setCurrentList ] = useState<{ title: string; state: boolean; value?: any }[]>(list);
-        const [ positionStyle, setPositionStyle ] = useState<{ left?: number; right?: number; top?: number; bottom?: number }>({ left: 0 });
+const Filter = forwardRef<{ reset: () => void }, FilterProps>(({ list = [], defaultValue, className, style, desc_no, elementRef, onChange, onConfirm, onCancel }, ref) => {
+    const [showMenu, setShowMenu] = useState(false);
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [containerHeight, setContainerHeight] = useState<number>(0);
+    const [initList, setInitList] = useState<{ title: string; state: boolean; value?: any }[]>([]);
+    const [currentList, setCurrentList] = useState<{ title: string; state: boolean; value?: any }[]>(list);
+    const [positionStyle, setPositionStyle] = useState<{ left?: number; right?: number; top?: number; bottom?: number }>({ left: 0 });
 
-        const { setToast } = useToastStore();
+    const { setToast } = useToastStore();
 
-        const filterContainerRef = useRef<HTMLElement>(null);
-        const containerRef = useRef<HTMLElement>(null);
-        const buttonRef = useRef<HTMLButtonElement>(null);
+    const filterContainerRef = useRef<HTMLElement>(null);
+    const containerRef = useRef<HTMLElement>(null);
+    const buttonRef = useRef<HTMLButtonElement>(null);
 
-        const allItems = list;
-        const activeItems = currentList?.filter(e => e.state);
+    const allItems = list;
+    const activeItems = currentList?.filter((e) => e.state);
 
-        const close = () => {
-            setCurrentList( initList );
-            setShowMenu( false );
+    const close = () => {
+        setCurrentList(initList);
+        setShowMenu(false);
+    };
+
+    const detectOutsideClick = (e: MouseEvent) => {
+        if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+            close();
         }
+    };
 
-        const detectOutsideClick = (e: MouseEvent) => {
-            if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
-                close();
-            }
-        };
+    useImperativeHandle(ref, () => ({
+        reset: () => {
+            setCurrentList(list.map((item) => ({ ...item, state: true })));
+        },
+    }));
 
-        useImperativeHandle(ref, () => ({
-            reset: () => {
-                setCurrentList(list.map(item => ({ ...item, state: true })));
-            }
-        }));
+    useEffect(() => {
+        if (showMenu) {
+            document.addEventListener("click", detectOutsideClick);
 
-        useEffect(() => {
-            if (showMenu) {
-                document.addEventListener("click", detectOutsideClick);
+            if (buttonRef.current) {
+                const rect = buttonRef.current.getBoundingClientRect();
+                const dropdownWidth = buttonRef.current.offsetWidth;
+                const dropdownHeight = 200;
+                const viewportWidth = window.innerWidth;
+                const viewportHeight = window.innerHeight;
 
-                if (buttonRef.current) {
-                    const rect = buttonRef.current.getBoundingClientRect();
-                    const dropdownWidth = buttonRef.current.offsetWidth;
-                    const dropdownHeight = 200;
-                    const viewportWidth = window.innerWidth;
-                    const viewportHeight = window.innerHeight;
+                if (rect.left + dropdownWidth > viewportWidth) {
+                    setPositionStyle({ right: 0 });
+                } else {
+                    setPositionStyle({ left: 0 });
+                }
 
-                    if (rect.left + dropdownWidth > viewportWidth) {
-                        setPositionStyle({ right: 0 });
-                    } else {
-                        setPositionStyle({ left: 0 });
-                    }
-
-                    if (rect.bottom + dropdownHeight > viewportHeight) {
-                        setPositionStyle({ bottom: rect.height + 4 });
-                    } else {
-                        setPositionStyle({ top: rect.height + 4 });
-                    }
+                if (rect.bottom + dropdownHeight > viewportHeight) {
+                    setPositionStyle({ bottom: rect.height + 4 });
+                } else {
+                    setPositionStyle({ top: rect.height + 4 });
                 }
             }
+        }
 
-            return () => {
-                document.removeEventListener("click", detectOutsideClick);
-            };
-        }, [showMenu]);
+        return () => {
+            document.removeEventListener("click", detectOutsideClick);
+        };
+    }, [showMenu]);
 
-        useEffect(() => {
-            onChange?.(currentList);
-            setCurrentIndex(0);
+    useEffect(() => {
+        onChange?.(currentList);
+        setCurrentIndex(0);
 
-            if (!activeItems?.length) return;
-        }, [currentList]);
+        if (!activeItems?.length) return;
+    }, [currentList]);
 
-        useEffect(() => {
-            setInitList( list );
-        }, [])
+    useEffect(() => {
+        setInitList(list);
+    }, []);
 
-        useEffect(() => {
-            if ( filterContainerRef.current ) {
-                setContainerHeight(filterContainerRef.current?.scrollHeight)
-            }
-        }, [ filterContainerRef.current ])
+    useEffect(() => {
+        if (filterContainerRef.current) {
+            setContainerHeight(filterContainerRef.current?.scrollHeight);
+        }
+    }, [filterContainerRef.current]);
 
-        return (
-            <motion.section
-                ref={containerRef}
-                className={`switch rounded-[0.8rem] relative`}
+    return (
+        <motion.section
+            ref={containerRef}
+            className={`switch rounded-[0.8rem] relative`}
+        >
+            <motion.button
+                ref={buttonRef}
+                layout="size"
+                className={`${className?.button ?? "h-full"} min-w-[20.0rem] flex items-center text-left px-[1.2rem] rounded-[0.8rem] bg-[var(--color-gray-100)] hover:bg-[var(--color-gray-200)] transition-colors`}
+                data-description={desc_no}
+                onClick={() => setShowMenu(!showMenu)}
             >
-                <motion.button
-                    ref={buttonRef}
-                    layout="size"
-                    className={`${className?.button ?? "h-full"} min-w-[20.0rem] flex items-center text-left px-[1.2rem] rounded-[0.8rem] bg-[var(--color-gray-100)] hover:bg-[var(--color-gray-200)] transition-colors`}
-                    data-description={desc_no}
-                    onClick={() => setShowMenu(!showMenu)}
-                >
-                    { activeItems?.length > 0 ? (
-                        // <div className="h-[1.6rem] max-w-[calc(1.6rem*7)] relative whitespace-nowrap overflow-hidden text-ellipsis">
-                        <div className="h-[1.6rem] max-w-[calc(1.6rem*7)] relative">
-                            <AnimatePresence mode="wait">
-                                {activeItems.map((item, i) =>
-                                    i === currentIndex ? (
-                                        <motion.p
-                                            layout
-                                            key={`${ activeItems[currentIndex] }`}
-                                            className="w-full overflow-hidden pointer-events-none whitespace-nowrap text-ellipsis"
-                                            initial={{ opacity: 0 }}
-                                            animate={{ opacity: 1 }}
-                                            exit={{ opacity: 0 }}
-                                            transition={{ type: "spring", mass: 0.1, stiffness: 100, damping: 10 }}
-                                        >
-                                            { item.title }
-                                        </motion.p>
-                                    ) : null
-                                )}
-                            </AnimatePresence>
-                        </div>
-                    ) : (
-                        <motion.p
-                            className="pointer-events-none"
-                            layout
-                            initial={{ x: -20, opacity: 0 }}
-                            animate={{ x: 0, opacity: 1 }}
-                            exit={{ x: -20, opacity: 0 }}
-                            transition={{ type: "spring", mass: 0.1, stiffness: 100, damping: 10 }}
-                        >
-                            항목을 선택해주세요
-                        </motion.p>
-                    )}
+                {activeItems?.length > 0 ? (
+                    // <div className="h-[1.6rem] max-w-[calc(1.6rem*7)] relative whitespace-nowrap overflow-hidden text-ellipsis">
+                    <div className="h-[1.6rem] max-w-[calc(1.6rem*7)] relative">
+                        <AnimatePresence mode="wait">
+                            {activeItems.map((item, i) =>
+                                i === currentIndex ? (
+                                    <motion.p
+                                        layout
+                                        key={`${activeItems[currentIndex]}`}
+                                        className="w-full overflow-hidden pointer-events-none whitespace-nowrap text-ellipsis"
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        exit={{ opacity: 0 }}
+                                        transition={{ type: "spring", mass: 0.1, stiffness: 100, damping: 10 }}
+                                    >
+                                        {item.title}
+                                    </motion.p>
+                                ) : null,
+                            )}
+                        </AnimatePresence>
+                    </div>
+                ) : (
+                    <motion.p
+                        className="pointer-events-none"
+                        layout
+                        initial={{ x: -20, opacity: 0 }}
+                        animate={{ x: 0, opacity: 1 }}
+                        exit={{ x: -20, opacity: 0 }}
+                        transition={{ type: "spring", mass: 0.1, stiffness: 100, damping: 10 }}
+                    >
+                        항목을 선택해주세요
+                    </motion.p>
+                )}
 
-                    { activeItems.length ? (
-                        <motion.p
-                            key={`${ activeItems[currentIndex] }`}
-                            // key={ activeItems.find((e, idx) => idx === currentIndex )?.title }
-                            layout="position"
-                            className='ml-[0.4rem]'
-                        >
-                            {activeItems.length === allItems.length ? ` ・ 전체` : ` ・ ${activeItems.length}개`}
-                        </motion.p>
-                    ) : ""}
+                {activeItems.length ? (
+                    <motion.p
+                        key={`${activeItems[currentIndex]}`}
+                        // key={ activeItems.find((e, idx) => idx === currentIndex )?.title }
+                        layout="position"
+                        className="ml-[0.4rem]"
+                    >
+                        {activeItems.length === allItems.length ? ` ・ 전체` : ` ・ ${activeItems.length}개`}
+                    </motion.p>
+                ) : (
+                    ""
+                )}
 
-                    <IconComponent
-                        type="colored-arrow-below"
-                        alt="더보기"
-                        className={`${showMenu ? "rotate-180" : ""} transition-transform absolute right-[1.6rem] top-[50%] transform translate-y-[-50%]`}
-                    />
-                </motion.button>
+                <IconComponent
+                    type="colored-arrow-below"
+                    alt="더보기"
+                    className={`${showMenu ? "rotate-180" : ""} transition-transform absolute right-[1.6rem] top-[50%] transform translate-y-[-50%]`}
+                />
+            </motion.button>
 
-                <AnimatePresence>
-                    {showMenu && (
+            <AnimatePresence>
+                {showMenu && (
+                    <motion.section
+                        key={"as"}
+                        ref={filterContainerRef}
+                        className={`absolute bg-white overflow-y-auto scrollbar-hide top-[calc(4.2rem+0.8rem)] flex flex-col gap-[0.4rem] shadow-[var(--shadow-normal)] p-[0.4rem] rounded-[1.2rem] min-w-[26.0rem] z-1 ${className?.container ?? ""}`}
+                        style={{
+                            width: buttonRef.current?.offsetWidth,
+                            ...style,
+                            ...positionStyle,
+                        }}
+                        initial={{ opacity: 0, transform: "scale(0.99)", height: `0px` }}
+                        animate={{
+                            opacity: 1,
+                            transform: "scale(1)",
+                            height: containerHeight,
+                            // height: containerHeight + (16 * currentList.length) + 24
+                            // height: (filterContainerRef.current?.scrollHeight ?? 0) + (16*currentList.length) + 24
+                            // height: ref
+                            //     ? (containerHeight > currentList.length * (26 + 38 + 16 + 24)
+                            //         ? `auto`
+                            //         : `calc(${containerHeight}px - 4.2rem - (1.6rem * 2))`)
+                            //     : "auto"
+                        }}
+                        exit={{ opacity: 0, transform: "scale(0.99)", height: `0px` }}
+                        transition={{
+                            delay: 0,
+                            type: "spring",
+                            mass: 0.1,
+                            stiffness: 100,
+                            damping: 10,
+                        }}
+                    >
                         <motion.section
-                            key={"as"}
-                            ref={filterContainerRef}
-                            className={`absolute bg-white overflow-y-auto scrollbar-hide top-[calc(4.2rem+0.8rem)] flex flex-col gap-[0.4rem] shadow-[var(--shadow-normal)] p-[0.4rem] rounded-[1.2rem] min-w-[26.0rem] z-1 ${className?.container ?? ""}`}
-                            style={{
-                                width: buttonRef.current?.offsetWidth,
-                                ...style,
-                                ...positionStyle
-                            }}
-                            initial={{ opacity: 0, transform: "scale(0.99)", height: `0px` }}
-                            animate={{
-                                opacity: 1,
-                                transform: "scale(1)",
-                                height: containerHeight
-                                // height: containerHeight + (16 * currentList.length) + 24
-                                // height: (filterContainerRef.current?.scrollHeight ?? 0) + (16*currentList.length) + 24
-                                // height: ref
-                                //     ? (containerHeight > currentList.length * (26 + 38 + 16 + 24)
-                                //         ? `auto`
-                                //         : `calc(${containerHeight}px - 4.2rem - (1.6rem * 2))`)
-                                //     : "auto"
-                            }}
-                            exit={{ opacity: 0, transform: "scale(0.99)", height: `0px` }}
+                            key={`mini-modal-header`}
+                            className={`text-left text-[var(--color-gray-700)] rounded-[1.2rem] transition-colors`}
+                            initial={{ opacity: 0, transform: "scale(0.8)" }}
+                            animate={{ opacity: 1, transform: "scale(1)" }}
+                            exit={{ opacity: 0, transform: "scale(0.8)" }}
                             transition={{
-                                delay: 0,
+                                delay: 0.1 * 1,
                                 type: "spring",
                                 mass: 0.1,
                                 stiffness: 100,
-                                damping: 10
+                                damping: 10,
                             }}
                         >
-                            <motion.section
-                                key={`mini-modal-header`}
-                                className={`text-left text-[var(--color-gray-700)] rounded-[1.2rem] transition-colors`}
-                                initial={{ opacity: 0, transform: "scale(0.8)" }}
-                                animate={{ opacity: 1, transform: "scale(1)" }}
-                                exit={{ opacity: 0, transform: "scale(0.8)" }}
-                                transition={{
-                                    delay: 0.1 * 1,
-                                    type: "spring",
-                                    mass: 0.1,
-                                    stiffness: 100,
-                                    damping: 10
+                            <UI.Button
+                                onClick={() => {
+                                    setCurrentList((prev) =>
+                                        prev.map((items) => ({
+                                            ...items,
+                                            state: true,
+                                            // state: currentList.some(e => e.state === true) ? false : true
+                                        })),
+                                    );
                                 }}
+                                className="text-right w-full py-[1.2rem] underline"
                             >
-                                <UI.Button
-                                    onClick={() => {
-                                        setCurrentList(prev =>
-                                            prev.map(items => ({
-                                                ...items,
-                                                state: true
-                                                // state: currentList.some(e => e.state === true) ? false : true
-                                            }))
-                                        );
-                                    }}
-                                    className="text-right w-full py-[1.2rem] underline"
-                                >
-                                    전체선택
-                                </UI.Button>
-                            </motion.section>
-
-                            <section className='max-h-[22.0rem] overflow-y-auto'>
-                                { currentList.map((item, key) => (
-                                    <motion.div
-                                        key={`${item}-${key}`}
-                                        initial={{ opacity: 0, transform: "scale(0.8)" }}
-                                        animate={{ opacity: 1, transform: "scale(1)" }}
-                                        exit={{ opacity: 0, transform: "scale(0.8)" }}
-                                        transition={{
-                                            delay: 0.1 * (key + 1),
-                                            type: "spring",
-                                            mass: 0.1,
-                                            stiffness: 100,
-                                            damping: 10
-                                        }}
-                                    >
-                                        <UI.CheckBox
-                                            defaultState={item.state}
-                                            checked={item.state}
-                                            preventClick={ currentList.filter(it => it.state).length === 1 }
-                                            onChange={(e) => {
-                                                // true 상태인 항목 수
-                                                const activeCount = currentList.filter(it => it.state).length;
-
-                                                // 마지막 하나를 false로 바꾸려는 경우
-                                                if ( activeCount === 1 && item.state === true && e === false ) {
-                                                    setToast({ msg: "하나 이상 선택하세요.", time: 2 })
-                                                    console.log("하나 이상 선택하세요.");
-                                                    
-                                                    return; // 상태 업데이트 막기
-                                                }
-
-                                                // 정상 업데이트
-                                                setCurrentList(prev =>
-                                                    prev.map(items =>
-                                                        items.title === item.title
-                                                            ? { ...items, state: e }
-                                                            : items
-                                                    )
-                                                );
-                                            }}
-                                            guide={item.title}
-                                            className={{ button: "justify-start flex-1 w-full" }}
-                                        />
-                                    </motion.div>
-                                ))}
-                            </section>
-
-                            <motion.section
-                                key={`mini-modal-footer`}
-                                className={`text-left flex flex-1 justify-end gap-[0.8rem] text-[var(--color-gray-700)] mt-[2.4rem] rounded-[1.2rem] transition-colors`}
-                                initial={{ opacity: 0, transform: "scale(0.8)" }}
-                                animate={{ opacity: 1, transform: "scale(1)" }}
-                                exit={{ opacity: 0, transform: "scale(0.8)" }}
-                                transition={{
-                                    delay: 0.1 * 3,
-                                    type: "spring",
-                                    mass: 0.1,
-                                    stiffness: 100,
-                                    damping: 10
-                                }}
-                            >
-                                <UI.Button
-                                    className={`bg-[var(--color-gray-200)] font-medium whitespace-nowrap rounded-[0.6rem] px-[1.6rem] h-[4.2rem]`}
-                                    onClick={() => {
-                                        close();
-                                        
-                                        onCancel?.( initList );
-                                    }}
-                                >
-                                    닫기
-                                </UI.Button>
-
-                                <UI.Button
-                                    className={`text-white bg-[var(--color-blue-1000)] font-medium whitespace-nowrap rounded-[0.6rem] w-[12.8rem] h-[4.2rem]`}
-                                    onClick={(e) => {
-                                        setShowMenu(false);
-                                        
-                                        onConfirm?.( currentList );
-                                    }}
-                                >
-                                    완료
-                                </UI.Button>
-                            </motion.section>
+                                전체선택
+                            </UI.Button>
                         </motion.section>
-                    )}
-                </AnimatePresence>
-            </motion.section>
-        );
-    }
-);
+
+                        <section className="max-h-[22.0rem] overflow-y-auto">
+                            {currentList.map((item, key) => (
+                                <motion.div
+                                    key={`${item}-${key}`}
+                                    initial={{ opacity: 0, transform: "scale(0.8)" }}
+                                    animate={{ opacity: 1, transform: "scale(1)" }}
+                                    exit={{ opacity: 0, transform: "scale(0.8)" }}
+                                    transition={{
+                                        delay: 0.1 * (key + 1),
+                                        type: "spring",
+                                        mass: 0.1,
+                                        stiffness: 100,
+                                        damping: 10,
+                                    }}
+                                >
+                                    <UI.CheckBox
+                                        defaultState={item.state}
+                                        checked={item.state}
+                                        preventClick={currentList.filter((it) => it.state).length === 1}
+                                        onChange={(e) => {
+                                            // true 상태인 항목 수
+                                            const activeCount = currentList.filter((it) => it.state).length;
+
+                                            // 마지막 하나를 false로 바꾸려는 경우
+                                            if (activeCount === 1 && item.state === true && e === false) {
+                                                setToast({ msg: "하나 이상 선택하세요.", time: 2 });
+                                                console.log("하나 이상 선택하세요.");
+
+                                                return; // 상태 업데이트 막기
+                                            }
+
+                                            // 정상 업데이트
+                                            setCurrentList((prev) => prev.map((items) => (items.title === item.title ? { ...items, state: e } : items)));
+                                        }}
+                                        guide={item.title}
+                                        className={{ button: "justify-start flex-1 w-full" }}
+                                    />
+                                </motion.div>
+                            ))}
+                        </section>
+
+                        <motion.section
+                            key={`mini-modal-footer`}
+                            className={`text-left flex flex-1 justify-end gap-[0.8rem] text-[var(--color-gray-700)] mt-[2.4rem] rounded-[1.2rem] transition-colors`}
+                            initial={{ opacity: 0, transform: "scale(0.8)" }}
+                            animate={{ opacity: 1, transform: "scale(1)" }}
+                            exit={{ opacity: 0, transform: "scale(0.8)" }}
+                            transition={{
+                                delay: 0.1 * 3,
+                                type: "spring",
+                                mass: 0.1,
+                                stiffness: 100,
+                                damping: 10,
+                            }}
+                        >
+                            <UI.Button
+                                className={`bg-[var(--color-gray-200)] font-medium whitespace-nowrap rounded-[0.6rem] px-[1.6rem] h-[4.2rem]`}
+                                onClick={() => {
+                                    close();
+
+                                    onCancel?.(initList);
+                                }}
+                            >
+                                닫기
+                            </UI.Button>
+
+                            <UI.Button
+                                className={`text-white bg-[var(--color-blue-1000)] font-medium whitespace-nowrap rounded-[0.6rem] w-[12.8rem] h-[4.2rem]`}
+                                onClick={(e) => {
+                                    setShowMenu(false);
+
+                                    onConfirm?.(currentList);
+                                }}
+                            >
+                                완료
+                            </UI.Button>
+                        </motion.section>
+                    </motion.section>
+                )}
+            </AnimatePresence>
+        </motion.section>
+    );
+});
 
 Filter.displayName = "Filter";
 
 const MiniModal = ({ element, className, defaultValue, desc_no, onConfirm, onCancel, onChange }: MiniModalProps) => {
-    const containerRef = useRef<HTMLElement>( null );
-    const buttonRef = useRef<HTMLButtonElement>( null );
+    const containerRef = useRef<HTMLElement>(null);
+    const buttonRef = useRef<HTMLButtonElement>(null);
 
-    const [ showMenu, setShowMenu ] = useState( false );
-    const [ currentValue, setCurrentValue ] = useState( "test" );
-    const [ positionStyle, setPositionStyle ] = useState<{ left?: number; right?: number; top?: number; bottom?: number }>({ left: 0 });
+    const [showMenu, setShowMenu] = useState(false);
+    const [currentValue, setCurrentValue] = useState("test");
+    const [positionStyle, setPositionStyle] = useState<{ left?: number; right?: number; top?: number; bottom?: number }>({ left: 0 });
 
     const detectOutsideClick = (e: MouseEvent) => {
-        if ( containerRef.current && !containerRef.current.contains(e.target as Node) ) {
+        if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
             setShowMenu(false);
         }
     };
 
     useEffect(() => {
-        if ( showMenu ) {
+        if (showMenu) {
             document.addEventListener("click", detectOutsideClick);
 
-            if ( buttonRef.current ) {
+            if (buttonRef.current) {
                 const rect = buttonRef.current.getBoundingClientRect();
                 const dropdownWidth = buttonRef.current.offsetWidth;
                 const dropdownHeight = 200; // 예상 높이 (필요하면 동적 측정 가능)
@@ -910,18 +907,18 @@ const MiniModal = ({ element, className, defaultValue, desc_no, onConfirm, onCan
         return () => {
             document.removeEventListener("click", detectOutsideClick);
         };
-    }, [ showMenu ]);
+    }, [showMenu]);
 
     useEffect(() => {
-        onChange( currentValue );
-    }, [ currentValue ]);
+        onChange(currentValue);
+    }, [currentValue]);
 
     return (
         <section
-            ref={ containerRef }
+            ref={containerRef}
             // className={`switch rounded-[0.8rem] relative p-[2.0rem] ${ className?.container ? className.container : "" }`}
             className={`switch rounded-[0.8rem] relative`}
-            data-description={ desc_no }
+            data-description={desc_no}
         >
             <button
                 ref={buttonRef}
@@ -930,7 +927,7 @@ const MiniModal = ({ element, className, defaultValue, desc_no, onConfirm, onCan
                 } min-w-[12.8rem] flex justify-between items-center text-left px-[1.2rem] rounded-[0.8rem] bg-[var(--color-gray-100)] hover:bg-[var(--color-gray-200)] transition-colors`}
                 onClick={() => setShowMenu(!showMenu)}
             >
-                <p>{ defaultValue }</p>
+                <p>{defaultValue}</p>
                 <IconComponent
                     type="colored-arrow-below"
                     alt="더보기"
@@ -941,10 +938,10 @@ const MiniModal = ({ element, className, defaultValue, desc_no, onConfirm, onCan
             <AnimatePresence>
                 {showMenu && (
                     <motion.section
-                        className={`absolute bg-white flex flex-col gap-[0.4rem] border border-[var(--color-gray-200)] rounded-[1.2rem] z-1 w-[26.0rem] ${ className?.container ? className.container : "" }`}
+                        className={`absolute bg-white flex flex-col gap-[0.4rem] border border-[var(--color-gray-200)] rounded-[1.2rem] z-1 w-[26.0rem] ${className?.container ? className.container : ""}`}
                         style={{
                             // width: buttonRef.current?.offsetWidth,
-                            ...positionStyle
+                            ...positionStyle,
                         }}
                         initial={{ opacity: 0, transform: "scale(0.99)" }}
                         animate={{ opacity: 1, transform: "scale(1)" }}
@@ -954,7 +951,7 @@ const MiniModal = ({ element, className, defaultValue, desc_no, onConfirm, onCan
                             type: "spring",
                             mass: 0.1,
                             stiffness: 100,
-                            damping: 10
+                            damping: 10,
                         }}
                     >
                         <AnimatePresence>
@@ -969,10 +966,10 @@ const MiniModal = ({ element, className, defaultValue, desc_no, onConfirm, onCan
                                     type: "spring",
                                     mass: 0.1,
                                     stiffness: 100,
-                                    damping: 10
+                                    damping: 10,
                                 }}
                             >
-                                { element.header }
+                                {element.header}
                             </motion.section>
 
                             <motion.section
@@ -986,10 +983,10 @@ const MiniModal = ({ element, className, defaultValue, desc_no, onConfirm, onCan
                                     type: "spring",
                                     mass: 0.1,
                                     stiffness: 100,
-                                    damping: 10
+                                    damping: 10,
                                 }}
                             >
-                                { element.body }
+                                {element.body}
                             </motion.section>
 
                             <motion.section
@@ -1003,7 +1000,7 @@ const MiniModal = ({ element, className, defaultValue, desc_no, onConfirm, onCan
                                     type: "spring",
                                     mass: 0.1,
                                     stiffness: 100,
-                                    damping: 10
+                                    damping: 10,
                                 }}
                             >
                                 <UI.Button
@@ -1023,7 +1020,7 @@ const MiniModal = ({ element, className, defaultValue, desc_no, onConfirm, onCan
                                 >
                                     완료
                                 </UI.Button>
-                                { element.footer }
+                                {element.footer}
                             </motion.section>
                         </AnimatePresence>
                     </motion.section>
@@ -1033,27 +1030,27 @@ const MiniModal = ({ element, className, defaultValue, desc_no, onConfirm, onCan
     );
 };
 
-const DropDown = ({ children, className, list, height = "var(--input-height)", desc_no, prevent=false }: DropDownProps) => {
+const DropDown = ({ children, className, list, height = "var(--input-height)", desc_no, prevent = false }: DropDownProps) => {
     const containerRef = useRef<HTMLElement>(null);
     const floatingRef = useRef<HTMLElement>(null);
 
-    const [ isShowList, setIsShowList ] = useState( false );
-    const [ positionStyle, setPositionStyle ] = useState<{ left?: number; right?: number; top?: number; bottom?: number }>({ left: 0 });
+    const [isShowList, setIsShowList] = useState(false);
+    const [positionStyle, setPositionStyle] = useState<{ left?: number; right?: number; top?: number; bottom?: number }>({ left: 0 });
 
     const detectOutsideClick = (e: MouseEvent) => {
-        if ( containerRef.current && !containerRef.current.contains(e.target as Node) ) {
+        if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
             setIsShowList(false);
         }
     };
 
     useEffect(() => {
-        if ( isShowList ) {
-            if ( containerRef.current ) {
+        if (isShowList) {
+            if (containerRef.current) {
                 const rect = containerRef.current.getBoundingClientRect();
 
                 const dropdownWidth = containerRef.current.offsetWidth;
                 const dropdownHeight = 200; // 예상 높이 (필요하면 동적 측정 가능)
-                
+
                 const viewportWidth = window.innerWidth;
                 const viewportHeight = window.innerHeight;
 
@@ -1081,22 +1078,22 @@ const DropDown = ({ children, className, list, height = "var(--input-height)", d
 
     return (
         <section
-            ref={ containerRef }
-            className={`${ className?.container ?? "" } relative cursor-pointer`}
+            ref={containerRef}
+            className={`${className?.container ?? ""} relative cursor-pointer`}
             onClick={(e) => {
-                if ( prevent ) {
+                if (prevent) {
                     e.preventDefault();
                 }
-                setIsShowList( !isShowList );
+                setIsShowList(!isShowList);
             }}
-            data-description={ desc_no }
+            data-description={desc_no}
         >
-            { children }
+            {children}
             <AnimatePresence>
-                { isShowList && (
+                {isShowList && (
                     <motion.section
                         ref={floatingRef}
-                        className={`${ className?.inner ?? "" } absolute z-[100] flex flex-col cursor-pointer whitespace-nowrap rounded-2xl p-[0.4rem] bg-[#ffffff90] backdrop-blur-sm shadow-[var(--shadow-normal)]`}
+                        className={`${className?.inner ?? ""} absolute z-[100] flex flex-col cursor-pointer whitespace-nowrap rounded-2xl p-[0.4rem] bg-[#ffffff90] backdrop-blur-sm shadow-[var(--shadow-normal)]`}
                         initial={{ opacity: 0, transform: "scale(0.99)", height: "0px" }}
                         animate={{ opacity: 1, transform: "scale(1)", height: (floatingRef.current?.scrollHeight ? floatingRef.current?.scrollHeight : 0) + 10 }}
                         exit={{ opacity: 0, transform: "scale(0.99)", height: "0px" }}
@@ -1105,23 +1102,21 @@ const DropDown = ({ children, className, list, height = "var(--input-height)", d
                             type: "spring",
                             mass: 0.1,
                             stiffness: 100,
-                            damping: 10
+                            damping: 10,
                         }}
                         style={{
-                            ...positionStyle
+                            ...positionStyle,
                         }}
                     >
-                        { list.map((e, index) => (
+                        {list.map((e, index) => (
                             <Fragment key={index}>
-                                { e.element ? (
-                                    <Fragment>
-                                        { e.element }
-                                    </Fragment>
+                                {e.element ? (
+                                    <Fragment>{e.element}</Fragment>
                                 ) : (
                                     <motion.button
-                                        key={ index }
+                                        key={index}
                                         type="button"
-                                        value={ e.value }
+                                        value={e.value}
                                         initial={{ opacity: 0, transform: "scale(0.8)" }}
                                         animate={{ opacity: 1, transform: "scale(1)" }}
                                         exit={{ opacity: 0, transform: "scale(0.8)" }}
@@ -1130,19 +1125,18 @@ const DropDown = ({ children, className, list, height = "var(--input-height)", d
                                             type: "spring",
                                             mass: 0.1,
                                             stiffness: 100,
-                                            damping: 10
+                                            damping: 10,
                                         }}
-                                        className={`${ e.className } item px-[1.6rem] py-[1.3rem] hover:bg-[var(--color-gray-200)] rounded-[0.8rem] transition-colors`}
+                                        className={`${e.className} item px-[1.6rem] py-[1.3rem] hover:bg-[var(--color-gray-200)] rounded-[0.8rem] transition-colors`}
                                         onClick={() => {
                                             e.onClick?.();
                                         }}
-                                        data-description={ desc_no }
+                                        data-description={desc_no}
                                     >
-                                        { e.title }
+                                        {e.title}
                                     </motion.button>
-                                ) }
+                                )}
                             </Fragment>
-                            
                         ))}
                     </motion.section>
                 )}
@@ -1165,7 +1159,7 @@ const Calendar = ({
     center = false,
     onRuleAdjust, // 상대 Calendar를 보정하기 위한 callback
 }: CalendarModalProps & { ruleDate?: string; onRuleAdjust?: (newDate: string) => void }) => {
-        const [modalOpen, setModalOpen] = useState(false);
+    const [modalOpen, setModalOpen] = useState(false);
     const [currentDate, setCurrentDate] = useState(defaultValue);
     const [positionStyle, setPositionStyle] = useState<{ left?: number; right?: number }>({ left: 0 });
 
@@ -1186,9 +1180,7 @@ const Calendar = ({
     const parseRuleDate = () => (ruleDate ? new Date(ruleDate) : null);
 
     const convertDateToStr = (date: Date, isEnd?: boolean) => {
-        const base = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(
-            date.getDate()
-        ).padStart(2, "0")}`;
+        const base = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
         return isEnd ? `${base}T23:59:59` : `${base}T00:00:00`;
     };
 
@@ -1215,8 +1207,8 @@ const Calendar = ({
 
         // 종료일이면 23:59:59, 아니면 정오
         const SELECTED_DATE = isEnd
-            // ? new Date(year, month, day, 23, 59, 59, 999)
-            ? new Date(year, month, day, 23, 59, 59)
+            ? // ? new Date(year, month, day, 23, 59, 59, 999)
+              new Date(year, month, day, 23, 59, 59)
             : new Date(year, month, day, 12);
 
         setCurrentDate(SELECTED_DATE);
@@ -1268,7 +1260,7 @@ const Calendar = ({
 
         if (descriptionKey.includes("종료일") && rule > currentDate) {
             const endDate = new Date(rule.getFullYear(), rule.getMonth(), rule.getDate(), 23, 59, 59, 999);
-            console.log("endDate", endDate)
+            console.log("endDate", endDate);
             setCurrentDate(endDate);
             if (onDateSelect) onDateSelect(convertDateToStr(endDate, true));
             return;
@@ -1287,82 +1279,115 @@ const Calendar = ({
     }, [ruleDate]);
 
     useEffect(() => {
-        console.log("currentDate", currentDate)
-    }, [currentDate])
+        console.log("currentDate", currentDate);
+    }, [currentDate]);
 
     return (
-        <section ref={containerRef} className={`relative calendar ${ containerClassName ? containerClassName : "" }`}>
+        <section
+            ref={containerRef}
+            className={`relative calendar ${containerClassName ? containerClassName : ""}`}
+        >
             <UI.Button
                 ref={calendarRef}
                 onClick={() => setModalOpen(!modalOpen)}
                 className={`${className} ${icon ? "flex gap-[2.8rem] items-center justify-between" : ""} hover:bg-[var(--color-gray-200)] transition-colors`}
                 // whileTap={{ scale: 0.95 }}
-                desc_no={ desc_no }
-                rippleColor='#65778a'
+                desc_no={desc_no}
+                rippleColor="#65778a"
             >
-                {currentDate.toLocaleDateString("sv-SE")} 
-                {icon && <IconComponent type="outlined-calendar" alt="캘린더" />}
+                {currentDate.toLocaleDateString("sv-SE")}
+                {icon && (
+                    <IconComponent
+                        type="outlined-calendar"
+                        alt="캘린더"
+                    />
+                )}
             </UI.Button>
 
             <AnimatePresence>
                 {modalOpen && (
                     <motion.section
-                        className={`${ center ? "fixed top-[50%!important] left-[50%!important] transform translate-x-[-50%!important] translate-y-[-50%!important]" : "absolute" } flex items-center justify-center z-[1000] bg-white rounded-[1.2rem] shadow-[var(--shadow-normal)] overflow-hidden`}
+                        className={`${center ? "fixed top-[50%!important] left-[50%!important] transform translate-x-[-50%!important] translate-y-[-50%!important]" : "absolute"} flex items-center justify-center z-[1000] bg-white rounded-[1.2rem] shadow-[var(--shadow-normal)] overflow-hidden`}
                         style={{ top: (calendarRef.current?.offsetHeight ?? 0) + 4, ...positionStyle }}
                         initial={{ opacity: 0, transform: "scale(0.99)", height: "0px" }}
                         animate={{ opacity: 1, transform: "scale(1)", height: "auto" }}
                         exit={{ opacity: 0, transform: "scale(0.99)", height: "0px" }}
                         transition={{ delay: 0, type: "spring", mass: 0.1, stiffness: 150, damping: 10 }}
                     >
-                        <div className="p-[2.4rem] w-[calc(1.6rem*20)] flex flex-col gap-[2.4rem]" onClick={(e) => e.stopPropagation()}>
+                        <div
+                            className="p-[2.4rem] w-[calc(1.6rem*20)] flex flex-col gap-[2.4rem]"
+                            onClick={(e) => e.stopPropagation()}
+                        >
                             <section className="flex items-center justify-between mb-4">
-                                <button onClick={prevMonth} className="px-2 py-1 rounded hover:bg-gray-200" type="button">
-                                    <IconComponent type='outlined-arrow-below' alt='이전' className='rotate-90' />
+                                <button
+                                    onClick={prevMonth}
+                                    className="px-2 py-1 rounded hover:bg-gray-200"
+                                    type="button"
+                                >
+                                    <IconComponent
+                                        type="outlined-arrow-below"
+                                        alt="이전"
+                                        className="rotate-90"
+                                    />
                                 </button>
-                                <h6 className="font-semibold text-[2.0rem]">{month + 1}월 {year}</h6>
-                                <button onClick={nextMonth} className="px-2 py-1 rounded hover:bg-gray-200" type="button">
-                                    <IconComponent type='outlined-arrow-below' alt='다음' className='rotate-270' />
+                                <h6 className="font-semibold text-[2.0rem]">
+                                    {month + 1}월 {year}
+                                </h6>
+                                <button
+                                    onClick={nextMonth}
+                                    className="px-2 py-1 rounded hover:bg-gray-200"
+                                    type="button"
+                                >
+                                    <IconComponent
+                                        type="outlined-arrow-below"
+                                        alt="다음"
+                                        className="rotate-270"
+                                    />
                                 </button>
                             </section>
 
                             <section>
                                 <section className="grid w-full grid-cols-7 mb-2 text-sm text-center gap-[1.8rem]">
                                     {DAYS.map((day, index) => (
-                                        <p key={day} className={`${index === 0 ? "text-[var(--color-red-500)]" : "text-[var(--color-gray-1000)]"} w-[2.8rem] place-self-center`}>
+                                        <p
+                                            key={day}
+                                            className={`${index === 0 ? "text-[var(--color-red-500)]" : "text-[var(--color-gray-1000)]"} w-[2.8rem] place-self-center`}
+                                        >
                                             {day}
                                         </p>
                                     ))}
                                 </section>
 
                                 <section className="grid grid-cols-7 gap-[1.8rem]">
-                                    {Array(firstDay).fill(null).map((_, idx) => <div key={"empty-" + idx} />)}
-                                    {Array(daysInMonth).fill(null).map((_, idx) => {
-                                        const day = idx + 1;
-                                        const dateObj = new Date(year, month, day, 12); // ← 여기 추가
+                                    {Array(firstDay)
+                                        .fill(null)
+                                        .map((_, idx) => (
+                                            <div key={"empty-" + idx} />
+                                        ))}
+                                    {Array(daysInMonth)
+                                        .fill(null)
+                                        .map((_, idx) => {
+                                            const day = idx + 1;
+                                            const dateObj = new Date(year, month, day, 12); // ← 여기 추가
 
-                                        const today = new Date();
-                                        const isToday =
-                                            dateObj.getDate() === today.getDate() &&
-                                            dateObj.getMonth() === today.getMonth() &&
-                                            dateObj.getFullYear() === today.getFullYear();
+                                            const today = new Date();
+                                            const isToday = dateObj.getDate() === today.getDate() && dateObj.getMonth() === today.getMonth() && dateObj.getFullYear() === today.getFullYear();
 
-                                        const isSelected =
-                                            dateObj.getDate() === currentDate.getDate() &&
-                                            dateObj.getMonth() === currentDate.getMonth() &&
-                                            dateObj.getFullYear() === currentDate.getFullYear();
+                                            const isSelected =
+                                                dateObj.getDate() === currentDate.getDate() && dateObj.getMonth() === currentDate.getMonth() && dateObj.getFullYear() === currentDate.getFullYear();
 
-                                        return (
-                                            <motion.button
-                                                key={day}
-                                                type="button"
-                                                onClick={() => handleDateClick(day)}
-                                                className={`text-center py-1 hover:bg-[var(--color-gray-200)] transition-colors w-[2.8rem] h-[2.8rem] rounded-full
+                                            return (
+                                                <motion.button
+                                                    key={day}
+                                                    type="button"
+                                                    onClick={() => handleDateClick(day)}
+                                                    className={`text-center py-1 hover:bg-[var(--color-gray-200)] transition-colors w-[2.8rem] h-[2.8rem] rounded-full
                                                     ${isSelected ? "bg-[var(--color-blue-1000)] text-white" : isToday ? "bg-[var(--color-gray-100)] text-[var(--color-gray-700)]" : ""}`}
-                                            >
-                                                {day}
-                                            </motion.button>
-                                        );
-                                    })}
+                                                >
+                                                    {day}
+                                                </motion.button>
+                                            );
+                                        })}
                                 </section>
                             </section>
                         </div>
@@ -1374,30 +1399,28 @@ const Calendar = ({
 };
 
 const MultiSelect = ({ data, onChange }: MultiSelectProps) => {
-    const [ list, setList ] = useState( data );
+    const [list, setList] = useState(data);
 
     useEffect(() => {
-        onChange( list );
-    }, [ list ])
+        onChange(list);
+    }, [list]);
 
     return (
         <section className="flex gap-[0.8rem]">
-            { list.map((e: any, i: number) =>
+            {list.map((e: any, i: number) => (
                 <motion.button
-                    key={ i }
-                    className={`p-[1.6rem] rounded-[0.8rem] ${ e.state ? "bg-[var(--color-blue-100)] text-[var(--color-blue-1000)]" : "bg-[var(--color-gray-100)]" }`}
+                    key={i}
+                    className={`p-[1.6rem] rounded-[0.8rem] ${e.state ? "bg-[var(--color-blue-100)] text-[var(--color-blue-1000)]" : "bg-[var(--color-gray-100)]"}`}
                     onClick={() => {
-                        setList(prev =>
-                            prev.map( item => item.id === e.id ? { ...item, state: !item.state } : item )
-                        );
+                        setList((prev) => prev.map((item) => (item.id === e.id ? { ...item, state: !item.state } : item)));
                     }}
                     whileTap={{ scale: 0.9 }}
                 >
-                    { e.title }
+                    {e.title}
                 </motion.button>
-            )}
+            ))}
         </section>
-    )
+    );
 };
 
 const FileUpload = ({ placeholder = "파일을 여기에 드래그하거나", buttonText = "파일 선택", onChange }: FileUploadProps) => {
@@ -1440,9 +1463,7 @@ const FileUpload = ({ placeholder = "파일을 여기에 드래그하거나", bu
 
     return (
         <section
-            className={`relative w-full h-64 border rounded-lg flex items-center justify-center ${
-                isDragging ? "border-blue-400 bg-blue-50" : "border-[var(--color-gray-200)] bg-white"
-            }`}
+            className={`relative w-full h-64 border rounded-lg flex items-center justify-center ${isDragging ? "border-blue-400 bg-blue-50" : "border-[var(--color-gray-200)] bg-white"}`}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
@@ -1476,7 +1497,7 @@ const FileUpload = ({ placeholder = "파일을 여기에 드래그하거나", bu
 };
 
 const Tab = ({ list, type = "button", className, preventTargetIdx = 999, preventMsg = "제한 설정 됨", defaultSelect = 0, onClick }: TabComponentProps) => {
-    const [ menuState, setMenuState ] = useState( defaultSelect );
+    const [menuState, setMenuState] = useState(defaultSelect);
 
     const { setToast } = useToastStore();
     const { isDirty, resetDirty } = useDirtyStore();
@@ -1484,84 +1505,87 @@ const Tab = ({ list, type = "button", className, preventTargetIdx = 999, prevent
 
     const { pushToUrl } = useNavigate();
 
-    const setPreventModal = ({ onClick }: { onClick: () => void }) => setModal({
-        type: "CHECK",
-        title: "저장하지 않고 나가시겠어요?",
-        description: "변경 사항이 모두 사라져요.",
-        // description: msg,
-        cancel: { text: "취소" },
-        confirm: {
-            text: "나가기",
-            onClick: () => {
-                onClick();
-                resetDirty();
-            }
-        },
-        isOpen: true
-    });
-    
+    const setPreventModal = ({ onClick }: { onClick: () => void }) =>
+        setModal({
+            type: "CHECK",
+            title: "저장하지 않고 나가시겠어요?",
+            description: "변경 사항이 모두 사라져요.",
+            // description: msg,
+            cancel: { text: "취소" },
+            confirm: {
+                text: "나가기",
+                onClick: () => {
+                    onClick();
+                    resetDirty();
+                },
+            },
+            isOpen: true,
+        });
+
     useEffect(() => {
-        setMenuState( defaultSelect );
-        onClick( defaultSelect )
-    }, [ defaultSelect ])
-    
-    
+        setMenuState(defaultSelect);
+        onClick(defaultSelect);
+    }, [defaultSelect]);
+
     return (
-        <section className={`${ className?.container ? className.container : "" }`}>
-            { list && list.map(( e ,i ) =>
-                <section key={i}>
-                    <motion.button
-                        key={ i }
-                        value={ e.value }
-                        // className={ `${ e.value === menuState ? `${ className?.active }` : `${ className?.normal }` } ${ className?.button }` }
-                        className="px-[2.0rem] py-[1.2rem]"
-                        onClick={() => {
-                            const MOVE_TAB = () => {
-                                setMenuState( e.value );
-                                onClick( e.value );
-                            }
+        <section className={`${className?.container ? className.container : ""}`}>
+            {list &&
+                list.map((e, i) => (
+                    <section key={i}>
+                        <motion.button
+                            key={i}
+                            value={e.value}
+                            // className={ `${ e.value === menuState ? `${ className?.active }` : `${ className?.normal }` } ${ className?.button }` }
+                            className="px-[2.0rem] py-[1.2rem]"
+                            onClick={() => {
+                                const MOVE_TAB = () => {
+                                    setMenuState(e.value);
+                                    onClick(e.value);
+                                };
 
-                            if ( preventTargetIdx !== 999 && preventTargetIdx !== i ) {
-                                setToast({ msg: preventMsg })
+                                if (preventTargetIdx !== 999 && preventTargetIdx !== i) {
+                                    setToast({ msg: preventMsg });
 
-                                return;
-                            }
+                                    return;
+                                }
 
-                            if ( isDirty ) {
-                                setPreventModal({
-                                    onClick: () => MOVE_TAB()
-                                });
+                                if (isDirty) {
+                                    setPreventModal({
+                                        onClick: () => MOVE_TAB(),
+                                    });
 
-                                return
-                            }
+                                    return;
+                                }
 
-                            if ( type === "button" ) {
-                                MOVE_TAB();
-                            } else {
-                                pushToUrl( e.route ?? "/" );
-                            }
-                        }}
-                    >
-                        { e.title }
-                    </motion.button>
+                                if (type === "button") {
+                                    MOVE_TAB();
+                                } else {
+                                    pushToUrl(e.route ?? "/");
+                                }
+                            }}
+                        >
+                            {e.title}
+                        </motion.button>
 
-                    { e.value === menuState ?
-                        <motion.p
-                            layout
-                            key={"tab"}
-                            id="underline"
-                            layoutId="underline"
-                            className="h-[0.2rem] w-full bg-black"
-                        />
-                    : "" }
-                </section>
-            )}
+                        {e.value === menuState ? (
+                            <motion.p
+                                layout
+                                key={"tab"}
+                                id="underline"
+                                layoutId="underline"
+                                className="h-[0.2rem] w-full bg-black"
+                            />
+                        ) : (
+                            ""
+                        )}
+                    </section>
+                ))}
         </section>
-    )
-}
+    );
+};
 
 const Button = ({ children, className, type = "button", disabled = false, rippleColor = "#ffffff", ref, test, desc_no, onClick, onPointerDown }: ButtonProps) => {
-    const [ ripples, setRipples ] = useState<{ x: number; y: number; id: number }[]>([]);
+    const [ripples, setRipples] = useState<{ x: number; y: number; id: number }[]>([]);
 
     return (
         <motion.button
@@ -1582,21 +1606,21 @@ const Button = ({ children, className, type = "button", disabled = false, ripple
                     setRipples((prev) => prev.filter((r) => r.id !== newRipple.id));
                 }, 1500);
             }}
-            onPointerDown={ onPointerDown }
-            className={`${className ? className : "relative"} overflow-hidden transition-opacity ${disabled ? "opacity-[0.5]" : ""}`}
+            onPointerDown={onPointerDown}
+            className={`${className ? className : "relative"} relative overflow-hidden transition-opacity ${disabled ? "opacity-[0.5]" : ""}`}
             disabled={disabled}
             whileTap={{ scale: 0.95 }}
             data-testid={test ?? ""}
             data-description={desc_no}
         >
-            { ripples.map((ripple) => (
+            {ripples.map((ripple) => (
                 <motion.div
                     key={ripple.id}
                     className="absolute pointer-events-none w-full h-full z-10 rounded-[50%] blur-[10px]"
                     style={{
                         left: `calc(${ripple.x}px - 50%)`,
                         top: `calc(${ripple.y}px - 50%)`,
-                        background: `radial-gradient(circle, ${ rippleColor }00 0%, ${ rippleColor } 50%, ${ rippleColor }00 70%)`,
+                        background: `radial-gradient(circle, ${rippleColor}00 0%, ${rippleColor} 50%, ${rippleColor}00 70%)`,
                         transform: "translate(-50%, -50%)",
                     }}
                     initial={{ scale: 0, opacity: 0.6 }}
@@ -1605,10 +1629,10 @@ const Button = ({ children, className, type = "button", disabled = false, ripple
                 />
             ))}
 
-            { children }
+            {children}
         </motion.button>
-    )
-}
+    );
+};
 
 const Pagination = ({ totalCount, pageSize, currentPage, desc_no, onPageChange }: PaginationProps) => {
     const totalPages = Math.ceil(totalCount / pageSize);
@@ -1619,7 +1643,7 @@ const Pagination = ({ totalCount, pageSize, currentPage, desc_no, onPageChange }
     const endPage = Math.min(totalPages, startPage + maxVisible - 1);
 
     const pageNumbers = [];
-    
+
     for (let i = startPage; i <= endPage; i++) {
         pageNumbers.push(i);
     }
@@ -1627,11 +1651,11 @@ const Pagination = ({ totalCount, pageSize, currentPage, desc_no, onPageChange }
     return (
         <div
             className="flex items-center justify-center gap-2 mt-4"
-            data-description={ desc_no }
+            data-description={desc_no}
         >
             {/* 처음 */}
             <button
-                onClick={() => onPageChange((currentPage - 10) <= 1 ? 1 : (currentPage - 10) )}
+                onClick={() => onPageChange(currentPage - 10 <= 1 ? 1 : currentPage - 10)}
                 disabled={currentPage === 1}
                 className="bg-transparent rounded-full p-[0.4rem] hover:bg-[var(--color-gray-200)] disabled:opacity-50"
             >
@@ -1646,7 +1670,13 @@ const Pagination = ({ totalCount, pageSize, currentPage, desc_no, onPageChange }
                 className="bg-transparent rounded-full p-[0.4rem] hover:bg-[var(--color-gray-200)] disabled:opacity-50"
             >
                 {/* 이전 */}
-                <IconComponent type='colored-arrow-below' className='rotate-90' width={24} height={24} alt='이전' />
+                <IconComponent
+                    type="colored-arrow-below"
+                    className="rotate-90"
+                    width={24}
+                    height={24}
+                    alt="이전"
+                />
             </button>
 
             {/* 페이지 번호 */}
@@ -1669,12 +1699,18 @@ const Pagination = ({ totalCount, pageSize, currentPage, desc_no, onPageChange }
                 className="bg-transparent rounded-full p-[0.4rem] hover:bg-[var(--color-gray-200)] disabled:opacity-50"
             >
                 {/* 다음 */}
-                <IconComponent type='colored-arrow-below' className='rotate-270' width={24} height={24} alt='이전' />
+                <IconComponent
+                    type="colored-arrow-below"
+                    className="rotate-270"
+                    width={24}
+                    height={24}
+                    alt="이전"
+                />
             </button>
 
             {/* 끝 */}
             <button
-                onClick={() => onPageChange((currentPage + 10) >= totalPages ? totalPages : (currentPage + 10))}
+                onClick={() => onPageChange(currentPage + 10 >= totalPages ? totalPages : currentPage + 10)}
                 disabled={currentPage === totalPages}
                 className="bg-transparent rounded-full p-[0.4rem] hover:bg-[var(--color-gray-200)] disabled:opacity-50"
             >
@@ -1702,11 +1738,9 @@ const Table = ({ className, desc_no, children }: TableProps) => {
     return (
         <section
             className={`${className ?? ""}`}
-            data-description={ desc_no }
+            data-description={desc_no}
         >
-            <section className="table-inner border border-[var(--color-gray-200)] rounded-[0.6rem]">
-                {children}
-            </section>
+            <section className="table-inner border border-[var(--color-gray-200)] rounded-[0.6rem]">{children}</section>
         </section>
     );
 };
@@ -1718,7 +1752,7 @@ const TableHeader = ({ children, desc_no, className }: { children: React.ReactNo
                 ${className ?? ""} 
                 grid font-semibold bg-gray-100 border-b border-b-[var(--color-gray-200)] p-[0.4rem]
             `}
-            data-description={ desc_no }
+            data-description={desc_no}
         >
             {children}
         </section>
@@ -1726,86 +1760,72 @@ const TableHeader = ({ children, desc_no, className }: { children: React.ReactNo
 };
 
 const TableBody = ({
-  children,
-  desc_no,
-  className,
-  reorder = false,
-  values,
-  onReorder,
+    children,
+    desc_no,
+    className,
+    reorder = false,
+    values,
+    onReorder,
 }: {
-  children: React.ReactNode;
-  desc_no?: string;
-  className?: string;
-  reorder?: boolean;
-  values?: any[];
-  onReorder?: (newOrder: any[]) => void;
+    children: React.ReactNode;
+    desc_no?: string;
+    className?: string;
+    reorder?: boolean;
+    values?: any[];
+    onReorder?: (newOrder: any[]) => void;
 }) => {
-  if (reorder) {
-    return (
-      <Reorder.Group
-        axis="y"
-        values={values ?? []}
-        onReorder={onReorder ?? (() => {})}
-        // onReorder={onReorder ?? (() => {})}
-        className={`${className ?? ""} flex flex-col`}
-        data-description={desc_no}
-      >
-        {children}
-      </Reorder.Group>
-    );
-  }
+    if (reorder) {
+        return (
+            <Reorder.Group
+                axis="y"
+                values={values ?? []}
+                onReorder={onReorder ?? (() => {})}
+                // onReorder={onReorder ?? (() => {})}
+                className={`${className ?? ""} flex flex-col`}
+                data-description={desc_no}
+            >
+                {children}
+            </Reorder.Group>
+        );
+    }
 
-  return (
-    <section
-      className={`${className ?? ""} flex flex-col`}
-      data-description={desc_no}
-    >
-      {children}
-    </section>
-  );
+    return (
+        <section
+            className={`${className ?? ""} flex flex-col`}
+            data-description={desc_no}
+        >
+            {children}
+        </section>
+    );
 };
 
-const TableRow = ({
-  children,
-  className,
-  reorder = false,
-  value,
-}: {
-  children: React.ReactNode;
-  className?: string;
-  reorder?: boolean;
-  value?: any;
-}) => {
-  const controls = useDragControls();
+const TableRow = ({ children, className, reorder = false, value }: { children: React.ReactNode; className?: string; reorder?: boolean; value?: any }) => {
+    const controls = useDragControls();
 
-  if (reorder) {
-    return (
-      <Reorder.Item
-        value={value}
-        dragListener={false} // 기본 drag 막기
-        dragControls={controls} // handle로만 drag 허용
-        className={`
+    if (reorder) {
+        return (
+            <Reorder.Item
+                value={value}
+                dragListener={false} // 기본 drag 막기
+                dragControls={controls} // handle로만 drag 허용
+                className={`
           ${className ?? ""} 
           grid border-b border-b-[var(--color-gray-200)] last:border-b-0 p-[0.4rem]
         `}
-      >
-        {/* 순서 변경 버튼 (이걸로만 drag 시작) */}
-        <button
-          onPointerDown={(e) => controls.start(e)}
-          className="mr-2 cursor-grab"
-        >
-          ☰
-        </button>
-        {children}
-      </Reorder.Item>
-    );
-  }
+            >
+                {/* 순서 변경 버튼 (이걸로만 drag 시작) */}
+                <button
+                    onPointerDown={(e) => controls.start(e)}
+                    className="mr-2 cursor-grab"
+                >
+                    ☰
+                </button>
+                {children}
+            </Reorder.Item>
+        );
+    }
 
-  return (
-    <div className={`${className ?? ""} grid border-b border-b-[var(--color-gray-200)] last:border-b-0 p-[0.4rem]`}>
-      {children}
-    </div>
-  );
+    return <div className={`${className ?? ""} grid border-b border-b-[var(--color-gray-200)] last:border-b-0 p-[0.4rem]`}>{children}</div>;
 };
 
 const TableCell = ({
@@ -1825,20 +1845,20 @@ const TableCell = ({
     return (
         <div
             className={`
-                ${ typeof children === "string" ? "pointer-events-none" : "" }
-                ${ className?.container ? className.container : "px-[2.0rem] py-[1.3rem]" } 
+                ${typeof children === "string" ? "pointer-events-none" : ""}
+                ${className?.container ? className.container : "px-[2.0rem] py-[1.3rem]"} 
                 flex items-center justify-center flex-1 rounded-[0.8rem]
             `}
-            onClick={ onClick }
-            data-description={ desc_no }
+            onClick={onClick}
+            data-description={desc_no}
         >
-            { typeof children === "string" ? (
+            {typeof children === "string" ? (
                 <p
                     className={`${className?.text ?? ""} flex-1`}
                     // className={`${className ?? ""} flex-1`}
-                    data-description={ desc_no }
+                    data-description={desc_no}
                 >
-                    { children }
+                    {children}
                 </p>
             ) : (
                 children
@@ -1847,15 +1867,15 @@ const TableCell = ({
     );
 };
 
-const ColorPicker = ({ defaultValue, onChange }: { defaultValue?: string, onChange: (e: string) => void }) => {
-    const [ colorMode, setColorMode ] = useState( 0 );
-	const [ selectedColor, setSelectedColor ] = useState("");
-    const [ isColorPickerOpen, setIsColorPickerOpen ] = useState( false );
-    const [ positionStyle, setPositionStyle ] = useState<{ left?: number; right?: number; top?: number; bottom?: number }>({ left: 0 });
-    
+const ColorPicker = ({ defaultValue, onChange }: { defaultValue?: string; onChange: (e: string) => void }) => {
+    const [colorMode, setColorMode] = useState(0);
+    const [selectedColor, setSelectedColor] = useState("");
+    const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
+    const [positionStyle, setPositionStyle] = useState<{ left?: number; right?: number; top?: number; bottom?: number }>({ left: 0 });
+
     const containerRef = useRef<HTMLElement>(null);
 
-	const COLOR_GROUPS: Record<string, string[]> = {
+    const COLOR_GROUPS: Record<string, string[]> = {
         transparent: ["#FFFFFF00"],
         red: ["#FFE0E0"],
         orange: ["#FFE5CC"],
@@ -1864,7 +1884,7 @@ const ColorPicker = ({ defaultValue, onChange }: { defaultValue?: string, onChan
         sky: ["#D1F1FF"],
         blue: ["#D6E4FF"],
         purple: ["#E8D6FF"],
-        gray: ["#F3F4F6"]
+        gray: ["#F3F4F6"],
     };
 
     const COLOR_SPECIAL_GROUPS: Record<string, string[]> = {
@@ -1876,36 +1896,36 @@ const ColorPicker = ({ defaultValue, onChange }: { defaultValue?: string, onChan
         sky: ["#0D6E99"],
         blue: ["#164899"],
         purple: ["#4B1699"],
-        gray: ["#1F2937"]
+        gray: ["#1F2937"],
     };
 
-	const baseColors = Object.keys(COLOR_GROUPS);
-	const baseSpecialColors = Object.keys(COLOR_SPECIAL_GROUPS);
+    const baseColors = Object.keys(COLOR_GROUPS);
+    const baseSpecialColors = Object.keys(COLOR_SPECIAL_GROUPS);
 
     const detectOutsideClick = (e: MouseEvent) => {
-        if ( containerRef.current && !containerRef.current.contains(e.target as Node) ) {
+        if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
             setIsColorPickerOpen(false);
         }
     };
 
     useEffect(() => {
-        if ( isColorPickerOpen ) {
+        if (isColorPickerOpen) {
             document.addEventListener("click", detectOutsideClick);
         }
-        
+
         return () => {
             document.removeEventListener("click", detectOutsideClick);
         };
-    }, [ isColorPickerOpen ]);
+    }, [isColorPickerOpen]);
 
-     useEffect(() => {
-        if ( isColorPickerOpen ) {
-            if ( containerRef.current ) {
+    useEffect(() => {
+        if (isColorPickerOpen) {
+            if (containerRef.current) {
                 const rect = containerRef.current.getBoundingClientRect();
 
                 const dropdownWidth = containerRef.current.offsetWidth;
                 const dropdownHeight = 200; // 예상 높이 (필요하면 동적 측정 가능)
-                
+
                 const viewportWidth = window.innerWidth;
                 const viewportHeight = window.innerHeight;
 
@@ -1931,18 +1951,21 @@ const ColorPicker = ({ defaultValue, onChange }: { defaultValue?: string, onChan
         };
     }, [isColorPickerOpen]);
 
-	return (
-		<section className="relative" ref={containerRef}>
-			{/* 상위 색상 선택 */}
-			<section className="flex items-center justify-center h-full">
+    return (
+        <section
+            className="relative"
+            ref={containerRef}
+        >
+            {/* 상위 색상 선택 */}
+            <section className="flex items-center justify-center h-full">
                 <button
-                    className='w-[2.0rem] h-[2.0rem] border border-[var(--color-gray-200)] rounded-full'
+                    className="w-[2.0rem] h-[2.0rem] border border-[var(--color-gray-200)] rounded-full"
                     type="button"
                     style={{
-                        backgroundColor: selectedColor !== "" ? selectedColor : (defaultValue ? defaultValue : "black")
+                        backgroundColor: selectedColor !== "" ? selectedColor : defaultValue ? defaultValue : "black",
                     }}
                     onClick={() => {
-                        setIsColorPickerOpen( !isColorPickerOpen );
+                        setIsColorPickerOpen(!isColorPickerOpen);
                     }}
                 />
                 {/* <input
@@ -1961,15 +1984,15 @@ const ColorPicker = ({ defaultValue, onChange }: { defaultValue?: string, onChan
                     <input type="text" defaultValue={ 100 } />
                     <p>%</p>
                 </section> */}
-			</section>
+            </section>
 
-			{/* 세부 색상 선택 */}
-			{ isColorPickerOpen && (
-				<section
+            {/* 세부 색상 선택 */}
+            {isColorPickerOpen && (
+                <section
                     className={`absolute z-[100] flex flex-col cursor-pointer whitespace-nowrap rounded-2xl p-[0.4rem] bg-white shadow-[var(--shadow-normal)]`}
                     // className={`absolute left-0 z-[100] top-[calc(3.8rem+0.8rem)] backdrop-blur-[20px] bg-white shadow-[var(--shadow-popup)] rounded-[1.6rem] flex flex-col overflow-hidden detect`}
                     style={{
-                        ...positionStyle
+                        ...positionStyle,
                     }}
                 >
                     <div className="flex items-center justify-between p-[0.8rem]">
@@ -1979,10 +2002,16 @@ const ColorPicker = ({ defaultValue, onChange }: { defaultValue?: string, onChan
 
                         <section className="function">
                             <section className="backdrop-blur-[20px] bg-gray-100 rounded-[0.8rem] gap-[0.4rem] p-[0.4rem] flex">
-                                <button className={`text-[#9198a0] rounded-[0.4rem] p-[0.4rem] text-[1.2rem] font-semibold transition-colors duration-250 ease-[cubic-bezier(.075,.82,.165,1)] ${ colorMode === 0 ? "text-gray-700 bg-white shadow-[var(--shadow-normal)]" : "" } detect`} onClick={() => setColorMode(0)}>
+                                <button
+                                    className={`text-[#9198a0] rounded-[0.4rem] p-[0.4rem] text-[1.2rem] font-semibold transition-colors duration-250 ease-[cubic-bezier(.075,.82,.165,1)] ${colorMode === 0 ? "text-gray-700 bg-white shadow-[var(--shadow-normal)]" : ""} detect`}
+                                    onClick={() => setColorMode(0)}
+                                >
                                     일반
                                 </button>
-                                <button className={`text-[#9198a0] rounded-[0.4rem] p-[0.4rem] text-[1.2rem] font-semibold transition-colors duration-250 ease-[cubic-bezier(.075,.82,.165,1)] ${ colorMode === 1 ? "text-gray-700 bg-white shadow-[var(--shadow-normal)]" : "" } detect`} onClick={() => setColorMode(1)}>
+                                <button
+                                    className={`text-[#9198a0] rounded-[0.4rem] p-[0.4rem] text-[1.2rem] font-semibold transition-colors duration-250 ease-[cubic-bezier(.075,.82,.165,1)] ${colorMode === 1 ? "text-gray-700 bg-white shadow-[var(--shadow-normal)]" : ""} detect`}
+                                    onClick={() => setColorMode(1)}
+                                >
                                     특별
                                 </button>
                             </section>
@@ -2011,29 +2040,32 @@ const ColorPicker = ({ defaultValue, onChange }: { defaultValue?: string, onChan
                     </div> */}
 
                     <div>
-                        {( colorMode === 0 ? baseColors : baseSpecialColors ).map(( colorKey, i) => 
-                            <section key={i} className='flex-1'>
-                                {( colorMode === 0 ? COLOR_GROUPS : COLOR_SPECIAL_GROUPS )[ colorKey ].map((shade, i) => (
+                        {(colorMode === 0 ? baseColors : baseSpecialColors).map((colorKey, i) => (
+                            <section
+                                key={i}
+                                className="flex-1"
+                            >
+                                {(colorMode === 0 ? COLOR_GROUPS : COLOR_SPECIAL_GROUPS)[colorKey].map((shade, i) => (
                                     <button
                                         key={i}
                                         className={`detect h-[1.2rem] w-[1.2rem]`}
                                         style={{
-                                            backgroundColor: shade
+                                            backgroundColor: shade,
                                         }}
                                         onClick={() => {
-                                            setSelectedColor( shade );
+                                            setSelectedColor(shade);
                                             // setValue( shade );
-                                            onChange( shade );
+                                            onChange(shade);
                                         }}
                                     />
                                 ))}
                             </section>
-                        )}
+                        ))}
                     </div>
-				</section>
-			)}
-		</section>
-	);
+                </section>
+            )}
+        </section>
+    );
 };
 
 interface ErrorBoundaryWrapperProps {
@@ -2042,57 +2074,51 @@ interface ErrorBoundaryWrapperProps {
     loading?: React.ReactNode;
 }
 
-const ErrorBoundaryWrapper: React.FC<ErrorBoundaryWrapperProps> = ({
-  children,
-  fallback: Fallback = UI.Error,
-  loading: Loading = <UI.Loading />,
-}) => {
+const ErrorBoundaryWrapper: React.FC<ErrorBoundaryWrapperProps> = ({ children, fallback: Fallback = UI.Error, loading: Loading = <UI.Loading /> }) => {
     return (
         <QueryErrorResetBoundary>
             {({ reset }) => (
                 <ErrorBoundary
-                    FallbackComponent={ Fallback }
+                    FallbackComponent={Fallback}
                     onReset={reset}
                 >
-                    <Suspense fallback={ Loading }>
-                        {children}
-                    </Suspense>
+                    <Suspense fallback={Loading}>{children}</Suspense>
                 </ErrorBoundary>
             )}
         </QueryErrorResetBoundary>
     );
 };
 
-const Empty = ({
-    title = "결과가 없습니다",
-    desc_no,
-    className
-}: {
-    title?: string
-    desc_no?: string
-    className?: string
-}) => {
+const Empty = ({ title = "결과가 없습니다", desc_no, className }: { title?: string; desc_no?: string; className?: string }) => {
     return (
         <div
-            className={`col-span-3 p-[2.0rem] w-full flex items-center justify-center flex-col gap-[2.4rem] opacity-[0.2] ${ className ? className : "" }`}
-            data-description={ desc_no }
+            className={`col-span-3 p-[2.0rem] w-full flex items-center justify-center flex-col gap-[2.4rem] opacity-[0.2] ${className ? className : ""}`}
+            data-description={desc_no}
         >
-            <IconComponent type='graphic-case-empty' alt='없음' width={52} height={52} />
-            <p className='text-center text-black pointer-events-none'>{ title }</p>
+            <IconComponent
+                type="graphic-case-empty"
+                alt="없음"
+                width={52}
+                height={52}
+            />
+            <p className="text-center text-black pointer-events-none">{title}</p>
         </div>
-    )
-}
+    );
+};
 
 const Loading = () => {
     return (
         <div>
             <p>Loading...</p>
         </div>
-    )
-}
+    );
+};
 
 const ErrorRetry = ({ onRetry }: { onRetry?: () => void }) => (
-    <article role="alert" className="h-[100dvh!important] w-[100dvw!important] flex flex-col items-center justify-center gap-[1.6rem]">
+    <article
+        role="alert"
+        className="h-[100dvh!important] w-[100dvw!important] flex flex-col items-center justify-center gap-[1.6rem]"
+    >
         <div className="alert-inner flex flex-col gap-[1.6rem] shadow-[var(--shadow-normal)] rounded-[1.6rem] bg-white p-[0.4rem]">
             <section className="flex flex-col gap-[1.6rem] px-[1.6rem] py-[0.8rem]">
                 <p>에러 발생!</p>
@@ -2109,19 +2135,22 @@ const ErrorRetry = ({ onRetry }: { onRetry?: () => void }) => (
 );
 
 const Error = ({ error, resetErrorBoundary }: FallbackProps) => {
-    const message = getErrorMessage(error) ?? '알 수 없는 오류가 발생했습니다.';
+    const message = getErrorMessage(error) ?? "알 수 없는 오류가 발생했습니다.";
 
     return (
-        <article role='alert' className='h-[100dvh!important] w-[100dvw!important] flex flex-col items-center justify-center gap-[1.6rem]'>
-            <div className='alert-inner flex flex-col gap-[1.6rem] shadow-[var(--shadow-normal)] rounded-[1.6rem] bg-white p-[0.4rem]'>
-                <section className='flex flex-col gap-[1.6rem] px-[1.6rem] py-[0.8rem]'>
+        <article
+            role="alert"
+            className="h-[100dvh!important] w-[100dvw!important] flex flex-col items-center justify-center gap-[1.6rem]"
+        >
+            <div className="alert-inner flex flex-col gap-[1.6rem] shadow-[var(--shadow-normal)] rounded-[1.6rem] bg-white p-[0.4rem]">
+                <section className="flex flex-col gap-[1.6rem] px-[1.6rem] py-[0.8rem]">
                     <p>에러 발생!</p>
                     <pre>{message}</pre>
                 </section>
-                
+
                 <UI.Button
                     onClick={resetErrorBoundary}
-                    className='p-[1.6rem] shadow-[var(--shadow-normal)] bg-[var(--color-orange-500)] rounded-[1.2rem]'
+                    className="p-[1.6rem] shadow-[var(--shadow-normal)] bg-[var(--color-orange-500)] rounded-[1.2rem]"
                 >
                     다시 시도
                 </UI.Button>
@@ -2142,8 +2171,8 @@ const Error = ({ error, resetErrorBoundary }: FallbackProps) => {
         //         </UI.Button>
         //     </div>
         // </article>
-    )
-}
+    );
+};
 
 const UI = {
     Select,
@@ -2175,6 +2204,6 @@ const UI = {
         Row: TableRow,
         Cell: TableCell,
     }),
-}
+};
 
-export default UI
+export default UI;

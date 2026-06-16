@@ -1,11 +1,13 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 
 import UI from "@/shared/ui/common/UIComponent";
 import TextShimmer from "@/shared/ui/common/TextShimmerComponent";
-import PostHeroImageDropZone from "@/features/managePost/ui/PostHeroImageDropZone";
+import PostHeroImageDropZone, { useHeroThumbnailFileHandler } from "@/features/managePost/ui/PostHeroImageDropZone";
+import { useReducedMotion } from "@/shared/hooks/useReducedMotion";
 
 import { util } from "@/shared/lib/util";
 import { useGetCategoryListQuery } from "@/entities/category/api/category.query";
@@ -36,67 +38,97 @@ type PostHeroEditProps = {
 
 type PostHeroProps = PostHeroViewProps | PostHeroEditProps;
 
+const isOptimizableImageSrc = (src: string) => src.startsWith("/") || src.startsWith("https://");
+
 const PostHero = (props: PostHeroProps) => {
-    const [initGlow, setInitGlow] = useState(false);
+    const reducedMotion = useReducedMotion();
+    const [isDraggingThumbnail, setIsDraggingThumbnail] = useState(false);
+    const dragDepthRef = useRef(0);
     const heroImageSrc = props.imageUrl || undefined;
     const heroImageAlt = props.mode === "view" ? props.thumbnailAlt || props.title : "";
+    const canOptimizeImage = heroImageSrc ? isOptimizableImageSrc(heroImageSrc) : false;
+    const handleThumbnailFile = useHeroThumbnailFileHandler(props.mode === "edit" ? props.onThumbnailChange : () => {});
+
+    const handleThumbnailDragEnter = (event: React.DragEvent<HTMLElement>) => {
+        event.preventDefault();
+        dragDepthRef.current += 1;
+
+        if (dragDepthRef.current === 1) {
+            setIsDraggingThumbnail(true);
+        }
+    };
+
+    const handleThumbnailDragLeave = () => {
+        dragDepthRef.current = Math.max(0, dragDepthRef.current - 1);
+
+        if (dragDepthRef.current === 0) {
+            setIsDraggingThumbnail(false);
+        }
+    };
+
+    const handleThumbnailDragOver = (event: React.DragEvent<HTMLElement>) => {
+        event.preventDefault();
+    };
+
+    const handleThumbnailDrop = (event: React.DragEvent<HTMLElement>) => {
+        event.preventDefault();
+        dragDepthRef.current = 0;
+        setIsDraggingThumbnail(false);
+
+        const file = event.dataTransfer.files?.[0];
+        if (file) handleThumbnailFile(file);
+    };
 
     return (
         <motion.article
             className="relative flex flex-col items-end justify-end gap-[1.6rem] w-full h-full rounded-[calc(1.6rem*3)] overflow-hidden"
-            initial={{ opacity: 0, y: 12 }}
+            initial={reducedMotion ? false : { opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.45, ease: [0.25, 0.8, 0.25, 1] }}
+            transition={{ duration: reducedMotion ? 0 : 0.45, ease: [0.25, 0.8, 0.25, 1] }}
+            onDragEnter={props.mode === "edit" ? handleThumbnailDragEnter : undefined}
+            onDragLeave={props.mode === "edit" ? handleThumbnailDragLeave : undefined}
+            onDragOver={props.mode === "edit" ? handleThumbnailDragOver : undefined}
+            onDrop={props.mode === "edit" ? handleThumbnailDrop : undefined}
         >
-            <section className={`flex flex-col items-start justify-end gap-[2.4rem] h-full w-full max-w-[var(--size-tablet)] px-[1.2rem] py-[7.2rem] z-[100] absolute left-[50%] top-[50%] transform translate-x-[-50%] translate-y-[-50%] ${props.mode === "edit" ? "pointer-events-none" : ""}`}>
-                {props.mode === "edit" ? (
-                    <PostHeroEditContent {...props} />
-                ) : (
-                    <PostHeroViewContent {...props} />
-                )}
+            <section
+                className="flex flex-col items-start justify-end gap-[2.4rem] h-full w-full max-w-[var(--size-tablet)] px-[1.2rem] py-[7.2rem] z-[100] absolute left-[50%] top-[50%] transform translate-x-[-50%] translate-y-[-50%] pointer-events-none"
+            >
+                {props.mode === "edit" ? <PostHeroEditContent {...props} /> : <PostHeroViewContent {...props} />}
             </section>
 
             <div className="absolute top-0 left-[50%] transform translate-x-[-50%] w-full h-full bg-[linear-gradient(0deg,_#000,_#00000000)] z-[1] rounded-[2.4rem] pointer-events-none" />
 
-            {!initGlow ? (
-                <motion.div
-                    className="absolute inset-0 z-[1000] pointer-events-none blur-[10px]"
-                    initial={{ scale: 0.8, opacity: 0.35 }}
-                    animate={{ scale: 1.2, opacity: 0 }}
-                    transition={{ duration: 1.2, ease: "easeOut" }}
-                    onAnimationComplete={() => setInitGlow(true)}
-                    style={{
-                        background: `
-                            radial-gradient(
-                                circle at 50% 50%,
-                                rgba(255, 255, 255, 0.25) 0%,
-                                rgba(173, 216, 230, 0.35) 25%,
-                                rgba(144, 238, 255, 0.4) 40%,
-                                rgba(255, 182, 193, 0.35) 60%,
-                                rgba(255, 255, 255, 0.15) 80%,
-                                transparent 100%
-                            )
-                        `,
-                        borderRadius: "50%",
-                        transformOrigin: "center",
-                    }}
-                />
-            ) : null}
-
-            <div className="absolute inset-0 rounded-[2.4rem] overflow-hidden z-0">
+            <div className="absolute inset-0 rounded-[2.4rem] overflow-hidden z-0 relative w-full h-full">
                 {heroImageSrc ? (
-                    <img
-                        src={heroImageSrc}
-                        alt={heroImageAlt}
-                        className="object-cover object-center w-full h-full aspect-auto pointer-events-none"
-                    />
+                    canOptimizeImage ? (
+                        <Image
+                            src={heroImageSrc}
+                            alt={heroImageAlt}
+                            fill
+                            priority
+                            sizes="100vw"
+                            className="object-cover object-center pointer-events-none"
+                        />
+                    ) : (
+                        <img
+                            src={heroImageSrc}
+                            alt={heroImageAlt}
+                            className="object-cover object-center w-full h-full aspect-auto pointer-events-none"
+                        />
+                    )
                 ) : (
-                    <div className="w-full h-full bg-[var(--color-gray-200)] pointer-events-none" aria-hidden />
+                    <div
+                        className="w-full h-full bg-[var(--color-gray-200)] pointer-events-none"
+                        aria-hidden
+                    />
                 )}
             </div>
 
             {props.mode === "edit" ? (
-                <PostHeroImageDropZone onImageSelected={props.onThumbnailChange} />
+                <PostHeroImageDropZone
+                    onImageSelected={props.onThumbnailChange}
+                    isDragging={isDraggingThumbnail}
+                />
             ) : null}
         </motion.article>
     );
@@ -116,9 +148,7 @@ const PostHeroViewContent = ({ title, summary, createDate, viewCount, likeCount 
             >
                 {title}
             </TextShimmer>
-            <h2 className="font-extrabold text-left tablet:text-[3.2rem] mobile:text-[2.0rem] text-white leading-[1.5] whitespace-break-spaces">
-                &quot;{summary}&quot;
-            </h2>
+            <h2 className="font-extrabold text-left tablet:text-[3.2rem] mobile:text-[2.0rem] text-white leading-[1.5] whitespace-break-spaces">&quot;{summary}&quot;</h2>
         </section>
 
         <section className="flex items-end flex-wrap gap-[1.6rem] pointer-events-none">
@@ -144,17 +174,7 @@ const PostHeroViewContent = ({ title, summary, createDate, viewCount, likeCount 
     </>
 );
 
-const PostHeroEditableField = ({
-    value,
-    placeholder,
-    className,
-    onChange,
-}: {
-    value: string;
-    placeholder: string;
-    className: string;
-    onChange: (value: string) => void;
-}) => {
+const PostHeroEditableField = ({ value, placeholder, className, onChange }: { value: string; placeholder: string; className: string; onChange: (value: string) => void }) => {
     const ref = useRef<HTMLHeadingElement>(null);
     const lastExternalValue = useRef(value);
 
@@ -184,15 +204,7 @@ const PostHeroEditableField = ({
     );
 };
 
-const PostHeroEditContent = ({
-    title,
-    summary,
-    categoryIdx,
-    editLabel = "작성 중",
-    onTitleChange,
-    onSummaryChange,
-    onCategoryChange,
-}: PostHeroEditProps) => {
+const PostHeroEditContent = ({ title, summary, categoryIdx, editLabel = "작성 중", onTitleChange, onSummaryChange, onCategoryChange }: PostHeroEditProps) => {
     const { data: getCategoryListData } = useGetCategoryListQuery();
     const enabledCategories = getCategoryListData?.result?.filter((e) => e.is_enabled) ?? [];
     const selectedCategory = enabledCategories.find((e) => e.idx === categoryIdx);

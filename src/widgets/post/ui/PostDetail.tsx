@@ -20,6 +20,7 @@ import { isMainBlock } from "@/widgets/post/lib/blockMode";
 import { getPostTocAnchorId } from "@/widgets/post/lib/postToc";
 import GiscusComments from "@/shared/ui/common/GiscusComments";
 import AsyncErrorState from "@/shared/ui/common/AsyncErrorState";
+import { PostNavigationActions, usePostNavigationActions } from "@/features/managePost";
 
 import { useToastStore } from "@/shared/stores/useToastStore";
 import { useCreatePostStore } from "@/shared/stores/useCreatePostStore";
@@ -200,6 +201,32 @@ const ContentColumn = memo(({ col, rowLength, onCopySentence }: { col: SectionCo
 });
 ContentColumn.displayName = "ContentColumn";
 
+const PostDetailActions = ({ postIdx }: { postIdx: number }) => {
+    const { pushToUrl } = useNavigate();
+    const { alreadyLiked, visibleActions, isDeletePending, handleNavAction } = usePostNavigationActions({
+        postIdx,
+        isView: true,
+        isCreate: false,
+        isEdit: false,
+        pushToUrl,
+    });
+
+    if (visibleActions.length === 0) {
+        return null;
+    }
+
+    return (
+        <section className="flex justify-center gap-[0.8rem] flex-wrap w-full pt-[0.8rem]">
+            <PostNavigationActions
+                actions={visibleActions}
+                alreadyLiked={alreadyLiked}
+                isDeletePending={isDeletePending}
+                onAction={handleNavAction}
+            />
+        </section>
+    );
+};
+
 const Contents = ({ contents, prev, next, postId }: { contents: SectionContent[][]; prev?: PostPrevNextInfo; next?: PostPrevNextInfo; postId: string }) => {
     const { pushToUrl } = useNavigate();
     const { setToast } = useToastStore();
@@ -214,7 +241,7 @@ const Contents = ({ contents, prev, next, postId }: { contents: SectionContent[]
 
     return (
         <article className="flex gap-[0.4rem] w-full max-w-[var(--size-tablet)] min-w-0 px-[1.2rem] [content-visibility:auto]">
-            <section className="flex flex-col gap-[7.2rem] flex-1 min-w-0">
+            <section className="flex flex-col gap-[2.4rem] flex-1 min-w-0">
                 {contents?.map((row, rowIdx) => (
                     <section
                         key={rowIdx}
@@ -287,6 +314,8 @@ const Contents = ({ contents, prev, next, postId }: { contents: SectionContent[]
                         )}
                     </UI.Button>
                 </section>
+
+                <PostDetailActions postIdx={parseInt(postId)} />
 
                 <GiscusComments
                     term={`post-${postId}`}

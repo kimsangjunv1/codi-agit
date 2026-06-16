@@ -59,7 +59,7 @@ export const useGetPostListQuery = () => {
     const { data, isLoading, isError, error, isFetching, refetch } = useQuery<GetPostListResponse>({
         queryKey: [AgitRoutes.KEY_POST, "list"],
         queryFn: () => getPostListFetch(),
-        staleTime: 0,
+        staleTime: POST_DETAIL_STALE_TIME_MS,
         throwOnError: false,
     });
 
