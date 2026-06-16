@@ -4,6 +4,8 @@ import React, { Fragment, useEffect } from "react";
 import { signOut, useSession } from "next-auth/react";
 import { AnimatePresence, motion } from "motion/react";
 
+import { PAGE_REVEAL_COVER_DURATION, PAGE_REVEAL_COVER_EASE, PAGE_REVEAL_UNCOVER_DURATION, PAGE_REVEAL_UNCOVER_EASE } from "@/shared/constants/pageTransition";
+import { useReducedMotion } from "@/shared/hooks/useReducedMotion";
 import { useLayoutStore } from "@/shared/stores/useLayoutStore";
 import { useServiceStore } from "@/shared/stores/useServiceStore";
 
@@ -14,7 +16,14 @@ import TextShimmer from "../common/TextShimmerComponent";
 import useNavigate from "@/shared/hooks/useNavigate";
 import { headerMenuList } from "@/shared/constants/lists/configServiceList";
 
+const CLIP_MENU = {
+    hidden: "inset(0 100% 0 0)",
+    visible: "inset(0 0 0 0)",
+    exit: "inset(0 0 0 100%)",
+} as const;
+
 const MobileMenu = () => {
+    const reducedMotion = useReducedMotion();
     const { isMobileMenuOpen, setIsMobileMenuOpen } = useLayoutStore();
     const { data: session } = useSession();
     const { pushToUrl, currentPathName } = useNavigate();
@@ -38,15 +47,18 @@ const MobileMenu = () => {
                 {isMobileMenuOpen ? (
                     <motion.article
                         className="mobile flex flex-col justify-center items-center gap-[1.6rem] fixed top-0 left-0 w-full h-full bg-[#ffffff] z-10000"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
+                        initial={{ clipPath: CLIP_MENU.hidden }}
+                        animate={{ clipPath: CLIP_MENU.visible }}
+                        exit={{
+                            clipPath: CLIP_MENU.exit,
+                            transition: {
+                                duration: reducedMotion ? 0 : PAGE_REVEAL_UNCOVER_DURATION,
+                                ease: PAGE_REVEAL_UNCOVER_EASE,
+                            },
+                        }}
                         transition={{
-                            delay: 0,
-                            type: "spring",
-                            mass: 0.1,
-                            stiffness: 100,
-                            damping: 10,
+                            duration: reducedMotion ? 0 : PAGE_REVEAL_COVER_DURATION,
+                            ease: PAGE_REVEAL_COVER_EASE,
                         }}
                     >
                         <UI.Button
@@ -88,11 +100,9 @@ const MobileMenu = () => {
                                             initial={{ y: "4.8rem" }}
                                             animate={{ y: "0rem" }}
                                             transition={{
-                                                delay: 0.1 * (i + 1),
-                                                type: "spring",
-                                                mass: 0.1,
-                                                stiffness: 100,
-                                                damping: 10,
+                                                delay: reducedMotion ? 0 : 0.1 * (i + 1),
+                                                duration: reducedMotion ? 0 : PAGE_REVEAL_COVER_DURATION,
+                                                ease: PAGE_REVEAL_COVER_EASE,
                                             }}
                                         >
                                             <Item
@@ -112,11 +122,9 @@ const MobileMenu = () => {
                                         initial={{ y: "4.8rem" }}
                                         animate={{ y: "0rem" }}
                                         transition={{
-                                            delay: 0.1 * (headerMenuList.length + 1),
-                                            type: "spring",
-                                            mass: 0.1,
-                                            stiffness: 100,
-                                            damping: 10,
+                                            delay: reducedMotion ? 0 : 0.1 * (headerMenuList.length + 1),
+                                            duration: reducedMotion ? 0 : PAGE_REVEAL_COVER_DURATION,
+                                            ease: PAGE_REVEAL_COVER_EASE,
                                         }}
                                     />
                                 </div>
@@ -129,11 +137,9 @@ const MobileMenu = () => {
                                         initial={{ y: "4.8rem" }}
                                         animate={{ y: "0rem" }}
                                         transition={{
-                                            delay: 0.1 * (headerMenuList.length + 2),
-                                            type: "spring",
-                                            mass: 0.1,
-                                            stiffness: 100,
-                                            damping: 10,
+                                            delay: reducedMotion ? 0 : 0.1 * (headerMenuList.length + 2),
+                                            duration: reducedMotion ? 0 : PAGE_REVEAL_COVER_DURATION,
+                                            ease: PAGE_REVEAL_COVER_EASE,
                                         }}
                                     >
                                         {session ? (
@@ -202,10 +208,9 @@ const MobileMenu = () => {
                             initial={{ scale: 0, opacity: 0.4 }}
                             animate={{ scale: 10, opacity: -10 }}
                             transition={{
-                                duration: 2,
-                                ease: "easeOut",
-                                repeat: 0, // 무한 반복
-                                // repeatType: "loop",
+                                duration: reducedMotion ? 0 : 2,
+                                ease: PAGE_REVEAL_UNCOVER_EASE,
+                                repeat: 0,
                             }}
                             style={{
                                 background: "radial-gradient(circle, rgba(255,255,255,0) 0%, var(--color-blue-500) 20%, rgba(255,255,255,0) 70%)",
