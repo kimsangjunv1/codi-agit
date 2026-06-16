@@ -2,9 +2,10 @@
 
 import { Fragment, useEffect, useRef } from "react";
 
-import SortableBlock from "@/widgets/post/ui/SortableBlock";
-import PostHero from "@/widgets/post/ui/PostHero";
-import PostAttachedImageList from "@/widgets/post/ui/PostAttachedImageList";
+import SortableBlock from "@/features/managePost/ui/SortableBlock";
+import PostHero from "@/features/managePost/ui/PostHero";
+import PostAttachedImageList from "@/features/managePost/ui/PostAttachedImageList";
+import PostTocPanel from "@/features/managePost/ui/PostTocPanel";
 
 import { useGetPostDetailQuery } from "@/entities/post/api/post.query";
 import { collectImagesFromPost } from "@/features/managePost/lib/preparePostSave";
@@ -12,7 +13,6 @@ import { collectImagesFromPost } from "@/features/managePost/lib/preparePostSave
 import { SectionContent } from "@/entities/post/model/post.type";
 import { useCreatePostStore } from "@/shared/stores/useCreatePostStore";
 import { usePostDraftImageStore } from "@/shared/stores/usePostDraftImageStore";
-
 const PostModifyEditor = ({ id }: { id: string }) => {
     const { setPostIdx } = useCreatePostStore();
 
@@ -25,6 +25,8 @@ const PostModifyEditor = ({ id }: { id: string }) => {
             <section className="mx-auto post-inner flex flex-col gap-[5.2rem] w-full items-center">
                 <RenderContents id={id} />
             </section>
+
+            <PostTocPanel />
         </section>
     );
 };
@@ -33,8 +35,7 @@ const RenderContents = ({ id }: { id: string }) => {
     const { data: getPostListData } = useGetPostDetailQuery(parseInt(id));
     const data = getPostListData?.result;
 
-    const { title, summary, thumbnail, category_idx, setTitle, setSummary, setCategoryIdx, setThumbnail } =
-        useCreatePostStore();
+    const { title, summary, thumbnail, category_idx, setTitle, setSummary, setCategoryIdx, setThumbnail } = useCreatePostStore();
     const { reset: resetDraftImages, addFromUrl } = usePostDraftImageStore();
     const initializedRef = useRef(false);
 
@@ -83,8 +84,8 @@ const RenderContents = ({ id }: { id: string }) => {
 
 const Contents = ({ contents }: { contents: SectionContent[][] }) => {
     return (
-        <article className="flex gap-[0.4rem] w-full max-w-[var(--size-tablet)] px-[1.2rem] [content-visibility:auto]">
-            <section className="flex flex-col gap-[7.2rem] flex-1">
+        <article className="flex gap-[0.4rem] w-full max-w-[var(--size-tablet)] min-w-0">
+            <section className="flex flex-col gap-[7.2rem] flex-1 min-w-0">
                 <SortableBlock contents={contents} />
                 <PostAttachedImageList />
             </section>

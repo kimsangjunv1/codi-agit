@@ -1,13 +1,33 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { getPostDetailServerFetch } from "@/entities/post/api/post.api";
+import { getPostDetailServerFetch } from "@/entities/post/api/post.server.api";
 import { GetPostDetailResponse } from "@/entities/post/model/post.type";
+import { buildBlogPostingJsonLd, buildPostMetadata } from "@/shared/lib/seo/metadata";
 import { singleItemPagination } from "@/shared/lib/utils/apiResponse";
+import JsonLd from "@/shared/ui/seo/JsonLd";
 import Main from "@/widgets/layout/Main";
 import PostDetailView from "@/views/post/PostDetailView";
 
 // POST_DETAIL_REVALIDATE_SECONDS 와 동일하게 유지
 export const revalidate = 300;
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+    const { id } = await params;
+    const postIdx = Number(id);
+
+    if (!Number.isFinite(postIdx) || postIdx <= 0) {
+        return {};
+    }
+
+    const data = await getPostDetailServerFetch(postIdx);
+
+    if (data.resultCode === "NOT_FOUND" || !data.result?.title) {
+        return { title: "게시물을 찾을 수 없음" };
+    }
+
+    return buildPostMetadata(data.result);
+}
 
 const createFallbackData = (): GetPostDetailResponse => ({
     result: {
@@ -48,10 +68,15 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
         console.error("SSR fetch error:", err);
     }
 
+    const post = initialData.result;
+
     return (
-        <Main id="post-detail" className={{ inner: "flex flex-col gap-[2.4rem]", container: "" }}>
-            <PostDetailView id={id} initialData={initialData} />
-        </Main>
+        <>
+            {post?.title ? <JsonLd data={buildBlogPostingJsonLd(post)} /> : null}
+            <Main id="post-detail" className={{ inner: "flex flex-col gap-[2.4rem]", container: "" }}>
+                <PostDetailView id={id} initialData={initialData} />
+            </Main>
+        </>
     );
 };
 

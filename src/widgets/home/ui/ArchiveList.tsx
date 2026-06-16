@@ -1,10 +1,9 @@
 "use client";
 
 import { useLayoutEffect, useRef } from "react";
-import { AnimatePresence } from "motion/react";
 
-import useNavigate from "@/shared/hooks/useNavigate";
 import { useGetPostListQuery } from "@/entities/post/api/post.query";
+import usePageTransitionReady from "@/shared/hooks/usePageTransitionReady";
 import { useLayoutStore } from "@/shared/stores/useLayoutStore";
 import { clampPageScroll } from "@/widgets/home/lib/clampPageScroll";
 
@@ -12,15 +11,18 @@ import ArchiveListDefaultItem from "./ArchiveListDefaultItem";
 import ArchiveListGridItem from "./ArchiveListGridItem";
 import { FeedEmpty, FeedError, FeedLoading } from "./FeedStatus";
 import ListViewModeToggle from "./ListViewModeToggle";
+import { AnimatePresence } from "motion/react";
 
 const ArchiveList = () => {
     const { data, isLoading, isError, error, refetch } = useGetPostListQuery();
     const { categoryFilter, listViewMode } = useLayoutStore();
-    const { pushToUrl } = useNavigate();
     const listRef = useRef<HTMLElement | null>(null);
 
     const posts = data?.result ?? [];
     const filtered = categoryFilter !== 999 ? posts.filter((item) => item.category_idx === categoryFilter) : posts;
+    const isDataReady = (!isLoading || posts.length > 0) || isError || data?.resultCode === "ERROR";
+
+    usePageTransitionReady("archive-list-data", isDataReady);
 
     useLayoutEffect(() => {
         clampPageScroll();
@@ -41,11 +43,21 @@ const ArchiveList = () => {
     }
 
     if (isError) {
-        return <FeedError message={error?.message} onRetry={() => refetch()} />;
+        return (
+            <FeedError
+                message={error?.message}
+                onRetry={() => refetch()}
+            />
+        );
     }
 
     if (data?.resultCode === "ERROR") {
-        return <FeedError message={data.resultMessage} onRetry={() => refetch()} />;
+        return (
+            <FeedError
+                message={data.resultMessage}
+                onRetry={() => refetch()}
+            />
+        );
     }
 
     if (posts.length === 0) {
@@ -56,28 +68,33 @@ const ArchiveList = () => {
         return <FeedEmpty title="해당 카테고리에 게시물이 없습니다" />;
     }
 
-    const handleSelect = (idx: number) => pushToUrl(`/post/${idx}`);
-
     return (
         <>
             <article
                 ref={listRef}
                 className={
                     listViewMode === "grid"
-                        ? "grid grid-cols-4 gap-[4px] px-[1.2rem] mx-auto max-w-[var(--size-tablet)]"
-                        : "flex flex-col gap-6"
+                        ? "relative grid grid-cols-4 gap-[4px] px-[1.2rem] mx-auto max-w-[var(--size-tablet)]"
+                        : "relative flex flex-col gap-6"
                 }
             >
                 <AnimatePresence mode="popLayout">
                     {filtered.map((post) =>
                         listViewMode === "grid" ? (
-                            <ArchiveListGridItem key={post.idx} post={post} onSelect={handleSelect} />
+                            <ArchiveListGridItem
+                                key={post.idx + post.title}
+                                post={post}
+                            />
                         ) : (
-                            <ArchiveListDefaultItem key={post.idx} post={post} onSelect={handleSelect} />
+                            <ArchiveListDefaultItem
+                                key={post.idx + post.title}
+                                post={post}
+                            />
                         ),
                     )}
                 </AnimatePresence>
             </article>
+
             <ListViewModeToggle />
         </>
     );

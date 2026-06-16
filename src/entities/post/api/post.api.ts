@@ -1,5 +1,4 @@
 import { clientApi } from "@/shared/lib/api/client";
-import { serverApi } from "@/shared/lib/api/server";
 import {
     DeletePostManagerResponse,
     GetPostDetailResponse,
@@ -31,27 +30,12 @@ export const getPostDetailFetch = (idx: number) => {
 };
 
 /**
- * 포스트 - 상세 ISR/SSR 조회 (조회수 증가 없음)
- */
-export const getPostDetailServerFetch = (idx: number) =>
-    serverApi.get<GetPostDetailResponse>(`/api/v1/get/post/${idx}`, {
-        headers: { "x-internal-fetch": "isr" },
-        throwOnError: false,
-    });
-
-/**
  * 포스트 - 최근 생성한 목록 조회 (10개)
  */
 export const getPostLatestListFetch = () => {
     const url = `/api/v1/get/post/latest`;
     return clientApi.get<GetPostLatestListResponse>(url);
 };
-
-/**
- * 포스트 - 최근 목록 SSR 조회
- */
-export const getPostLatestListServerFetch = () =>
-    serverApi.get<GetPostLatestListResponse>("/api/v1/get/post/latest");
 
 /**
  * 포스트 - 생성

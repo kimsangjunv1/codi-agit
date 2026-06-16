@@ -28,7 +28,7 @@ const SANITIZE_OPTIONS = {
         "mark",
         "hr",
     ],
-    ALLOWED_ATTR: ["href", "src", "alt", "class", "style", "target", "rel"],
+    ALLOWED_ATTR: ["href", "src", "alt", "class", "style", "target", "rel", "data-align", "data-image-width"],
 };
 
 export const sanitizeHtml = (dirty: string): string => DOMPurify.sanitize(dirty, SANITIZE_OPTIONS);

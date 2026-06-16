@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { RefObject, useEffect, useState } from "react";
 
 const getScrollPercent = () => {
     const winScroll =
@@ -41,6 +41,35 @@ const useScrollProgress = () => {
     }, []);
 
     return { scrollValue };
+};
+
+/** 스크롤 프로그레스 바를 React state 없이 DOM에 직접 반영 — Navigation 등 스크롤 중 리렌더 방지 */
+export const useScrollProgressBar = (barRef: RefObject<HTMLElement | null>) => {
+    useEffect(() => {
+        const bar = barRef.current;
+        if (!bar) return;
+
+        let rafId = 0;
+
+        const update = () => {
+            const safe = getScrollPercent();
+            bar.style.width = `${safe}%`;
+            bar.style.backgroundColor = safe >= 99 ? "#00ff61" : "#ffffff";
+        };
+
+        const onScroll = () => {
+            cancelAnimationFrame(rafId);
+            rafId = requestAnimationFrame(update);
+        };
+
+        update();
+        window.addEventListener("scroll", onScroll, { passive: true });
+
+        return () => {
+            cancelAnimationFrame(rafId);
+            window.removeEventListener("scroll", onScroll);
+        };
+    }, [barRef]);
 };
 
 /** 스크롤 %가 threshold를 넘었는지 — 경계에서만 state 갱신 (리렌더 최소화) */

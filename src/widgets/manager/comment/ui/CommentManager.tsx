@@ -4,9 +4,9 @@ import useNavigate from "@/shared/hooks/useNavigate";
 import { useModalStore } from "@/shared/stores/useModalStore";
 import UI from "@/shared/ui/common/UIComponent";
 import {
-    useDeleteCommentManagerQuery,
     useGetCommentManagerListQuery,
 } from "@/entities/comment/api/comment.query";
+import { useDeleteCommentWithToast } from "@/widgets/manager/comment/hooks/useCommentMutations";
 import { CommentManagerItem } from "@/entities/comment/model/comment.type";
 import { util } from "@/shared/lib/util";
 import ManagerPageShell from "@/widgets/manager/ui/ManagerPageShell";
@@ -18,7 +18,7 @@ const CommentManager = () => {
     const { setModal } = useModalStore();
 
     const { data, isLoading, isError, error, refetch } = useGetCommentManagerListQuery();
-    const { mutate: deleteCommentFetch } = useDeleteCommentManagerQuery();
+    const { mutate: deleteCommentFetch } = useDeleteCommentWithToast();
 
     const deleteCommentModal = (item: CommentManagerItem) =>
         setModal({

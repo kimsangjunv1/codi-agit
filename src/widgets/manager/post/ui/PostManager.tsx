@@ -4,9 +4,9 @@ import useNavigate from "@/shared/hooks/useNavigate";
 import { useModalStore } from "@/shared/stores/useModalStore";
 import UI from "@/shared/ui/common/UIComponent";
 import {
-    useDeletePostManagerQuery,
     useGetPostManagerListQuery,
 } from "@/entities/post/api/post.query";
+import { useDeletePostManagerWithToast } from "@/widgets/manager/post/hooks/usePostManagerMutations";
 import { PostManagerItem } from "@/entities/post/model/post.type";
 import { util } from "@/shared/lib/util";
 import ManagerPageShell from "@/widgets/manager/ui/ManagerPageShell";
@@ -18,7 +18,7 @@ const PostManager = () => {
     const { setModal } = useModalStore();
 
     const { data, isLoading, isError, error, refetch } = useGetPostManagerListQuery();
-    const { mutate: deletePostFetch } = useDeletePostManagerQuery();
+    const { mutate: deletePostFetch } = useDeletePostManagerWithToast();
 
     const deletePostModal = (item: PostManagerItem) =>
         setModal({
