@@ -14,7 +14,6 @@ import {
     GetCommentLatestListResponse,
     GetCommentManagerListResponse,
 } from "@/entities/comment/model/comment.type";
-import { useToastStore } from "@/shared/stores/useToastStore";
 
 export const useGetCommentDetailQuery = (commentIdx?: number) => {
     const { data, isLoading, isError, isFetching, refetch } = useQuery<GetCommentDetailResponse>({
@@ -38,18 +37,13 @@ export const useGetCommentLatestListQuery = () => {
 };
 
 export const useSetCommentQuery = () => {
-    const { setToast } = useToastStore();
     const queryClient = useQueryClient();
 
     const { data, mutate, mutateAsync, error, isError, isSuccess, isIdle, isPending, isPaused, reset } = useMutation({
         mutationKey: [AgitRoutes.KEY_COMMENT, "set"],
         mutationFn: (payload: unknown) => setCommentFetch(payload),
         onSuccess: () => {
-            setToast({ msg: "댓글을 생성했어요", time: 2 });
             queryClient.invalidateQueries({ queryKey: [AgitRoutes.KEY_COMMENT] });
-        },
-        onError: (err: Error) => {
-            setToast({ msg: err.message ?? "에러 발생", time: 2 });
         },
     });
 
@@ -67,18 +61,13 @@ export const useGetCommentManagerListQuery = () => {
 };
 
 export const useDeleteCommentManagerQuery = () => {
-    const { setToast } = useToastStore();
     const queryClient = useQueryClient();
 
     const { data, mutate, mutateAsync, error, isError, isSuccess, isIdle, isPending, isPaused, reset } = useMutation({
         mutationKey: [AgitRoutes.KEY_COMMENT, "manager", "delete"],
         mutationFn: (payload: DeleteCommentManagerPayload) => deleteCommentManagerFetch(payload),
         onSuccess: () => {
-            setToast({ msg: "댓글을 삭제했어요", time: 2 });
             queryClient.invalidateQueries({ queryKey: [AgitRoutes.KEY_COMMENT] });
-        },
-        onError: (err: Error) => {
-            setToast({ msg: err.message ?? "에러 발생", time: 2 });
         },
     });
 

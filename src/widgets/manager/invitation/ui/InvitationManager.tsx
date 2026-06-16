@@ -6,11 +6,13 @@ import { useModalStore } from "@/shared/stores/useModalStore";
 import UI from "@/shared/ui/common/UIComponent";
 import ModalContent from "@/widgets/common/ui/ModalComponent";
 import {
-    useDeleteInvitationCodeQuery,
     useGetInvitationCodeListOnManagerQuery,
-    usePatchInvitationCodeQuery,
-    useSetInvitationCodeQuery,
 } from "@/entities/invitation/api/invitation.query";
+import {
+    useDeleteInvitationCodeWithToast,
+    usePatchInvitationCodeWithToast,
+    useSetInvitationCodeWithToast,
+} from "@/widgets/manager/invitation/hooks/useInvitationMutations";
 import {
     InvitationCodeListItem,
     PatchInvitationCodePayload,
@@ -25,9 +27,9 @@ const InvitationManager = () => {
     const invitationCodeCreateValueRef = useRef<SetInvitationCodePayload>({ is_active: false, expire_at: "" });
 
     const { data: getInvitationCodeListData, isLoading, isError, error, refetch } = useGetInvitationCodeListOnManagerQuery();
-    const { mutate: setInvitationCodeFetch } = useSetInvitationCodeQuery();
-    const { mutate: patchInvitationCodeFetch } = usePatchInvitationCodeQuery();
-    const { mutate: deleteInvitationCodeFetch } = useDeleteInvitationCodeQuery();
+    const { mutate: setInvitationCodeFetch } = useSetInvitationCodeWithToast();
+    const { mutate: patchInvitationCodeFetch } = usePatchInvitationCodeWithToast();
+    const { mutate: deleteInvitationCodeFetch } = useDeleteInvitationCodeWithToast();
 
     const { setModal } = useModalStore();
 
