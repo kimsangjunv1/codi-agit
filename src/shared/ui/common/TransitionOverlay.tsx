@@ -1,6 +1,6 @@
 "use client"
 
-import { AnimatePresence, motion } from 'motion/react'
+import { motion } from 'motion/react'
 import { ReactNode, useEffect, useRef } from "react";
 
 import useNavigate from "@/shared/hooks/useNavigate";
@@ -23,22 +23,19 @@ const TransitionOverlay = ({ children }: { children: ReactNode }) => {
     
             return () => clearTimeout( timeout ); // 클린업
         }
-	}, [ currentPathName, isRouteChange ]);
+	}, [ currentPathName, isRouteChange, setIsRouteChange ]);
 
     return (
-        <AnimatePresence mode='wait'>
-            { isRouteChange === 0 && (
-                <motion.div
-                    key={`base-${isRouteChange}`}
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.98 }}
-                    transition={{ duration: 0.35, ease: [0.25, 0.8, 0.25, 1] }}
-                >
-                    { children }
-                </motion.div>
-            )}
-        </AnimatePresence>
+        <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{
+                opacity: isRouteChange === 1 ? 0.6 : 1,
+                scale: isRouteChange === 1 ? 0.98 : 1,
+            }}
+            transition={{ duration: 0.35, ease: [0.25, 0.8, 0.25, 1] }}
+        >
+            { children }
+        </motion.div>
     )
 }
 

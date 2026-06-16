@@ -72,7 +72,8 @@ export const useGetPostLatestListQuery = (initialData?: GetPostLatestListRespons
     const { data, isLoading, isError, error, isFetching, refetch } = useQuery<GetPostLatestListResponse>({
         queryKey: [AgitRoutes.KEY_POST, "latest"],
         queryFn: () => getPostLatestListFetch(),
-        staleTime: 0,
+        staleTime: hasValidInitialData ? POST_DETAIL_STALE_TIME_MS : 0,
+        refetchOnMount: hasValidInitialData ? false : true,
         initialData: hasValidInitialData ? initialData : undefined,
         throwOnError: false,
     });

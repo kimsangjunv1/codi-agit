@@ -2,7 +2,7 @@
 
 import { FormEvent, Fragment, ReactNode, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { motion, PanInfo, useAnimationFrame, useMotionValue } from "framer-motion";
+import { motion, PanInfo, useAnimationFrame, useMotionValue } from "motion/react";
 import Image from "next/image";
 
 import { R } from "./renewalStyles";
