@@ -1,7 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { AgitRoutes } from "@/shared/constants/entityKeys";
-import { useToastStore } from "@/shared/stores/useToastStore";
 import {
     deleteCategoryFetch,
     getCategoryListFetch,
@@ -38,18 +37,13 @@ export const useGetCategoryListOnManagerQuery = () => {
 };
 
 export const useSetCategoryQuery = () => {
-    const { setToast } = useToastStore();
     const queryClient = useQueryClient();
 
     const { data, mutate, mutateAsync, error, isError, isSuccess, isIdle, isPending, isPaused, reset } = useMutation({
         mutationKey: [AgitRoutes.KEY_CATEGORY, "set"],
         mutationFn: (payload: SetCategoryPayload) => setCategoryFetch(payload),
         onSuccess: () => {
-            setToast({ msg: "카테고리를 생성했어요", time: 2 });
             queryClient.invalidateQueries({ queryKey: [AgitRoutes.KEY_CATEGORY] });
-        },
-        onError: (err: Error) => {
-            setToast({ msg: err.message ?? "에러 발생", time: 2 });
         },
     });
 
@@ -57,18 +51,13 @@ export const useSetCategoryQuery = () => {
 };
 
 export const usePatchCategoryQuery = () => {
-    const { setToast } = useToastStore();
     const queryClient = useQueryClient();
 
     const { data, mutate, mutateAsync, error, isError, isSuccess, isIdle, isPending, isPaused, reset } = useMutation({
         mutationKey: [AgitRoutes.KEY_CATEGORY, "patch"],
         mutationFn: (payload: PatchCategoryPayload) => patchCategoryFetch(payload),
         onSuccess: () => {
-            setToast({ msg: "카테고리를 수정했어요", time: 2 });
             queryClient.invalidateQueries({ queryKey: [AgitRoutes.KEY_CATEGORY] });
-        },
-        onError: (err: Error) => {
-            setToast({ msg: err.message ?? "에러 발생", time: 2 });
         },
     });
 
@@ -76,18 +65,13 @@ export const usePatchCategoryQuery = () => {
 };
 
 export const useDeleteCategoryQuery = () => {
-    const { setToast } = useToastStore();
     const queryClient = useQueryClient();
 
     const { data, mutate, mutateAsync, error, isError, isSuccess, isIdle, isPending, isPaused, reset } = useMutation({
         mutationKey: [AgitRoutes.KEY_CATEGORY, "delete"],
         mutationFn: (payload: DeleteCategoryPayload) => deleteCategoryFetch(payload),
         onSuccess: () => {
-            setToast({ msg: "카테고리를 삭제했어요", time: 2 });
             queryClient.invalidateQueries({ queryKey: [AgitRoutes.KEY_CATEGORY] });
-        },
-        onError: (err: Error) => {
-            setToast({ msg: err.message ?? "에러 발생", time: 2 });
         },
     });
 

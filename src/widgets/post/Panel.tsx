@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { GetPostDetailResponse } from "@/entities/post/model/post.type";
@@ -17,9 +18,11 @@ export default function Panel({ id, initialData }: PostDetailPanelProps) {
     const queryClient = useQueryClient();
     const postIdx = parseInt(id);
 
-    if (initialData?.resultCode === "SUCCESS" && Number.isFinite(postIdx)) {
-        queryClient.setQueryData([AgitRoutes.KEY_POST, "detail", postIdx], initialData);
-    }
+    useEffect(() => {
+        if (initialData?.resultCode === "SUCCESS" && Number.isFinite(postIdx)) {
+            queryClient.setQueryData([AgitRoutes.KEY_POST, "detail", postIdx], initialData);
+        }
+    }, [queryClient, initialData, postIdx]);
 
     return (
         <PostDetailPageProvider>

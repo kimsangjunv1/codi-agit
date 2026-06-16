@@ -8,7 +8,7 @@ import UI from '@/shared/ui/common/UIComponent'
 import useNavigate from '@/shared/hooks/useNavigate'
 import { useToastStore } from '@/shared/stores/useToastStore'
 import IconComponent from '@/shared/ui/common/IconComponent'
-import { useSetUserQuery } from '@/entities/user/api/user.query'
+import { useSetUserWithToast } from '@/widgets/signup/hooks/useSignupMutations'
 import { useGetInvitationCodeCheckQuery } from '@/entities/invitation/api/invitation.query'
 
 const SignupForm = () => {
@@ -33,7 +33,7 @@ const SignupForm = () => {
 const SignupCredentialsForm = () => {
     const { setToast } = useToastStore();
     const { replaceToUrl, backToUrl } = useNavigate();
-    const { data: setUserData, mutate: setUserFetch } = useSetUserQuery();
+    const { data: setUserData, mutate: setUserFetch } = useSetUserWithToast();
     const [ currentCode, setCurrentCode ] = useState("");
     const { data: getInvitationCodeCheckData, refetch: getInvitationCodeCheckFetch } = useGetInvitationCodeCheckQuery(currentCode);
     

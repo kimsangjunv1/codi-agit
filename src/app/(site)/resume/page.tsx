@@ -4,7 +4,7 @@ import Script from "next/script";
 import { buildRenewalPersonJsonLd } from "@/shared/constants/resume/resumeRenewalData";
 import { buildPageMetadata } from "@/shared/lib/seo/metadata";
 import Main from "@/widgets/layout/Main";
-import ResumeRenewalView from "@/views/resume-renewal/ResumeRenewalView";
+import ResumeView from "@/views/resume/ResumeView";
 
 export const metadata: Metadata = buildPageMetadata({
     title: "RESUME",
@@ -24,7 +24,7 @@ const Page = () => {
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
             />
             <Main id="resume" className={{ inner: "p-0", container: "" }}>
-                <ResumeRenewalView />
+                <ResumeView />
             </Main>
         </>
     );

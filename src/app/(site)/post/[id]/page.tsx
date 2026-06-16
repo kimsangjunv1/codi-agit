@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { getPostDetailServerFetch } from "@/entities/post/api/post.api";
+import { getPostDetailServerFetch } from "@/entities/post/api/post.server.api";
 import { GetPostDetailResponse } from "@/entities/post/model/post.type";
 import { buildBlogPostingJsonLd, buildPostMetadata } from "@/shared/lib/seo/metadata";
 import { singleItemPagination } from "@/shared/lib/utils/apiResponse";

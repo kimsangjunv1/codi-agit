@@ -4,16 +4,17 @@ import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 import { useSession } from "next-auth/react";
 
-import {
-    useDeletePostManagerQuery,
-    useGetPostDetailQuery,
-    usePatchPostQuery,
-    useSetLikeIncrementQuery,
-    useSetPostQuery,
-} from "@/entities/post/api/post.query";
+import { useGetPostDetailQuery } from "@/entities/post/api/post.query";
 import type { SectionContent } from "@/entities/post/model/post.type";
+import {
+    useDeletePostWithFeedback,
+    useLikeIncrementWithFeedback,
+    usePatchPostWithFeedback,
+    useSetPostWithFeedback,
+} from "@/features/managePost/hooks/usePostMutations";
 import { preparePostPayloadForSave } from "@/features/managePost/lib/preparePostSave";
 import { canManagePost, getVisiblePostNavActions } from "@/features/managePost/lib/postPermissions";
+import { util } from "@/shared/lib/util";
 import { useCreatePostStore } from "@/shared/stores/useCreatePostStore";
 import { useModalStore } from "@/shared/stores/useModalStore";
 import { useToastStore } from "@/shared/stores/useToastStore";
@@ -43,11 +44,10 @@ export const usePostNavigationActions = ({
         enabled: !!postIdx && isView,
     });
 
-    const { mutateAsync: patchPostFetchAsync, isPending: isPatchPending } = usePatchPostQuery();
-    const { mutateAsync: setPostFetchAsync, isPending: isSetPending } = useSetPostQuery();
-    const { mutate: likeIncrementFetch } = useSetLikeIncrementQuery();
-    const { mutateAsync: deletePostFetchAsync, isPending: isDeletePending } =
-        useDeletePostManagerQuery();
+    const { mutateAsync: patchPostFetchAsync, isPending: isPatchPending } = usePatchPostWithFeedback();
+    const { mutateAsync: setPostFetchAsync, isPending: isSetPending } = useSetPostWithFeedback();
+    const { mutate: likeIncrementFetch } = useLikeIncrementWithFeedback();
+    const { mutateAsync: deletePostFetchAsync, isPending: isDeletePending } = useDeletePostWithFeedback();
 
     const canManage = useMemo(
         () =>
@@ -131,6 +131,12 @@ export const usePostNavigationActions = ({
     };
 
     const handleNavAction = (action: (typeof visibleActions)[number]["action"]) => {
+        if (action === "share") {
+            util.dom.setCopyOnClipboard(window.location.href);
+            setToast({ msg: "링크를 복사했어요", time: 2 });
+            return;
+        }
+
         if (action === "like") {
             if (!session?.user?.id) {
                 setToast({ msg: "로그인이 필요합니다", time: 2 });

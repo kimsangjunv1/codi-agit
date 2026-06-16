@@ -5,13 +5,15 @@ import { useRef } from "react";
 import { useToastStore } from "@/shared/stores/useToastStore";
 import { useModalStore } from "@/shared/stores/useModalStore";
 import UI from "@/shared/ui/common/UIComponent";
-import ModalContent from "@/widgets/common/ui/ModalComponent";
+import ModalContent from "@/shared/ui/common/ModalComponent";
 import {
-    useDeleteCategoryQuery,
     useGetCategoryListOnManagerQuery,
-    usePatchCategoryQuery,
-    useSetCategoryQuery,
 } from "@/entities/category/api/category.query";
+import {
+    useDeleteCategoryWithToast,
+    usePatchCategoryWithToast,
+    useSetCategoryWithToast,
+} from "@/widgets/manager/category/hooks/useCategoryMutations";
 import { CategoryItemManager, PatchCategoryPayload, SetCategoryPayload } from "@/entities/category/model/category.type";
 import { util } from "@/shared/lib/util";
 import ManagerPageShell from "@/widgets/manager/ui/ManagerPageShell";
@@ -23,9 +25,9 @@ const CategoryManager = () => {
     const categoryPatchValueRef = useRef<PatchCategoryPayload>({ idx: 0, title: "", is_enabled: true, description: "" });
 
     const { data: getCategoryListData, isLoading, isError, error, refetch } = useGetCategoryListOnManagerQuery();
-    const { mutate: setCategoryFetch } = useSetCategoryQuery();
-    const { mutate: patchCategoryFetch } = usePatchCategoryQuery();
-    const { mutate: deleteCategoryFetch } = useDeleteCategoryQuery();
+    const { mutate: setCategoryFetch } = useSetCategoryWithToast();
+    const { mutate: patchCategoryFetch } = usePatchCategoryWithToast();
+    const { mutate: deleteCategoryFetch } = useDeleteCategoryWithToast();
 
     const { setToast } = useToastStore();
     const { setModal } = useModalStore();

@@ -32,7 +32,7 @@ const PostNavigationActions = ({
                     disabled={isDelete && isDeletePending}
                     className={`flex justify-center items-center transition-colors rounded-full gap-[0.8rem] w-[5.6rem] h-[5.6rem] disabled:opacity-60 ${
                         isLiked
-                            ? "bg-[var(--color-pink-500)]"
+                            ? "bg-[#00ff61]"
                             : isDelete
                               ? "bg-[#00000090] hover:bg-[var(--color-pink-500)]"
                               : "bg-[#00000090] hover:bg-[var(--color-blue-500)]"
@@ -44,7 +44,7 @@ const PostNavigationActions = ({
                         alt={item.title}
                         width={24}
                         height={24}
-                        className="invert-100"
+                        className={isLiked ? "" : "invert-100"}
                     />
                 </UI.Button>
             );

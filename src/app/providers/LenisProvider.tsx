@@ -16,7 +16,7 @@ export default function LenisProvider() {
         <ReactLenis
             root
             options={{
-                lerp: 0.2,
+                lerp: 0.14,
             }}
         />
     );
