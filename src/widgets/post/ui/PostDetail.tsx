@@ -13,13 +13,13 @@ import { useGetPostDetailQuery, useIncrementPostViewOnVisit } from "@/entities/p
 
 import UI from "@/shared/ui/common/UIComponent";
 import IconComponent from "@/shared/ui/common/IconComponent";
-import { BLOCK_COLUMN_CLASS, BLOCK_ROW_CLASS, POST_TIPTAP_CONTENT_CLASS } from "@/widgets/post/ui/blockEditor/blockEditorStyles";
+import { BLOCK_COLUMN_CLASS, BLOCK_ROW_CLASS, POST_TIPTAP_CONTENT_CLASS } from "@/features/managePost/ui/blockEditor/blockEditorStyles";
+import PostHero from "@/features/managePost/ui/PostHero";
+import PostTocPanel from "@/features/managePost/ui/PostTocPanel";
 import { isMainBlock } from "@/widgets/post/lib/blockMode";
 import { getPostTocAnchorId } from "@/widgets/post/lib/postToc";
-import PostTocPanel from "@/widgets/post/ui/PostTocPanel";
 import GiscusComments from "@/shared/ui/common/GiscusComments";
 import AsyncErrorState from "@/shared/ui/common/AsyncErrorState";
-import PostHero from "@/widgets/post/ui/PostHero";
 
 import { useToastStore } from "@/shared/stores/useToastStore";
 import { useCreatePostStore } from "@/shared/stores/useCreatePostStore";

@@ -1,7 +1,7 @@
 import { Fragment, useEffect, useRef, useState } from "react";
 
 import { Block } from "@/entities/post/model/post.type";
-import { useBlockStore } from "@/widgets/post/model/useEditorBlockStore";
+import { useBlockStore } from "@/features/managePost/model/useEditorBlockStore";
 
 import { Edit } from "@/shared/ui/layout/Edit";
 import ToolbarComponent from "./Toolbar";

@@ -5,7 +5,7 @@ import ReactDOM from "react-dom";
 import { AnimatePresence, motion } from "motion/react";
 
 import UI from "@/shared/ui/common/UIComponent";
-import { useBlockStore } from "@/widgets/post/model/useEditorBlockStore";
+import { useBlockStore } from "@/features/managePost/model/useEditorBlockStore";
 import { usePatchPostQuery } from "@/entities/post/api/post.query";
 
 const ToolbarComponent = ({ defaultConfig, onStyleChange }: { defaultConfig: Record<string, string>, onStyleChange: (style: any) => void }) => {

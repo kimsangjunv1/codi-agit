@@ -15,7 +15,7 @@ import {
     PostSaveNavButton,
     usePostNavigationActions,
 } from "@/features/managePost"
-import { useBlockStore } from "@/widgets/post/model/useEditorBlockStore"
+import { useBlockStore } from "@/features/managePost/model/useEditorBlockStore"
 
 const springTransition = {
     type: "spring" as const,

@@ -4,8 +4,8 @@ import { useMemo } from "react";
 
 import type { SectionContent } from "@/entities/post/model/post.type";
 import { buildPostToc } from "@/widgets/post/lib/postToc";
-import { useBlockStore } from "@/widgets/post/model/useEditorBlockStore";
-import PostTocNav from "@/widgets/post/ui/PostTocNav";
+import { useBlockStore } from "@/features/managePost/model/useEditorBlockStore";
+import PostTocNav from "@/features/managePost/ui/PostTocNav";
 
 type PostTocPanelProps = {
     contents?: SectionContent[][];

@@ -2,16 +2,16 @@
 
 import { Fragment, useEffect } from "react";
 
-import SortableBlock from "@/widgets/post/ui/SortableBlock";
-import PostHero from "@/widgets/post/ui/PostHero";
-import PostAttachedImageList from "@/widgets/post/ui/PostAttachedImageList";
+import SortableBlock from "@/features/managePost/ui/SortableBlock";
+import PostHero from "@/features/managePost/ui/PostHero";
+import PostAttachedImageList from "@/features/managePost/ui/PostAttachedImageList";
+import PostTocPanel from "@/features/managePost/ui/PostTocPanel";
 
 import { useGetCategoryListQuery } from "@/entities/category/api/category.query";
 
-import { useBlockStore } from "@/widgets/post/model/useEditorBlockStore";
+import { useBlockStore } from "@/features/managePost/model/useEditorBlockStore";
 import { useCreatePostStore } from "@/shared/stores/useCreatePostStore";
 import { usePostDraftImageStore } from "@/shared/stores/usePostDraftImageStore";
-import PostTocPanel from "@/widgets/post/ui/PostTocPanel";
 
 const PostCreateEditor = () => {
     const { reset: resetBlocks } = useBlockStore();

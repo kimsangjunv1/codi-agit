@@ -15,8 +15,8 @@ import { getPostTocAnchorId } from "@/widgets/post/lib/postToc";
 
 import { usePostDraftImageStore } from "@/shared/stores/usePostDraftImageStore";
 import { useToastStore } from "@/shared/stores/useToastStore";
-import { Row, useBlockStore } from "@/widgets/post/model/useEditorBlockStore";
-import { BLOCK_COLUMN_CLASS, BLOCK_ROW_CLASS } from "@/widgets/post/ui/blockEditor/blockEditorStyles";
+import { Row, useBlockStore } from "@/features/managePost/model/useEditorBlockStore";
+import { BLOCK_COLUMN_CLASS, BLOCK_ROW_CLASS } from "@/features/managePost/ui/blockEditor/blockEditorStyles";
 
 import type { SectionContent } from "@/entities/post/model/post.type";
 

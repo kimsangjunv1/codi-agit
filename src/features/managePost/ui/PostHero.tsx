@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 
 import UI from "@/shared/ui/common/UIComponent";
 import TextShimmer from "@/shared/ui/common/TextShimmerComponent";
-import PostHeroImageDropZone from "@/widgets/post/ui/PostHeroImageDropZone";
+import PostHeroImageDropZone from "@/features/managePost/ui/PostHeroImageDropZone";
 
 import { util } from "@/shared/lib/util";
 import { useGetCategoryListQuery } from "@/entities/category/api/category.query";

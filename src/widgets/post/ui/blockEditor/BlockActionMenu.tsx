@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ColorPickerPopover } from "@/shared/ui/common/richText/toolbar/ColorPickerPopover";
 import { isSameColor } from "@/shared/ui/common/richText/toolbar/colorPalette";
-import { BLOCK_MENU_ITEM_CLASS, BLOCK_MENU_PANEL_CLASS } from "@/widgets/post/ui/blockEditor/blockEditorStyles";
+import { BLOCK_MENU_ITEM_CLASS, BLOCK_MENU_PANEL_CLASS } from "@/features/managePost/ui/blockEditor/blockEditorStyles";
 
 type BlockActionMenuProps = {
     open: boolean;
@@ -188,7 +188,6 @@ export function BlockActionMenu({
                         onClose();
                     }}
                     open={isColorPickerOpen}
-                    placement="bottom"
                     recentColors={recentColors}
                 />
             </section>
