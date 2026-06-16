@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import ReactLenis from "lenis/react";
 
 import { SITE_DESCRIPTION, SITE_KEYWORDS, SITE_NAME } from "@/shared/lib/seo/constants";
 import { getSiteUrl } from "@/shared/lib/siteUrl";
@@ -8,6 +7,7 @@ import GlobalErrorBoundary from "@/app/providers/GlobalErrorBoundary";
 import QueryProvider from "@/app/providers/QueryProvider";
 import AuthProvider from "@/app/providers/AuthProvider";
 import PopupProvider from "@/app/providers/PopupProvider";
+import LenisProvider from "@/app/providers/LenisProvider";
 
 import Toast from "@/shared/ui/layout/Toast";
 import PageProgress from "@/shared/ui/common/PageProgress";
@@ -57,12 +57,7 @@ export default function RootLayout({
                         <AuthProvider>
                                 <PopupProvider>
                                     <PageProgress />
-                                    <ReactLenis
-                                        root
-                                        options={{
-                                            lerp: 0.2,
-                                        }}
-                                    />
+                                    <LenisProvider />
                                     <RootChromeView>
                                         <PathCheckComponent>
                                             <TransitionOverlay>

@@ -3,6 +3,7 @@
 import type { Editor } from "@tiptap/react";
 import { BubbleMenu } from "@tiptap/react/menus";
 
+import { getSelectedImagePosition } from "@/shared/ui/common/richText/extensions/imageSelection";
 import {
     preventEditorBlur,
     ToolbarDivider,
@@ -25,6 +26,10 @@ const TipTapBubbleMenu = ({ editor }: TipTapBubbleMenuProps) => {
                 offset: 8,
             }}
             shouldShow={({ editor: currentEditor, state: editorState }) => {
+                if (getSelectedImagePosition(currentEditor) !== null) {
+                    return false;
+                }
+
                 const { from, to } = editorState.selection;
                 if (from === to) return false;
                 return !currentEditor.isActive("codeBlock");

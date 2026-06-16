@@ -157,32 +157,6 @@ const MobileMenu = () => {
 
                             <section className="flex justify-between items-end w-full">
                                 <section className="flex flex-col gap-[1.6rem] items-start">
-                                    {session ? (
-                                        <Fragment>
-                                            <div className="flex gap-[1.6rem]">
-                                                <UI.Button
-                                                    className="flex items-center gap-[0.8rem] shadow-[var(--shadow-normal)] p-[0.8rem] rounded-[1.2rem] transition-colors bg-transparent hover:bg-[var(--color-gray-200)]"
-                                                    onClick={() => {
-                                                        pushToUrl(`/post/create`);
-                                                    }}
-                                                >
-                                                    새로운 아티클 생성하기
-                                                </UI.Button>
-
-                                                {session.user.role === "admin" ? (
-                                                    <UI.Button
-                                                        className="flex items-center gap-[0.8rem] shadow-[var(--shadow-normal)] p-[0.8rem] rounded-[1.2rem] transition-colors bg-transparent hover:bg-[var(--color-gray-200)]"
-                                                        onClick={() => {
-                                                            pushToUrl(`/manager`);
-                                                        }}
-                                                    >
-                                                        관리자 페이지 이동
-                                                    </UI.Button>
-                                                ) : null}
-                                            </div>
-                                        </Fragment>
-                                    ) : null}
-
                                     <IconComponent
                                         type="graphic-logo-horizontal"
                                         alt="로고"

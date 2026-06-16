@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import type { Editor } from "@tiptap/react";
 
+import { MaterialIcon } from "@/shared/ui/common/MaterialIcon";
 import {
     applyHeading,
     FONT_SIZES,
@@ -19,6 +20,8 @@ import { usePostDraftImageStore } from "@/shared/stores/usePostDraftImageStore";
 type TipTapToolbarProps = {
     editor: Editor;
 };
+
+const TOOLBAR_VARIANT = "glass" as const;
 
 const HEADING_OPTIONS = [
     { label: "본문", value: "paragraph" },
@@ -40,137 +43,155 @@ const TipTapToolbar = ({ editor }: TipTapToolbarProps) => {
         const previewUrl = usePostDraftImageStore.getState().images.find((image) => image.id === id)?.previewUrl;
 
         if (previewUrl) {
-            editor.chain().focus().setImage({ src: previewUrl }).run();
+            editor.chain().focus().setImage({ src: previewUrl, alt: file.name }).updateAttributes("image", { align: "left", imageWidth: "100%" }).run();
         }
     };
 
     return (
-        <div className="relative mb-[0.8rem] rounded-[1.6rem] bg-white shadow-[var(--shadow-normal)] border border-[var(--color-gray-200)]">
-            <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-[2.4rem] rounded-l-[1.6rem] bg-gradient-to-r from-white to-transparent z-[1]" />
-            <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-[2.4rem] rounded-r-[1.6rem] bg-gradient-to-l from-white to-transparent z-[1]" />
+        <div className="relative rounded-[1.6rem] bg-black/60 backdrop-blur-[2px]">
+            <div className="pointer-events-none absolute left-0 top-0 bottom-0 z-[1] w-[2.4rem] rounded-l-[1.6rem] bg-gradient-to-r from-black/20 to-transparent" />
+            <div className="pointer-events-none absolute right-0 top-0 bottom-0 z-[1] w-[2.4rem] rounded-r-[1.6rem] bg-gradient-to-l from-black/20 to-transparent" />
 
             <div className="overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-                <section className="flex flex-nowrap items-center gap-[0.2rem] p-[0.4rem] min-w-min">
+                <section className="flex min-w-min flex-nowrap items-center gap-[0.2rem] p-[0.4rem]">
                     <ToolbarIconButton
                         label="굵게"
                         title="굵게"
+                        variant={TOOLBAR_VARIANT}
                         active={state.isBold}
                         disabled={!state.canBold}
                         onClick={() => editor.chain().focus().toggleBold().run()}
                     >
-                        <span className="font-bold">B</span>
+                        <MaterialIcon name="format_bold" />
                     </ToolbarIconButton>
                     <ToolbarIconButton
                         label="기울임"
                         title="기울임"
+                        variant={TOOLBAR_VARIANT}
                         active={state.isItalic}
                         disabled={!state.canItalic}
                         onClick={() => editor.chain().focus().toggleItalic().run()}
                     >
-                        <span className="italic font-serif">I</span>
+                        <MaterialIcon name="format_italic" />
                     </ToolbarIconButton>
                     <ToolbarIconButton
                         label="밑줄"
                         title="밑줄"
+                        variant={TOOLBAR_VARIANT}
                         active={state.isUnderline}
                         disabled={!state.canUnderline}
                         onClick={() => editor.chain().focus().toggleUnderline().run()}
                     >
-                        <span className="underline">U</span>
+                        <MaterialIcon name="format_underlined" />
                     </ToolbarIconButton>
                     <ToolbarIconButton
                         label="취소선"
                         title="취소선"
+                        variant={TOOLBAR_VARIANT}
                         active={state.isStrike}
                         disabled={!state.canStrike}
                         onClick={() => editor.chain().focus().toggleStrike().run()}
                     >
-                        <span className="line-through">S</span>
+                        <MaterialIcon name="strikethrough_s" />
                     </ToolbarIconButton>
                     <ToolbarIconButton
                         label="인라인 코드"
                         title="인라인 코드"
+                        variant={TOOLBAR_VARIANT}
                         active={state.isCode}
                         disabled={!state.canCode}
                         onClick={() => editor.chain().focus().toggleCode().run()}
                     >
-                        <span className="font-mono text-[1.2rem]">{`</>`}</span>
+                        <MaterialIcon name="code" />
                     </ToolbarIconButton>
                     <ToolbarIconButton
                         label="형광펜"
                         title="형광펜"
+                        variant={TOOLBAR_VARIANT}
                         active={state.isHighlight}
                         onClick={() => editor.chain().focus().toggleHighlight().run()}
                     >
-                        <span className="bg-[#fff59d] text-[var(--color-gray-1000)] px-[0.4rem] rounded-[0.4rem]">H</span>
+                        <MaterialIcon name="highlight" />
                     </ToolbarIconButton>
 
-                    <ToolbarDivider />
+                    <ToolbarDivider variant={TOOLBAR_VARIANT} />
 
                     <ToolbarSelect
                         label="제목 스타일"
+                        variant={TOOLBAR_VARIANT}
                         value={activeHeading}
                         options={HEADING_OPTIONS.map((option) => ({ label: option.label, value: option.value }))}
                         onChange={(value) => applyHeading(editor, value as HeadingValue)}
                     />
 
-                    <ToolbarDivider />
+                    <ToolbarDivider variant={TOOLBAR_VARIANT} />
 
                     <ToolbarIconButton
                         label="글머리 목록"
                         title="글머리 목록"
+                        variant={TOOLBAR_VARIANT}
                         active={state.isBulletList}
                         onClick={() => editor.chain().focus().toggleBulletList().run()}
                     >
-                        <span>•</span>
+                        <MaterialIcon name="format_list_bulleted" />
                     </ToolbarIconButton>
                     <ToolbarIconButton
                         label="번호 목록"
                         title="번호 목록"
+                        variant={TOOLBAR_VARIANT}
                         active={state.isOrderedList}
                         onClick={() => editor.chain().focus().toggleOrderedList().run()}
                     >
-                        <span className="text-[1.2rem]">1.</span>
+                        <MaterialIcon name="format_list_numbered" />
                     </ToolbarIconButton>
                     <ToolbarIconButton
                         label="코드 블록"
                         title="코드 블록"
+                        variant={TOOLBAR_VARIANT}
                         active={state.isCodeBlock}
                         onClick={() => editor.chain().focus().toggleCodeBlock().run()}
                     >
-                        <span className="font-mono text-[1.1rem]">{`{ }`}</span>
+                        <MaterialIcon name="code_blocks" />
                     </ToolbarIconButton>
                     <ToolbarIconButton
                         label="인용문"
                         title="인용문"
+                        variant={TOOLBAR_VARIANT}
                         active={state.isBlockquote}
                         onClick={() => editor.chain().focus().toggleBlockquote().run()}
                     >
-                        <span className="text-[1.6rem] leading-none">&quot;</span>
+                        <MaterialIcon name="format_quote" />
                     </ToolbarIconButton>
                     <ToolbarIconButton
                         label="이미지"
                         title="이미지 삽입"
+                        variant={TOOLBAR_VARIANT}
                         onClick={() => imageInputRef.current?.click()}
                     >
-                        <span className="text-[1.2rem]">IMG</span>
+                        <MaterialIcon name="image" />
                     </ToolbarIconButton>
 
-                    <ToolbarDivider />
+                    <ToolbarDivider variant={TOOLBAR_VARIANT} />
 
                     <ToolbarSelect
                         label="글자 크기"
+                        variant={TOOLBAR_VARIANT}
                         value="16"
                         options={FONT_SIZES.map((size) => ({
                             label: `${size}px`,
                             value: String(size),
                         }))}
                         onChange={(value) =>
-                            editor.chain().focus().setMark("textStyle", { fontSize: `${value}px` }).run()
+                            editor
+                                .chain()
+                                .focus()
+                                .setMark("textStyle", { fontSize: `${value}px` })
+                                .run()
                         }
                     />
                     <ToolbarSelect
                         label="줄간격"
+                        variant={TOOLBAR_VARIANT}
                         value="1.5"
                         options={LINE_HEIGHTS.map((lh) => ({
                             label: lh,
@@ -179,23 +200,25 @@ const TipTapToolbar = ({ editor }: TipTapToolbarProps) => {
                         onChange={(value) => editor.chain().focus().setMark("textStyle", { lineHeight: value }).run()}
                     />
 
-                    <ToolbarDivider />
+                    <ToolbarDivider variant={TOOLBAR_VARIANT} />
 
                     <ToolbarIconButton
                         label="실행 취소"
                         title="실행 취소"
+                        variant={TOOLBAR_VARIANT}
                         disabled={!state.canUndo}
                         onClick={() => editor.chain().focus().undo().run()}
                     >
-                        <span className="text-[1.6rem] leading-none">↩</span>
+                        <MaterialIcon name="undo" />
                     </ToolbarIconButton>
                     <ToolbarIconButton
                         label="다시 실행"
                         title="다시 실행"
+                        variant={TOOLBAR_VARIANT}
                         disabled={!state.canRedo}
                         onClick={() => editor.chain().focus().redo().run()}
                     >
-                        <span className="text-[1.6rem] leading-none">↪</span>
+                        <MaterialIcon name="redo" />
                     </ToolbarIconButton>
                 </section>
             </div>

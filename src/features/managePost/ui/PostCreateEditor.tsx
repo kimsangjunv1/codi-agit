@@ -11,6 +11,7 @@ import { useGetCategoryListQuery } from "@/entities/category/api/category.query"
 import { useBlockStore } from "@/widgets/post/model/useEditorBlockStore";
 import { useCreatePostStore } from "@/shared/stores/useCreatePostStore";
 import { usePostDraftImageStore } from "@/shared/stores/usePostDraftImageStore";
+import PostTocPanel from "@/widgets/post/ui/PostTocPanel";
 
 const PostCreateEditor = () => {
     const { reset: resetBlocks } = useBlockStore();
@@ -41,6 +42,8 @@ const PostCreateEditor = () => {
                     onCategoryChange={setCategoryIdx}
                 />
             </section>
+
+            <PostTocPanel />
         </section>
     );
 };
@@ -82,8 +85,8 @@ const RenderContents = ({
 
 const Contents = () => {
     return (
-        <article className="flex gap-[0.4rem] w-full max-w-[var(--size-tablet)] px-[1.2rem] [content-visibility:auto]">
-            <section className="flex flex-col gap-[7.2rem] flex-1">
+        <article className="flex gap-[0.4rem] w-full max-w-[var(--size-tablet)] min-w-0">
+            <section className="flex flex-col gap-[7.2rem] flex-1 min-w-0">
                 <SortableBlock />
                 <PostAttachedImageList />
             </section>

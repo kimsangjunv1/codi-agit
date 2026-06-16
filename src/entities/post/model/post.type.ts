@@ -21,6 +21,8 @@ export interface Block {
     style: TextStyle;
 }
 
+export type BlockMode = "main" | "sub";
+
 export interface NormalSectionContent {
     id: string;
     type: number;
@@ -29,6 +31,7 @@ export interface NormalSectionContent {
     subtitle: string;
     content: string | Block[];
     imageUrl: string;
+    blockMode?: BlockMode;
 }
 
 export interface CodeSectionContent {
@@ -39,6 +42,7 @@ export interface CodeSectionContent {
     subtitle: string;
     content: string | Block[];
     imageUrl: string;
+    blockMode?: BlockMode;
 }
 
 export type SectionContent = NormalSectionContent | CodeSectionContent;

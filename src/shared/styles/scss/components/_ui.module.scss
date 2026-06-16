@@ -23,7 +23,7 @@
     font-weight: 700;
     font-size: 1.4rem;
     letter-spacing: -.025rem;
-    font-family: 'Pretendard';
+    font-family: var(--custom-font);
 
     border: none;
     border-radius: 1.2rem;
@@ -43,7 +43,7 @@
         padding: 0;
         width: calc(1.6rem * 8);
         color: var(--color-gray-700);
-        font-family: 'Pretendard';
+        font-family: var(--custom-font);
     }
 
     &[type="color"],

@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import TransitionLink from "@/shared/ui/common/TransitionLink";
 import { motion } from "motion/react";
 
 import { PostItem } from "@/entities/post/model/post.type";
@@ -24,14 +24,14 @@ const ArchiveListGridItem = ({ post }: ArchiveListGridItemProps) => {
                 damping: 10,
             }}
         >
-            <Link href={`/post/${post.idx}`} className="block w-full hover:scale-[1.04] transition-transform">
+            <TransitionLink href={`/post/${post.idx}`} className="block w-full hover:scale-[1.04] transition-transform">
                 <motion.img
                     layout="position"
                     src={post.thumbnail}
                     alt={post.title}
                     className="w-[calc(1.6rem*10)] h-[calc(1.6rem*13)] object-cover rounded-[1.6rem] shadow-[var(--shadow-normal)]"
                 />
-            </Link>
+            </TransitionLink>
         </motion.section>
     );
 };

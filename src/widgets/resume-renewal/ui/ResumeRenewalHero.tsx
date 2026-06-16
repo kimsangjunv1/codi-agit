@@ -1,0 +1,111 @@
+"use client";
+
+import { renewalHero, renewalProfileDetails } from "@/shared/constants/resume/resumeRenewalData";
+import RenewalRightBlocks from "./RenewalRightBlocks";
+import RenewalSplitSection from "./RenewalSplitSection";
+import { resumeProfile } from "@/shared/constants/resume/resumeData";
+import { R } from "./renewalStyles";
+
+const ResumeRenewalHero = () => {
+    return (
+        <RenewalSplitSection
+            id="renewal-about"
+            leftFill
+            leftWrapperClassName="w-full p-[2.4rem]"
+            rightClassName="tablet:!flex-col tablet:!justify-end tablet:!items-start tablet:min-h-[calc(100svh-var(--header-height))]"
+            left={<div className="tablet:sticky tablet:top-[var(--header-height)] w-full">{/* 프로필 이미지 영역 — 필요 시 RenewalFadeIn + Image 복원 */}</div>}
+        >
+            <RenewalRightBlocks
+                className="h-[calc(100svh-(var(--header-height)*2))] justify-center"
+                label={<p className={R.label}>{renewalHero.category}</p>}
+                headline={<h1 className={`${R.heroKeyline} whitespace-pre-line`}>{renewalHero.greeting}</h1>}
+                description={
+                    <div className="flex flex-col gap-[1.6rem]">
+                        {renewalHero.intro.map((paragraph) => (
+                            <p
+                                key={paragraph}
+                                className={R.body}
+                            >
+                                {paragraph}
+                            </p>
+                        ))}
+                    </div>
+                }
+                details={
+                    <div className="flex flex-col gap-[2.4rem]">
+                        <div>
+                            <p className={R.role}>{renewalHero.role}</p>
+                            <p className={R.name}>{renewalHero.title}</p>
+                        </div>
+                        {/* <div className="flex flex-wrap gap-x-[2rem] gap-y-[0.8rem]">
+                            {renewalHero.quickLinks.map((link) =>
+                                link.external ? (
+                                    <a
+                                        key={link.label}
+                                        href={link.href}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className={R.link}
+                                    >
+                                        {link.label}
+                                    </a>
+                                ) : (
+                                    <a
+                                        key={link.label}
+                                        href={link.href}
+                                        className={R.link}
+                                    >
+                                        {link.label}
+                                    </a>
+                                ),
+                            )}
+                        </div> */}
+                        {/* <div className="grid grid-cols-2 gap-[2rem]">
+                            {renewalHeroStats.map((stat) => (
+                                <div key={stat.label}>
+                                    <p className="text-[2rem] font-bold text-[#000000]">{stat.value}</p>
+                                    <p className={`${R.meta} mt-[0.4rem]`}>{stat.label}</p>
+                                </div>
+                            ))}
+                        </div> */}
+                        <dl className={`${R.divider} pt-[2.4rem] grid grid-cols-[9rem_1fr] gap-y-[1rem] ${R.meta}`}>
+                            {/* <dt>경력</dt>
+                            <dd>{resumeProfile.experience}</dd> */}
+                            <dt>연락처</dt>
+                            <dd>
+                                <a
+                                    href={`tel:${renewalProfileDetails.phone.replace(/-/g, "")}`}
+                                    className={R.link}
+                                >
+                                    {renewalProfileDetails.phone}
+                                </a>
+                            </dd>
+                            <dt>이메일</dt>
+                            <dd>
+                                <a
+                                    href={`mailto:${resumeProfile.email}`}
+                                    className={R.link}
+                                >
+                                    {resumeProfile.email}
+                                </a>
+                            </dd>
+                            {/* <dt>서비스</dt>
+                            <dd>
+                                <a
+                                    href={renewalProfileDetails.service}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className={R.link}
+                                >
+                                    codi-agit.com
+                                </a>
+                            </dd> */}
+                        </dl>
+                    </div>
+                }
+            />
+        </RenewalSplitSection>
+    );
+};
+
+export default ResumeRenewalHero;

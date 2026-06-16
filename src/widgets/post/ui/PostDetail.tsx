@@ -13,6 +13,10 @@ import { useGetPostDetailQuery, useIncrementPostViewOnVisit } from "@/entities/p
 
 import UI from "@/shared/ui/common/UIComponent";
 import IconComponent from "@/shared/ui/common/IconComponent";
+import { BLOCK_COLUMN_CLASS, BLOCK_ROW_CLASS, POST_TIPTAP_CONTENT_CLASS } from "@/widgets/post/ui/blockEditor/blockEditorStyles";
+import { isMainBlock } from "@/widgets/post/lib/blockMode";
+import { getPostTocAnchorId } from "@/widgets/post/lib/postToc";
+import PostTocPanel from "@/widgets/post/ui/PostTocPanel";
 import GiscusComments from "@/shared/ui/common/GiscusComments";
 import AsyncErrorState from "@/shared/ui/common/AsyncErrorState";
 import PostHero from "@/widgets/post/ui/PostHero";
@@ -38,7 +42,10 @@ const PostDetail = ({ id, initialData }: PostDetailProps) => {
     return (
         <section className="flex flex-col w-full post pb-[7.2rem]">
             <section className="mx-auto post-inner flex flex-col gap-[5.2rem] w-full items-center">
-                <RenderContents id={id} initialData={initialData} />
+                <RenderContents
+                    id={id}
+                    initialData={initialData}
+                />
             </section>
         </section>
     );
@@ -103,15 +110,14 @@ const RenderContents = ({ id, initialData }: { id: string; initialData: GetPostD
                 next={DATA?.next}
                 postId={id}
             />
+
+            <PostTocPanel contents={DATA?.contents ?? []} />
         </>
     );
 };
 
 const CodeBlockContent = memo(({ content }: { content: string }) => {
-    const html = useMemo(
-        () => sanitizeHtml(`<pre class="code-block"><code>${highlightCode(content)}</code></pre>`),
-        [content],
-    );
+    const html = useMemo(() => sanitizeHtml(`<pre class="code-block"><code>${highlightCode(content)}</code></pre>`), [content]);
 
     return (
         <section className="overflow-x-auto">
@@ -122,26 +128,29 @@ const CodeBlockContent = memo(({ content }: { content: string }) => {
 CodeBlockContent.displayName = "CodeBlockContent";
 
 const ContentColumn = memo(({ col, rowLength, onCopySentence }: { col: SectionContent; rowLength: number; onCopySentence: (text: string) => void }) => {
-    const sanitizedContent = useMemo(
-        () => (typeof col.content === "string" ? sanitizeHtml(col.content) : ""),
-        [col.content],
-    );
-    const columnClassName = `flex-1 min-w-[calc((var(--size-tablet)-(1.6rem*10))/2)] ${rowLength !== 0 ? "flex gap-[2.4rem]" : ""} ${rowLength === 1 ? "col-span-2" : "min-h-[36.0rem]"} ${col.type === 0 ? "flex-col" : ""} ${col.type === 1 || col.type === 2 ? "rounded-[2.4rem] overflow-hidden" : ""} ${col.type === 2 ? "flex-col" : ""}`;
+    const sanitizedContent = useMemo(() => (typeof col.content === "string" ? sanitizeHtml(col.content) : ""), [col.content]);
+    const subtitle = col.subtitle?.trim() ?? "";
+    const title = col.title?.trim() ?? "";
+    const showHeading = isMainBlock(col) && Boolean(subtitle || title);
+    const columnClassName = `${BLOCK_COLUMN_CLASS} ${rowLength !== 0 ? "flex gap-[2.4rem]" : ""} ${rowLength === 1 ? "tablet:col-span-2" : "tablet:min-h-[36.0rem]"} ${col.type === 0 ? "flex flex-col gap-[1.6rem]" : ""} ${col.type === 1 || col.type === 2 ? "rounded-[2.4rem] overflow-hidden" : ""} ${col.type === 2 ? "flex-col" : ""}`;
 
     return (
-        <section className={columnClassName}>
+        <section
+            id={col.type === 0 ? getPostTocAnchorId(col.id) : undefined}
+            className={`${columnClassName} ${col.type === 0 ? "scroll-mt-[12rem]" : ""}`}
+        >
             {col.type === 0 ? (
                 <Fragment>
-                    {col.title || col.subtitle ? (
+                    {showHeading ? (
                         <section className="flex flex-col gap-[0.8rem]">
-                            {col.subtitle ? <p className="text-[#676767]">{col.subtitle}</p> : null}
-                            {col.title ? <h5 className="text-[2.4rem] font-bold text-[var(--color-gray-1000)]">{col.title}</h5> : null}
+                            {subtitle ? <p className="text-[#676767]">{subtitle}</p> : null}
+                            {title ? <h5 className="text-[2.0rem] tablet:text-[2.4rem] font-bold text-[var(--color-gray-1000)]">{title}</h5> : null}
                         </section>
                     ) : null}
 
                     {typeof col.content === "string" ? (
                         <section
-                            className="post-tiptap-content flex flex-col items-start gap-[1.6rem] overflow-x-auto [&_p]:whitespace-break-spaces [&_p]:transition-colors [&_p]:border [&_p]:border-transparent [&_p]:cursor-pointer [&_p]:hover:border-[var(--color-gray-400)] [&_p]:rounded-[0.8rem]"
+                            className={POST_TIPTAP_CONTENT_CLASS}
                             dangerouslySetInnerHTML={{ __html: sanitizedContent }}
                             onClick={(e) => {
                                 const target = e.target as HTMLElement;
@@ -181,7 +190,7 @@ const ContentColumn = memo(({ col, rowLength, onCopySentence }: { col: SectionCo
                 <img
                     src={col.imageUrl}
                     alt=""
-                    className="w-full"
+                    className="w-full rounded-[2.4rem] shadow-[var(--shadow-normal)]"
                 />
             ) : null}
 
@@ -204,12 +213,12 @@ const Contents = ({ contents, prev, next, postId }: { contents: SectionContent[]
     );
 
     return (
-        <article className="flex gap-[0.4rem] w-full max-w-[var(--size-tablet)] px-[1.2rem] [content-visibility:auto]">
-            <section className="flex flex-col gap-[7.2rem] flex-1">
+        <article className="flex gap-[0.4rem] w-full max-w-[var(--size-tablet)] min-w-0 px-[1.2rem] [content-visibility:auto]">
+            <section className="flex flex-col gap-[7.2rem] flex-1 min-w-0">
                 {contents?.map((row, rowIdx) => (
                     <section
                         key={rowIdx}
-                        className={`flex flex-wrap gap-[1.6rem] ${row.length === 1 && (row?.[0].type === 1 || row?.[0].type === 2) ? "" : ""}`}
+                        className={BLOCK_ROW_CLASS}
                     >
                         {row.map((col) => (
                             <ContentColumn
