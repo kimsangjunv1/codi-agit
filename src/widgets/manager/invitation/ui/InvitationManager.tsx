@@ -4,7 +4,7 @@ import React, { useRef } from "react";
 
 import { useModalStore } from "@/shared/stores/useModalStore";
 import UI from "@/shared/ui/common/UIComponent";
-import ModalContent from "@/widgets/common/ui/ModalComponent";
+import ModalContent from "@/shared/ui/common/ModalComponent";
 import {
     useGetInvitationCodeListOnManagerQuery,
 } from "@/entities/invitation/api/invitation.query";

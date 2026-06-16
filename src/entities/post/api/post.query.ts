@@ -166,20 +166,6 @@ export const usePatchPostQuery = () => {
     return { mutate, mutateAsync, isError, isIdle, isSuccess, isPending, isPaused, data, error, reset };
 };
 
-export const useSetIncrementViewQuery = () => {
-    const queryClient = useQueryClient();
-
-    const { data, mutate, mutateAsync, error, isError, isSuccess, isIdle, isPending, isPaused, reset } = useMutation({
-        mutationKey: [AgitRoutes.KEY_POST, "increment-view"],
-        mutationFn: (payload: { postId: number; userId?: string }) => setPostViewIncrementFetch(payload),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: [AgitRoutes.KEY_POST] });
-        },
-    });
-
-    return { mutate, mutateAsync, isError, isIdle, isSuccess, isPending, isPaused, data, error, reset };
-};
-
 export const useSetLikeIncrementQuery = () => {
     const queryClient = useQueryClient();
 

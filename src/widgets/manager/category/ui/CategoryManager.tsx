@@ -5,7 +5,7 @@ import { useRef } from "react";
 import { useToastStore } from "@/shared/stores/useToastStore";
 import { useModalStore } from "@/shared/stores/useModalStore";
 import UI from "@/shared/ui/common/UIComponent";
-import ModalContent from "@/widgets/common/ui/ModalComponent";
+import ModalContent from "@/shared/ui/common/ModalComponent";
 import {
     useGetCategoryListOnManagerQuery,
 } from "@/entities/category/api/category.query";
