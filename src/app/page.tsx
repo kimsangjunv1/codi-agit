@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 import Main from "@/widgets/layout/Main";
 import HomeView from "@/views/home/HomeView";
-import { getPostLatestListServerFetch } from "@/entities/post/api/post.api";
+import { getPostLatestListServerFetch } from "@/entities/post/api/post.server.api";
 import { GetPostLatestListResponse } from "@/entities/post/model/post.type";
 import { buildPageMetadata, buildWebsiteJsonLd } from "@/shared/lib/seo/metadata";
 import JsonLd from "@/shared/ui/seo/JsonLd";
