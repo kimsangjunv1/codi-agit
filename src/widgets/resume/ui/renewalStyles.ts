@@ -1,4 +1,4 @@
-/** resume-renewal 전용 — 18px(1.8rem) 기준, #000000 단색 */
+/** resume 전용 — 18px(1.8rem) 기준, #000000 단색 */
 export const R = {
     /** 페이지 루트 — CSS reset(1.4rem) 덮어 최소 18px 보장 */
     root: "text-[1.8rem] text-[#000000]",
