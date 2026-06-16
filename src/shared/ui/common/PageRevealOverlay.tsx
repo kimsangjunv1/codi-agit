@@ -6,7 +6,7 @@ import { motion } from "motion/react";
 import NProgress from "nprogress";
 
 import { useReducedMotion } from "@/shared/hooks/useReducedMotion";
-import { PAGE_REVEAL_COVER_DURATION, PAGE_REVEAL_COVER_EASE, PAGE_REVEAL_UNCOVER_DURATION, PAGE_REVEAL_UNCOVER_EASE } from "@/shared/constants/pageTransition";
+import { PAGE_REVEAL_COVER_DURATION, PAGE_REVEAL_COVER_EASE, PAGE_REVEAL_READY_TIMEOUT, PAGE_REVEAL_UNCOVER_DURATION, PAGE_REVEAL_UNCOVER_EASE } from "@/shared/constants/pageTransition";
 import { useLayoutStore } from "@/shared/stores/useLayoutStore";
 import IconComponent from "./IconComponent";
 
@@ -30,8 +30,10 @@ const PageRevealOverlay = () => {
     const hasExecutedNavigation = useRef(false);
     const hasStartedInitialReveal = useRef(false);
 
-    const { transitionPhase, transitionDirection, pendingNavigation, isPageContentVisible, setTransitionPhase, setIsPageContentVisible, beginInitialReveal, completeRouteTransition } =
+    const { transitionPhase, transitionDirection, pendingNavigation, isPageContentVisible, pageReadinessBlockers, setTransitionPhase, setIsPageContentVisible, beginInitialReveal, completeRouteTransition, resetPageReadiness } =
         useLayoutStore();
+
+    const hasPageReadinessBlockers = Object.keys(pageReadinessBlockers).length > 0;
 
     const isForward = transitionDirection === "forward";
     const clip = isForward ? CLIP_FORWARD : CLIP_BACK;
@@ -97,17 +99,50 @@ const PageRevealOverlay = () => {
 
         if (pathname === pathnameAtNavStart.current) return;
 
+        NProgress.done();
+        resetPageReadiness();
+
         if (reducedMotion) {
-            NProgress.done();
+            setTransitionPhase("waiting");
+            return;
+        }
+
+        setTransitionPhase("waiting");
+    }, [pathname, transitionPhase, reducedMotion, setTransitionPhase, resetPageReadiness]);
+
+    useEffect(() => {
+        if (transitionPhase !== "waiting") return;
+        if (hasPageReadinessBlockers) return;
+
+        if (reducedMotion) {
             completeRouteTransition();
             return;
         }
 
-        NProgress.done();
         setTransitionPhase("revealing");
-    }, [pathname, transitionPhase, reducedMotion, setTransitionPhase, completeRouteTransition]);
+    }, [transitionPhase, hasPageReadinessBlockers, reducedMotion, setTransitionPhase, completeRouteTransition]);
 
-    const clipTarget = transitionPhase === "covering" ? clip.covered : transitionPhase === "revealing" ? clip.revealed : clip.covered;
+    useEffect(() => {
+        if (transitionPhase !== "waiting") return;
+
+        const timer = window.setTimeout(() => {
+            if (reducedMotion) {
+                completeRouteTransition();
+                return;
+            }
+
+            setTransitionPhase("revealing");
+        }, PAGE_REVEAL_READY_TIMEOUT);
+
+        return () => window.clearTimeout(timer);
+    }, [transitionPhase, reducedMotion, setTransitionPhase, completeRouteTransition]);
+
+    const clipTarget =
+        transitionPhase === "covering" || transitionPhase === "waiting" || transitionPhase === "navigating"
+            ? clip.covered
+            : transitionPhase === "revealing"
+              ? clip.revealed
+              : clip.covered;
 
     const clipInitial = transitionPhase === "revealing" ? clip.covered : clip.hidden;
 

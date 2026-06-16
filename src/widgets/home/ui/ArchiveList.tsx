@@ -3,6 +3,7 @@
 import { useLayoutEffect, useRef } from "react";
 
 import { useGetPostListQuery } from "@/entities/post/api/post.query";
+import usePageTransitionReady from "@/shared/hooks/usePageTransitionReady";
 import { useLayoutStore } from "@/shared/stores/useLayoutStore";
 import { clampPageScroll } from "@/widgets/home/lib/clampPageScroll";
 
@@ -19,6 +20,9 @@ const ArchiveList = () => {
 
     const posts = data?.result ?? [];
     const filtered = categoryFilter !== 999 ? posts.filter((item) => item.category_idx === categoryFilter) : posts;
+    const isDataReady = (!isLoading || posts.length > 0) || isError || data?.resultCode === "ERROR";
+
+    usePageTransitionReady("archive-list-data", isDataReady);
 
     useLayoutEffect(() => {
         clampPageScroll();

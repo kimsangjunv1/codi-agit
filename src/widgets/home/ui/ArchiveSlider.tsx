@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 
 import { useGetPostLatestListQuery } from "@/entities/post/api/post.query";
+import usePageTransitionReady from "@/shared/hooks/usePageTransitionReady";
 import { GetPostLatestListResponse } from "@/entities/post/model/post.type";
 
 import { FeedEmpty, FeedError, FeedLoading } from "./FeedStatus";
@@ -29,6 +30,9 @@ const ArchiveSliderStatic = ({ initialData }: ArchiveSliderProps) => {
 const ArchiveSliderWithQuery = ({ initialData }: ArchiveSliderProps) => {
     const { data, isLoading, isError, error, refetch } = useGetPostLatestListQuery(initialData);
     const posts = data?.result ?? [];
+    const isDataReady = (!isLoading || posts.length > 0) || isError || data?.resultCode === "ERROR";
+
+    usePageTransitionReady("archive-slider-data", isDataReady);
 
     if (isLoading && posts.length === 0) {
         return <FeedLoading className="h-screen" />;

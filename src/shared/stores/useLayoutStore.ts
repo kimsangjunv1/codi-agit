@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-export type RouteTransitionPhase = "idle" | "covering" | "navigating" | "revealing";
+export type RouteTransitionPhase = "idle" | "covering" | "navigating" | "waiting" | "revealing";
 export type RouteTransitionDirection = "forward" | "back";
 
 export type PendingNavigation = {
@@ -18,6 +18,7 @@ interface LayoutStoreType {
     transitionDirection: RouteTransitionDirection;
     pendingNavigation: PendingNavigation | null;
     isPageContentVisible: boolean;
+    pageReadinessBlockers: Record<string, true>;
     isNeedBackdrop: boolean;
     isNeedNavigation: boolean;
     isMobileMenuOpen: boolean;
@@ -41,6 +42,9 @@ interface LayoutStoreType {
     beginRouteTransition: (args: { direction: RouteTransitionDirection; navigation: PendingNavigation }) => void;
     beginInitialReveal: () => void;
     setIsPageContentVisible: (args: boolean) => void;
+    registerPageBlocker: (key: string) => void;
+    releasePageBlocker: (key: string) => void;
+    resetPageReadiness: () => void;
     completeRouteTransition: () => void;
     setIsNeedBackdrop: (args: boolean) => void;
     setIsNeedNavigation: (args: boolean) => void;
@@ -64,6 +68,7 @@ export const useLayoutStore = create<LayoutStoreType>()((set) => ({
     transitionDirection: "forward",
     pendingNavigation: null,
     isPageContentVisible: false,
+    pageReadinessBlockers: {},
     isNeedBackdrop: false,
     isNeedNavigation: false,
     isMobileMenuOpen: false,
@@ -135,6 +140,24 @@ export const useLayoutStore = create<LayoutStoreType>()((set) => ({
             isPageContentVisible: args,
         }));
     },
+    registerPageBlocker: (key: string) => {
+        set((state) => ({
+            pageReadinessBlockers: { ...state.pageReadinessBlockers, [key]: true },
+        }));
+    },
+    releasePageBlocker: (key: string) => {
+        set((state) => {
+            const next = { ...state.pageReadinessBlockers };
+            delete next[key];
+
+            return { pageReadinessBlockers: next };
+        });
+    },
+    resetPageReadiness: () => {
+        set(() => ({
+            pageReadinessBlockers: {},
+        }));
+    },
     completeRouteTransition: () => {
         set(() => ({
             transitionPhase: "idle",
@@ -142,6 +165,7 @@ export const useLayoutStore = create<LayoutStoreType>()((set) => ({
             isRouteChange: 0,
             isRouteChangeType: 0,
             isPageContentVisible: true,
+            pageReadinessBlockers: {},
         }));
     },
     setIsNeedBackdrop: (args: boolean) => {

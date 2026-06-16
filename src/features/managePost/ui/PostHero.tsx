@@ -11,6 +11,7 @@ import { useReducedMotion } from "@/shared/hooks/useReducedMotion";
 
 import { util } from "@/shared/lib/util";
 import { useGetCategoryListQuery } from "@/entities/category/api/category.query";
+import usePageTransitionReady from "@/shared/hooks/usePageTransitionReady";
 
 type PostHeroViewProps = {
     mode: "view";
@@ -47,7 +48,14 @@ const PostHero = (props: PostHeroProps) => {
     const heroImageSrc = props.imageUrl || undefined;
     const heroImageAlt = props.mode === "view" ? props.thumbnailAlt || props.title : "";
     const canOptimizeImage = heroImageSrc ? isOptimizableImageSrc(heroImageSrc) : false;
+    const [isHeroImageReady, setIsHeroImageReady] = useState(!heroImageSrc);
     const handleThumbnailFile = useHeroThumbnailFileHandler(props.mode === "edit" ? props.onThumbnailChange : () => {});
+
+    useEffect(() => {
+        setIsHeroImageReady(!heroImageSrc);
+    }, [heroImageSrc]);
+
+    usePageTransitionReady("post-hero-image", isHeroImageReady);
 
     const handleThumbnailDragEnter = (event: React.DragEvent<HTMLElement>) => {
         event.preventDefault();
@@ -108,12 +116,15 @@ const PostHero = (props: PostHeroProps) => {
                             priority
                             sizes="100vw"
                             className="object-cover object-center pointer-events-none"
+                            onLoadingComplete={() => setIsHeroImageReady(true)}
                         />
                     ) : (
                         <img
                             src={heroImageSrc}
                             alt={heroImageAlt}
                             className="object-cover object-center w-full h-full aspect-auto pointer-events-none"
+                            onLoad={() => setIsHeroImageReady(true)}
+                            onError={() => setIsHeroImageReady(true)}
                         />
                     )
                 ) : (

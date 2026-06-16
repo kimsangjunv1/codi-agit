@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { motion } from "motion/react";
 
 import { PostLatestItem } from "@/entities/post/model/post.type";
+import TransitionAwareImage from "@/shared/ui/common/TransitionAwareImage";
 import useNavigate from "@/shared/hooks/useNavigate";
 
 const MotionLink = motion.create(Link);
@@ -53,7 +54,8 @@ const ArchiveSliderCard = ({ post, index, cardRef }: ArchiveSliderCardProps) => 
                 pushToUrl(postHref);
             }}
         >
-            <img
+            <TransitionAwareImage
+                readinessKey={`archive-slider-thumbnail-${post.idx}`}
                 src={post.thumbnail}
                 alt={post.title}
                 className="object-cover h-full pointer-events-none"

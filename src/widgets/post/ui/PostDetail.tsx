@@ -9,6 +9,7 @@ import { highlightCode } from "@/shared/lib/highlight";
 import { sanitizeHtml } from "@/shared/lib/sanitizeHtml";
 
 import useNavigate from "@/shared/hooks/useNavigate";
+import usePageTransitionReady from "@/shared/hooks/usePageTransitionReady";
 import { useGetPostDetailQuery, useIncrementPostViewOnVisit } from "@/entities/post/api/post.query";
 
 import UI from "@/shared/ui/common/UIComponent";
@@ -57,6 +58,9 @@ const RenderContents = ({ id, initialData }: { id: string; initialData: GetPostD
     const { data: getPostListData, isLoading, isError, error, refetch } = useGetPostDetailQuery(postIdx, initialData);
 
     const hasContent = Boolean(getPostListData?.result?.title);
+    const isDataReady = hasContent || isError || getPostListData?.resultCode === "ERROR";
+
+    usePageTransitionReady("post-detail-data", isDataReady);
 
     if (isLoading && !hasContent) {
         return (
