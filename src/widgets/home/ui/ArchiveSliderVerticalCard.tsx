@@ -1,83 +1,63 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { motion } from "motion/react";
+import { motion, useScroll, useTransform } from "motion/react";
+import { useRef } from "react";
 
 import { PostLatestItem } from "@/entities/post/model/post.type";
 import TransitionAwareImage from "@/shared/ui/common/TransitionAwareImage";
-import useNavigate from "@/shared/hooks/useNavigate";
-import { util } from "@/shared/lib/util";
 import Marquee from "@/shared/ui/layout/Marquee";
+import { util } from "@/shared/lib/util";
 
 const MotionLink = motion.create(Link);
 
 type ArchiveSliderVerticalCardProps = {
     post: PostLatestItem;
-    index: number;
-    pauseAnimations?: boolean;
-    cardRef: (element: HTMLElement | null) => void;
 };
 
-const isModifiedClick = (event: React.MouseEvent<HTMLAnchorElement>) => event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0;
-
-const ArchiveSliderVerticalCard = ({ post, index, pauseAnimations = false, cardRef }: ArchiveSliderVerticalCardProps) => {
-    const router = useRouter();
-    const { pushToUrl } = useNavigate();
+const ArchiveSliderVerticalCard = ({ post }: ArchiveSliderVerticalCardProps) => {
+    const cardRef = useRef<HTMLAnchorElement | null>(null);
     const postHref = `/post/${post.idx}`;
+    const { scrollYProgress } = useScroll({
+        target: cardRef,
+        offset: ["start end", "center center", "end start"],
+    });
+    const scale = useTransform(scrollYProgress, [0, 0.5, 1], [1, 1.2, 1]);
 
     return (
-        <div
+        <MotionLink
             ref={cardRef}
-            className="flex w-[75dvw] h-[30svh] shrink-0 items-center justify-center origin-center will-change-transform"
+            href={postHref}
+            data-idx={post.idx}
+            aria-label={post.title}
+            className="block h-[30svh] w-[80dvw] shrink-0 origin-center will-change-transform"
+            // className="block h-[30svh] w-[calc(100dvw-(1.6rem*6))] shrink-0 origin-center will-change-transform"
+            // className="block h-[30svh] w-[75dvw] shrink-0 origin-center will-change-transform"
+            style={{ scale }}
         >
-            <MotionLink
-                href={postHref}
-                date-idx={post.idx}
-                className="item relative flex h-full w-full flex-col gap-[1.2rem] overflow-hidden"
-                initial={{
-                    opacity: 0,
-                    x: "100dvw",
-                }}
-                animate={{
-                    x: Math.sin(index * 0.8 + 6 * 0.5) * 40,
-                    opacity: 1,
-                }}
-                transition={{
-                    delay: 0.1 * (index + 1),
-                    type: "spring",
-                    stiffness: 100,
-                    damping: 15,
-                }}
-                onMouseEnter={() => router.prefetch(postHref)}
-                onClick={(event) => {
-                    if (event.defaultPrevented || isModifiedClick(event)) return;
+            <TransitionAwareImage
+                readinessKey={`archive-slider-thumbnail-${post.idx}`}
+                src={post.thumbnail}
+                alt={post.title}
+                className="object-cover h-full w-full pointer-events-none"
+            />
 
-                    event.preventDefault();
-                    pushToUrl(postHref);
-                }}
-            >
-                <TransitionAwareImage
-                    readinessKey={`archive-slider-vertical-thumbnail-${post.idx}`}
-                    src={post.thumbnail}
-                    alt={post.title}
-                    className="object-cover h-full pointer-events-none"
+            <div className="absolute top-[1.6rem] left-[1.6rem] w-full flex flex-col justify-start items-start">
+                <p className="bg-black p-[0.4rem] text-white font-mono">{util.string.getCurrentFullTime(post.created_at)}</p>
+
+                <Marquee
+                    content="NEW"
+                    className={{ container: "bg-black gap-[1.2rem] p-[0.4rem]", marquee: "text-white gap-[1.2rem] font-mono" }}
                 />
-                <div className="absolute top-[1.6rem] left-[1.6rem] w-full flex flex-col justify-start items-start">
-                    {util.string.getTimeAgo(post.created_at)}
-                    <Marquee
-                        content="NEW"
-                        paused={pauseAnimations}
-                        className={{ container: "bg-black gap-[1.2rem]", marquee: "text-white gap-[1.2rem]" }}
-                    />
-                </div>
+            </div>
 
-                <div className="absolute bottom-[1.6rem] left-[1.6rem] w-full flex flex-col justify-start items-start">
-                    <h5 className="bg-[#000000] text-white text-left text-[2.0rem] font-bold p-[0.4rem_0.4rem_0_0.4rem]">{post.title}</h5>
-                    <p className="bg-[#000000] text-[#ffffffc7] text-left font-semibold leading-[1.5] line-clamp-2 text-[1.6rem] p-[0.8rem_0.4rem_0.4rem_0.4rem]">&quot;{post.summary}&quot;</p>
-                </div>
-            </MotionLink>
-        </div>
+            <div className="absolute bottom-[1.6rem] left-[1.6rem] w-full flex flex-col justify-start items-start">
+                <h5 className="bg-[#000000] text-white text-left mobile:text-[1.4rem] pc:text-[1.8rem] font-semibold p-[0.4rem_0.4rem_0_0.4rem]">{post.title}</h5>
+                <p className="bg-[#000000] text-[#39ff28] text-left font-bold leading-[1.5] line-clamp-2 mobile:text-[1.6rem] tablet:text-[2.0rem] p-[0.8rem_0.4rem_0.4rem_0.4rem]">
+                    &quot;{post.summary}&quot;
+                </p>
+            </div>
+        </MotionLink>
     );
 };
 

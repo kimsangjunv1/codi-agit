@@ -47,7 +47,7 @@ const ArchiveFeed = ({ initialData }: ArchiveFeedProps) => {
 
     return (
         <>
-            <section className="w-full h-full mobile:pt-[calc(var(--header-height)/2)] pc:pt-[var(--header-height)] pb-[calc(1.6rem*4)]">
+            <section className="w-full h-full mobile:pt-[calc(var(--header-height)/2)] pc:pt-[var(--header-height)] pb-[calc((1.6rem*4)+env(safe-area-inset-bottom))]">
                 <UI.ErrorBoundaryWrapper>
                     <ArchiveList />
                 </UI.ErrorBoundaryWrapper>
