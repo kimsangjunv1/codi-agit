@@ -27,53 +27,57 @@ const ArchiveSliderVerticalCard = ({ post, index, pauseAnimations = false, cardR
     const postHref = `/post/${post.idx}`;
 
     return (
-        <MotionLink
-            href={postHref}
-            date-idx={post.idx}
+        <div
             ref={cardRef}
-            className="item w-[75dvw] relative flex shrink-0 flex-col gap-[1.2rem] overflow-hidden h-[30svh]"
-            initial={{
-                opacity: 0,
-                x: "100dvw",
-            }}
-            animate={{
-                x: Math.sin(index * 0.8 + 6 * 0.5) * 40,
-                opacity: 1,
-            }}
-            transition={{
-                delay: 0.1 * (index + 1),
-                type: "spring",
-                stiffness: 100,
-                damping: 15,
-            }}
-            onMouseEnter={() => router.prefetch(postHref)}
-            onClick={(event) => {
-                if (event.defaultPrevented || isModifiedClick(event)) return;
-
-                event.preventDefault();
-                pushToUrl(postHref);
-            }}
+            className="flex w-[75dvw] h-[30svh] shrink-0 items-center justify-center origin-center will-change-transform"
         >
-            <TransitionAwareImage
-                readinessKey={`archive-slider-vertical-thumbnail-${post.idx}`}
-                src={post.thumbnail}
-                alt={post.title}
-                className="object-cover h-full pointer-events-none"
-            />
-            <div className="absolute top-[1.6rem] left-[1.6rem] w-full flex flex-col justify-start items-start">
-                {util.string.getTimeAgo(post.created_at)}
-                <Marquee
-                    content="NEW"
-                    paused={pauseAnimations}
-                    className={{ container: "bg-black gap-[1.2rem]", marquee: "text-white gap-[1.2rem]" }}
-                />
-            </div>
+            <MotionLink
+                href={postHref}
+                date-idx={post.idx}
+                className="item relative flex h-full w-full flex-col gap-[1.2rem] overflow-hidden"
+                initial={{
+                    opacity: 0,
+                    x: "100dvw",
+                }}
+                animate={{
+                    x: Math.sin(index * 0.8 + 6 * 0.5) * 40,
+                    opacity: 1,
+                }}
+                transition={{
+                    delay: 0.1 * (index + 1),
+                    type: "spring",
+                    stiffness: 100,
+                    damping: 15,
+                }}
+                onMouseEnter={() => router.prefetch(postHref)}
+                onClick={(event) => {
+                    if (event.defaultPrevented || isModifiedClick(event)) return;
 
-            <div className="absolute bottom-[1.6rem] left-[1.6rem] w-full flex flex-col justify-start items-start">
-                <h5 className="bg-[#000000] text-white text-left text-[2.0rem] font-bold p-[0.4rem_0.4rem_0_0.4rem]">{post.title}</h5>
-                <p className="bg-[#000000] text-[#ffffffd0] text-left font-semibold leading-[1.5] line-clamp-2 text-[1.6rem] p-[0.8rem_0.4rem_0.4rem_0.4rem]">&quot;{post.summary}&quot;</p>
-            </div>
-        </MotionLink>
+                    event.preventDefault();
+                    pushToUrl(postHref);
+                }}
+            >
+                <TransitionAwareImage
+                    readinessKey={`archive-slider-vertical-thumbnail-${post.idx}`}
+                    src={post.thumbnail}
+                    alt={post.title}
+                    className="object-cover h-full pointer-events-none"
+                />
+                <div className="absolute top-[1.6rem] left-[1.6rem] w-full flex flex-col justify-start items-start">
+                    {util.string.getTimeAgo(post.created_at)}
+                    <Marquee
+                        content="NEW"
+                        paused={pauseAnimations}
+                        className={{ container: "bg-black gap-[1.2rem]", marquee: "text-white gap-[1.2rem]" }}
+                    />
+                </div>
+
+                <div className="absolute bottom-[1.6rem] left-[1.6rem] w-full flex flex-col justify-start items-start">
+                    <h5 className="bg-[#000000] text-white text-left text-[2.0rem] font-bold p-[0.4rem_0.4rem_0_0.4rem]">{post.title}</h5>
+                    <p className="bg-[#000000] text-[#ffffffd0] text-left font-semibold leading-[1.5] line-clamp-2 text-[1.6rem] p-[0.8rem_0.4rem_0.4rem_0.4rem]">&quot;{post.summary}&quot;</p>
+                </div>
+            </MotionLink>
+        </div>
     );
 };
 

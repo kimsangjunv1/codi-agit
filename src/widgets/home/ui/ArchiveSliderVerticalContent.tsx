@@ -11,6 +11,9 @@ type ArchiveSliderVerticalContentProps = {
     posts: PostLatestItem[];
 };
 
+const CARD_MIN_SCALE = 1;
+const CARD_MAX_SCALE = 92 / 75;
+
 const ArchiveSliderVerticalContent = ({ posts }: ArchiveSliderVerticalContentProps) => {
     const cardRefs = useRef<(HTMLElement | null)[]>([]);
     const scrollRef = useRef<HTMLDivElement | null>(null);
@@ -96,7 +99,7 @@ const ArchiveSliderVerticalContent = ({ posts }: ArchiveSliderVerticalContentPro
         };
     }, [scrollYProgress]);
 
-    const updateCardWidths = useCallback(() => {
+    const updateCardScales = useCallback(() => {
         const container = containerRef.current;
 
         if (!container) return;
@@ -112,17 +115,18 @@ const ArchiveSliderVerticalContent = ({ posts }: ArchiveSliderVerticalContentPro
             const distance = Math.abs(containerCenter - cardCenter);
             const maxDistance = containerRect.height / 2;
             const ratio = Math.max(0, 1 - distance / maxDistance);
+            const scale = CARD_MIN_SCALE + (CARD_MAX_SCALE - CARD_MIN_SCALE) * ratio;
 
-            card.style.width = `${75 + 17 * ratio}dvw`;
+            card.style.transform = `scale(${scale})`;
         });
     }, []);
 
     useEffect(() => {
-        const unsub = y.onChange(() => requestAnimationFrame(updateCardWidths));
-        updateCardWidths();
+        const unsub = y.onChange(() => requestAnimationFrame(updateCardScales));
+        updateCardScales();
 
         return () => unsub();
-    }, [y, posts, updateCardWidths]);
+    }, [y, posts, updateCardScales]);
 
     return (
         <div
