@@ -27,6 +27,33 @@ export const util = {
 
             return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         },
+
+        getTimeAgo: (target?: string) => {
+            if (!target) return "";
+
+            const date = new Date(target);
+            if (isNaN(date.getTime())) return "";
+
+            const now = new Date();
+
+            let years = now.getFullYear() - date.getFullYear();
+            let months = now.getMonth() - date.getMonth();
+            let days = now.getDate() - date.getDate();
+
+            if (days < 0) {
+                months -= 1;
+                days += new Date(now.getFullYear(), now.getMonth(), 0).getDate();
+            }
+
+            if (months < 0) {
+                years -= 1;
+                months += 12;
+            }
+
+            if (years >= 1) return `${years}년 전`;
+            if (months >= 1) return `${months}달 전`;
+            return `${days}일 전`;
+        },
     },
 
     dom: {

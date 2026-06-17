@@ -7,6 +7,7 @@ import { motion } from "motion/react";
 import { PostLatestItem } from "@/entities/post/model/post.type";
 import TransitionAwareImage from "@/shared/ui/common/TransitionAwareImage";
 import useNavigate from "@/shared/hooks/useNavigate";
+import { util } from "@/shared/lib/util";
 import Marquee from "@/shared/ui/layout/Marquee";
 
 const MotionLink = motion.create(Link);
@@ -64,7 +65,7 @@ const ArchiveSliderCard = ({ post, index, cardRef }: ArchiveSliderCardProps) => 
             {/* <div className="absolute h-[30%] mask-[linear-gradient(0deg,_#000,_#000_2.5%,_#000_50%,_#0000)] bottom-0 left-0 w-full bg-[#00000000] backdrop-blur-[30px]" /> */}
             <div className="absolute top-[1.6rem] left-[1.6rem] w-full flex flex-col justify-start items-start">
                 {/* {post.category?.title} ・ 2025.01.01 ・ 2달전 ・ {post.views} views ・ {post.likes ?? 0} likes */}
-                {post.created_at}
+                {util.string.getTimeAgo(post.created_at)}
                 <Marquee
                     content="NEW"
                     className={{ container: "bg-black gap-[1.2rem]", marquee: "text-white gap-[1.2rem]" }}
