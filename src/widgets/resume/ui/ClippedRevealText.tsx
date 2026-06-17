@@ -13,16 +13,19 @@ type ClippedRevealBlockProps = {
     className?: string;
 };
 
-/** clip reveal — revealed false일 때만 hidden 상태 */
+const CLIP_HIDDEN = "inset(0 100% 0 0)";
+const CLIP_VISIBLE = "inset(0 0 0 0)";
+
+/** clip reveal — clip-path로 다줄 텍스트 높이에 맞게 클리핑 */
 export const ClippedRevealBlock = ({ children, revealed, delay = 0, className = "" }: ClippedRevealBlockProps) => {
     const reducedMotion = useReducedMotion();
     const visible = reducedMotion || revealed;
 
     return (
-        <div className={`overflow-hidden ${className}`}>
+        <div className={`shrink-0 ${className}`}>
             <motion.div
                 initial={false}
-                animate={visible ? { x: 0, opacity: 1 } : { x: "110%", opacity: 0 }}
+                animate={visible ? { clipPath: CLIP_VISIBLE, x: 0 } : { clipPath: CLIP_HIDDEN, x: "100%" }}
                 transition={{
                     duration: reducedMotion ? 0 : visible ? 0.85 : 0.45,
                     ease: RENEWAL_REVEAL_EASE,

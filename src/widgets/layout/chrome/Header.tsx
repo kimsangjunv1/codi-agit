@@ -35,7 +35,7 @@ const Header = () => {
     if (IS_ROUTE_POST) return null;
 
     return (
-        <header className="fixed left-0 z-[100] mx-auto h-[calc(var(--header-height)/2)] pc:h-[var(--header-height)] w-full">
+        <header className="fixed left-0 z-[100] mx-auto h-[calc(var(--header-height)/2)] pc:h-[var(--header-height)] w-[100svw]">
             {/* <header className="fixed left-0 z-[100] mx-auto h-[calc(var(--header-height)/2)] pc:h-[var(--header-height)] w-full after:absolute after:top-0 after:left-0 after:-z-[1] after:mx-auto after:h-[var(--header-height)] after:w-full after:backdrop-blur-[20px] after:content-[''] after:[mask-image:linear-gradient(rgb(0,0,0),rgb(0,0,0)_0%,rgb(0,0,0)_20%,rgba(0,0,0,0))]"> */}
             <div className="relative mx-auto flex h-full w-full mobile:max-w-[calc(100dvw-(1.6rem*2))] tablet:max-w-[calc(100dvw-(2.0rem*2))] items-center pc:h-full">
                 <section className="menu flex gap-[4.8rem]">
