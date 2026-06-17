@@ -20,6 +20,8 @@ const ArchiveSliderVerticalContent = ({ posts }: ArchiveSliderVerticalContentPro
     const y = useMotionValue(0);
 
     const [maxTranslate, setMaxTranslate] = useState(0);
+    const [pauseAnimations, setPauseAnimations] = useState(false);
+    const scrollIdleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const { scrollYProgress } = useScroll({
         target: scrollRef,
@@ -67,6 +69,32 @@ const ArchiveSliderVerticalContent = ({ posts }: ArchiveSliderVerticalContentPro
 
         return () => unsub();
     }, [scrollYProgress, maxTranslate, y]);
+
+    useEffect(() => {
+        const SCROLL_IDLE_MS = 150;
+
+        const markScrolling = () => {
+            setPauseAnimations(true);
+
+            if (scrollIdleTimerRef.current) {
+                clearTimeout(scrollIdleTimerRef.current);
+            }
+
+            scrollIdleTimerRef.current = setTimeout(() => {
+                setPauseAnimations(false);
+            }, SCROLL_IDLE_MS);
+        };
+
+        const unsub = scrollYProgress.on("change", markScrolling);
+
+        return () => {
+            unsub();
+
+            if (scrollIdleTimerRef.current) {
+                clearTimeout(scrollIdleTimerRef.current);
+            }
+        };
+    }, [scrollYProgress]);
 
     const updateCardWidths = useCallback(() => {
         const container = containerRef.current;
@@ -116,6 +144,7 @@ const ArchiveSliderVerticalContent = ({ posts }: ArchiveSliderVerticalContentPro
                                 key={post.idx}
                                 post={post}
                                 index={index}
+                                pauseAnimations={pauseAnimations}
                                 cardRef={(element) => {
                                     cardRefs.current[index] = element;
                                 }}

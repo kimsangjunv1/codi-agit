@@ -5,7 +5,14 @@ import { motion } from "motion/react";
 
 const MIN_COPIES = 2;
 
-const Marquee = ({ content, duration = 1, className }: { content: string | ReactNode; duration?: number; className?: { container?: string; marquee?: string } }) => {
+type MarqueeProps = {
+    content: string | ReactNode;
+    duration?: number;
+    paused?: boolean;
+    className?: { container?: string; marquee?: string };
+};
+
+const Marquee = ({ content, duration = 1, paused = false, className }: MarqueeProps) => {
     const containerRef = useRef<HTMLDivElement | null>(null);
     const firstRef = useRef<HTMLDivElement | null>(null);
     const [segmentWidth, setSegmentWidth] = useState(0);
@@ -63,9 +70,7 @@ const Marquee = ({ content, duration = 1, className }: { content: string | React
         >
             <motion.div
                 className={`${className?.marquee ?? ""} flex w-max flex-nowrap`}
-                animate={{
-                    x: segmentWidth ? [0, -segmentWidth] : 0,
-                }}
+                animate={paused || !segmentWidth ? false : { x: [0, -segmentWidth] }}
                 transition={{
                     repeat: Infinity,
                     repeatType: "loop",

@@ -15,12 +15,13 @@ const MotionLink = motion.create(Link);
 type ArchiveSliderVerticalCardProps = {
     post: PostLatestItem;
     index: number;
+    pauseAnimations?: boolean;
     cardRef: (element: HTMLElement | null) => void;
 };
 
 const isModifiedClick = (event: React.MouseEvent<HTMLAnchorElement>) => event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0;
 
-const ArchiveSliderVerticalCard = ({ post, index, cardRef }: ArchiveSliderVerticalCardProps) => {
+const ArchiveSliderVerticalCard = ({ post, index, pauseAnimations = false, cardRef }: ArchiveSliderVerticalCardProps) => {
     const router = useRouter();
     const { pushToUrl } = useNavigate();
     const postHref = `/post/${post.idx}`;
@@ -34,12 +35,10 @@ const ArchiveSliderVerticalCard = ({ post, index, cardRef }: ArchiveSliderVertic
             initial={{
                 opacity: 0,
                 x: "100dvw",
-                filter: "blur(20px)",
             }}
             animate={{
                 x: Math.sin(index * 0.8 + 6 * 0.5) * 40,
                 opacity: 1,
-                filter: "blur(0px)",
             }}
             transition={{
                 delay: 0.1 * (index + 1),
@@ -65,15 +64,14 @@ const ArchiveSliderVerticalCard = ({ post, index, cardRef }: ArchiveSliderVertic
                 {util.string.getTimeAgo(post.created_at)}
                 <Marquee
                     content="NEW"
+                    paused={pauseAnimations}
                     className={{ container: "bg-black gap-[1.2rem]", marquee: "text-white gap-[1.2rem]" }}
                 />
             </div>
 
             <div className="absolute bottom-[1.6rem] left-[1.6rem] w-full flex flex-col justify-start items-start">
                 <h5 className="bg-[#000000] text-white text-left text-[2.0rem] font-bold p-[0.4rem_0.4rem_0_0.4rem]">{post.title}</h5>
-                <p className="bg-[#000000] text-[#ffffffd0] text-left font-semibold leading-[1.5] line-clamp-2 text-[1.6rem] p-[0.8rem_0.4rem_0.4rem_0.4rem]">
-                    &quot;{post.summary}&quot;
-                </p>
+                <p className="bg-[#000000] text-[#ffffffd0] text-left font-semibold leading-[1.5] line-clamp-2 text-[1.6rem] p-[0.8rem_0.4rem_0.4rem_0.4rem]">&quot;{post.summary}&quot;</p>
             </div>
         </MotionLink>
     );

@@ -35,12 +35,10 @@ const ArchiveSliderCard = ({ post, index, cardRef }: ArchiveSliderCardProps) => 
             initial={{
                 opacity: 0,
                 y: "100svh",
-                filter: "blur(20px)",
             }}
             animate={{
                 y: Math.sin(index * 0.8 + 6 * 0.5) * 90,
                 opacity: 1,
-                filter: "blur(0px)",
             }}
             transition={{
                 delay: 0.1 * (index + 1),
