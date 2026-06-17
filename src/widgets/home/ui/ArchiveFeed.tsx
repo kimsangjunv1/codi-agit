@@ -8,7 +8,7 @@ import { useLayoutStore } from "@/shared/stores/useLayoutStore";
 import { clampPageScroll } from "@/widgets/home/lib/clampPageScroll";
 
 import ArchiveList from "./ArchiveList";
-import ArchiveSlider from "./ArchiveSlider";
+import ArchiveSliderHorizontal from "./ArchiveSliderHorizontal";
 import ArchiveSliderVertical from "./ArchiveSliderVertical";
 import HomeViewModeFloatingMenu from "./HomeViewModeFloatingMenu";
 
@@ -36,7 +36,7 @@ const ArchiveFeed = ({ initialData }: ArchiveFeedProps) => {
                         {isMobile ? (
                             <ArchiveSliderVertical initialData={initialData} />
                         ) : (
-                            <ArchiveSlider initialData={initialData} />
+                            <ArchiveSliderHorizontal initialData={initialData} />
                         )}
                     </UI.ErrorBoundaryWrapper>
                 </section>

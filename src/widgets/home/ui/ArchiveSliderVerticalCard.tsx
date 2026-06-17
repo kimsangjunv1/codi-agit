@@ -8,6 +8,7 @@ import { PostLatestItem } from "@/entities/post/model/post.type";
 import TransitionAwareImage from "@/shared/ui/common/TransitionAwareImage";
 import Marquee from "@/shared/ui/layout/Marquee";
 import { util } from "@/shared/lib/util";
+import useNavigate from "@/shared/hooks/useNavigate";
 
 const MotionLink = motion.create(Link);
 
@@ -16,8 +17,9 @@ type ArchiveSliderVerticalCardProps = {
 };
 
 const ArchiveSliderVerticalCard = ({ post }: ArchiveSliderVerticalCardProps) => {
-    const cardRef = useRef<HTMLAnchorElement | null>(null);
+    const cardRef = useRef<HTMLButtonElement | null>(null);
     const postHref = `/post/${post.idx}`;
+    const { pushToUrl } = useNavigate();
     const { scrollYProgress } = useScroll({
         target: cardRef,
         offset: ["start end", "center center", "end start"],
@@ -25,15 +27,17 @@ const ArchiveSliderVerticalCard = ({ post }: ArchiveSliderVerticalCardProps) => 
     const scale = useTransform(scrollYProgress, [0, 0.5, 1], [1, 1.2, 1]);
 
     return (
-        <MotionLink
+        <motion.button
             ref={cardRef}
-            href={postHref}
             data-idx={post.idx}
             aria-label={post.title}
             className="block h-[30svh] w-[80dvw] shrink-0 origin-center will-change-transform"
-            // className="block h-[30svh] w-[calc(100dvw-(1.6rem*6))] shrink-0 origin-center will-change-transform"
-            // className="block h-[30svh] w-[75dvw] shrink-0 origin-center will-change-transform"
             style={{ scale }}
+            onClick={(event) => {
+                event.preventDefault();
+
+                pushToUrl(postHref);
+            }}
         >
             <TransitionAwareImage
                 readinessKey={`archive-slider-thumbnail-${post.idx}`}
@@ -57,7 +61,7 @@ const ArchiveSliderVerticalCard = ({ post }: ArchiveSliderVerticalCardProps) => 
                     &quot;{post.summary}&quot;
                 </p>
             </div>
-        </MotionLink>
+        </motion.button>
     );
 };
 
