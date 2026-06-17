@@ -2,7 +2,7 @@
 
 import { motion, Reorder, useDragControls } from "motion/react";
 import type { Editor } from "@tiptap/react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import TipTap from "@/shared/ui/layout/Tiptap";
 import TipTapToolbar from "@/shared/ui/layout/TipTapToolbar";
@@ -40,15 +40,13 @@ const BlockEditableField = ({
     onChange: (value: string) => void;
 }) => {
     const ref = useRef<HTMLElement>(null);
-    const lastExternalValue = useRef(value);
 
-    useEffect(() => {
-        if (value === lastExternalValue.current) return;
+    useLayoutEffect(() => {
+        const el = ref.current;
+        if (!el || document.activeElement === el) return;
 
-        lastExternalValue.current = value;
-
-        if (ref.current && document.activeElement !== ref.current) {
-            ref.current.textContent = value;
+        if ((el.textContent ?? "") !== value) {
+            el.textContent = value;
         }
     }, [value]);
 
@@ -61,9 +59,7 @@ const BlockEditableField = ({
             className={`${className} outline-none empty:before:content-[attr(data-placeholder)] empty:before:text-[var(--color-gray-400)] empty:before:pointer-events-none`}
             onClick={(event) => event.stopPropagation()}
             onInput={(event) => {
-                const text = event.currentTarget.textContent ?? "";
-                lastExternalValue.current = text;
-                onChange(text);
+                onChange(event.currentTarget.textContent ?? "");
             }}
         />
     );
@@ -384,14 +380,14 @@ const Block = ({
                                     as="p"
                                     value={block.subtitle}
                                     placeholder="부제목을 입력해주세요"
-                                    className="text-[1.4rem] text-[#676767]"
+                                    className="text-[1.4rem] leading-[1.5] text-[#676767]"
                                     onChange={(subtitle) => updateBlock(rowIndex, blockIndex, { subtitle })}
                                 />
                                 <BlockEditableField
                                     as="h5"
                                     value={block.title}
                                     placeholder="제목을 입력해주세요"
-                                    className="text-[2.0rem] tablet:text-[2.4rem] font-bold text-[var(--color-gray-1000)]"
+                                    className="text-[2.0rem] tablet:text-[2.4rem] leading-[1.5] font-bold text-[var(--color-gray-1000)]"
                                     onChange={(title) => updateBlock(rowIndex, blockIndex, { title })}
                                 />
                             </section>

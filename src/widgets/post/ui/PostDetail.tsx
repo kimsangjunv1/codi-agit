@@ -96,24 +96,18 @@ const RenderContents = ({ id, initialData }: { id: string; initialData: GetPostD
 
     return (
         <>
-            <section className="flex flex-col justify-center items-center gap-[3.2rem] h-[100svh] p-[0.8rem] w-full">
-                <PostHero
-                    mode="view"
-                    imageUrl={DATA?.thumbnail ?? ""}
-                    title={DATA?.title ?? ""}
-                    summary={DATA?.summary ?? ""}
-                    createDate={DATA?.created_at ?? ""}
-                    viewCount={DATA?.views ?? 0}
-                    likeCount={DATA?.likes ?? 0}
-                    thumbnailAlt={DATA?.title ?? ""}
-                />
-            </section>
-
             <Contents
                 contents={DATA?.contents ?? []}
                 prev={DATA?.prev}
                 next={DATA?.next}
                 postId={id}
+                imageUrl={DATA?.thumbnail ?? ""}
+                title={DATA?.title ?? ""}
+                summary={DATA?.summary ?? ""}
+                createDate={DATA?.created_at ?? ""}
+                viewCount={DATA?.views ?? 0}
+                likeCount={DATA?.likes ?? 0}
+                thumbnailAlt={DATA?.title ?? ""}
             />
 
             <PostTocPanel contents={DATA?.contents ?? []} />
@@ -148,8 +142,8 @@ const ContentColumn = memo(({ col, rowLength, onCopySentence }: { col: SectionCo
                 <Fragment>
                     {showHeading ? (
                         <section className="flex flex-col gap-[0.8rem]">
-                            {subtitle ? <p className="text-[#676767]">{subtitle}</p> : null}
-                            {title ? <h5 className="text-[2.0rem] tablet:text-[2.4rem] font-bold text-[var(--color-gray-1000)]">{title}</h5> : null}
+                            {subtitle ? <p className="leading-[1.5] text-[#676767]">{subtitle}</p> : null}
+                            {title ? <h5 className="text-[2.0rem] tablet:text-[2.4rem] leading-[1.5] font-bold text-[var(--color-gray-1000)]">{title}</h5> : null}
                         </section>
                     ) : null}
 
@@ -231,7 +225,21 @@ const PostDetailActions = ({ postIdx }: { postIdx: number }) => {
     );
 };
 
-const Contents = ({ contents, prev, next, postId }: { contents: SectionContent[][]; prev?: PostPrevNextInfo; next?: PostPrevNextInfo; postId: string }) => {
+type ContentsProps = {
+    contents: SectionContent[][];
+    prev?: PostPrevNextInfo;
+    next?: PostPrevNextInfo;
+    postId: string;
+    imageUrl: string;
+    title: string;
+    summary: string;
+    createDate: string;
+    viewCount: number;
+    likeCount: number;
+    thumbnailAlt: string;
+};
+
+const Contents = ({ contents, prev, next, postId, imageUrl, title, summary, createDate, viewCount, likeCount, thumbnailAlt }: ContentsProps) => {
     const { pushToUrl } = useNavigate();
     const { setToast } = useToastStore();
 
@@ -244,89 +252,104 @@ const Contents = ({ contents, prev, next, postId }: { contents: SectionContent[]
     );
 
     return (
-        <article className="flex gap-[0.4rem] w-full max-w-[var(--size-tablet)] min-w-0 px-[1.2rem] [content-visibility:auto]">
-            <section className="flex flex-col gap-[2.4rem] flex-1 min-w-0">
-                {contents?.map((row, rowIdx) => (
-                    <section
-                        key={rowIdx}
-                        className={BLOCK_ROW_CLASS}
-                    >
-                        {row.map((col) => (
-                            <ContentColumn
-                                key={col.id}
-                                col={col}
-                                rowLength={row.length}
-                                onCopySentence={handleCopySentence}
-                            />
-                        ))}
-                    </section>
-                ))}
-
-                <section className="flex gap-[1.6rem] flex-wrap">
-                    <UI.Button
-                        className={`flex items-center justify-start gap-[0.8rem] border border-[var(--color-gray-200)] min-w-[calc(var(--size-tablet)/2-(1.6rem*10))] flex-1 p-[1.6rem] rounded-[1.6rem] hover:border-[var(--color-blue-500)] ${prev ? "" : "pointer-events-none"}`}
-                        onClick={() => {
-                            if (prev) {
-                                pushToUrl(`/post/${prev?.idx}`);
-                            } else {
-                                setToast({ msg: "이전 글이 없어요", time: 2 });
-                            }
-                        }}
-                    >
-                        {prev ? (
-                            <Fragment>
-                                <IconComponent
-                                    type="outlined-arrow-below"
-                                    alt="테스트"
-                                    className="rotate-90"
-                                />
-
-                                <div className="flex flex-col gap-[0.8rem]">
-                                    <p className="text-left text-[1.2rem] font-semibold text-[var(--color-gray-500)]">이전글</p>
-                                    <p className="text-left text-[1.6rem] font-semibold">{prev.title}</p>
-                                </div>
-                            </Fragment>
-                        ) : (
-                            <p className="text-[var(--color-gray-500)]">이전글이 없습니다.</p>
-                        )}
-                    </UI.Button>
-
-                    <UI.Button
-                        className={`flex items-center justify-end gap-[0.8rem] border border-[var(--color-gray-200)] min-w-[calc(var(--size-tablet)/2-(1.6rem*10))] flex-1 p-[1.6rem] rounded-[1.6rem] hover:border-[var(--color-blue-500)] ${next ? "" : "pointer-events-none"}`}
-                        onClick={() => {
-                            if (next) {
-                                pushToUrl(`/post/${next?.idx}`);
-                            } else {
-                                setToast({ msg: "다음 글이 없어요", time: 2 });
-                            }
-                        }}
-                    >
-                        {next ? (
-                            <Fragment>
-                                <div className="flex flex-col gap-[0.8em]">
-                                    <p className="text-right text-[1.2rem] font-semibold text-[var(--color-gray-500)]">다음글</p>
-                                    <p className="text-right text-[1.6rem] font-semibold">{next.title}</p>
-                                </div>
-                                <IconComponent
-                                    type="outlined-arrow-below"
-                                    alt="테스트"
-                                    className="rotate-270"
-                                />
-                            </Fragment>
-                        ) : (
-                            <p className="text-[var(--color-gray-500)]">다음글이 없습니다.</p>
-                        )}
-                    </UI.Button>
-                </section>
-
-                <PostDetailActions postIdx={parseInt(postId)} />
-
-                <GiscusComments
-                    term={`post-${postId}`}
-                    className="w-full pt-[2.4rem]"
+        <>
+            <section className="flex flex-col justify-center items-center gap-[3.2rem] h-[100svh] p-[0.8rem] w-full">
+                <PostHero
+                    mode="view"
+                    imageUrl={imageUrl}
+                    title={title}
+                    summary={summary}
+                    createDate={createDate}
+                    viewCount={viewCount}
+                    likeCount={likeCount}
+                    thumbnailAlt={thumbnailAlt}
                 />
             </section>
-        </article>
+
+            <article className="flex gap-[0.4rem] w-full max-w-[var(--size-tablet)] min-w-0 px-[1.2rem] [content-visibility:auto]">
+                <section className="flex flex-col gap-[2.4rem] flex-1 min-w-0">
+                    {contents?.map((row, rowIdx) => (
+                        <section
+                            key={rowIdx}
+                            className={BLOCK_ROW_CLASS}
+                        >
+                            {row.map((col) => (
+                                <ContentColumn
+                                    key={col.id}
+                                    col={col}
+                                    rowLength={row.length}
+                                    onCopySentence={handleCopySentence}
+                                />
+                            ))}
+                        </section>
+                    ))}
+
+                    <section className="flex gap-[1.6rem] flex-wrap">
+                        <UI.Button
+                            className={`flex items-center justify-start gap-[0.8rem] border border-[var(--color-gray-200)] min-w-[calc(var(--size-tablet)/2-(1.6rem*10))] flex-1 p-[1.6rem] rounded-[1.6rem] hover:border-[var(--color-blue-500)] ${prev ? "" : "pointer-events-none"}`}
+                            onClick={() => {
+                                if (prev) {
+                                    pushToUrl(`/post/${prev?.idx}`);
+                                } else {
+                                    setToast({ msg: "이전 글이 없어요", time: 2 });
+                                }
+                            }}
+                        >
+                            {prev ? (
+                                <Fragment>
+                                    <IconComponent
+                                        type="outlined-arrow-below"
+                                        alt="테스트"
+                                        className="rotate-90"
+                                    />
+
+                                    <div className="flex flex-col gap-[0.8rem]">
+                                        <p className="text-left text-[1.2rem] font-semibold text-[var(--color-gray-500)]">이전글</p>
+                                        <p className="text-left text-[1.6rem] font-semibold">{prev.title}</p>
+                                    </div>
+                                </Fragment>
+                            ) : (
+                                <p className="text-[var(--color-gray-500)]">이전글이 없습니다.</p>
+                            )}
+                        </UI.Button>
+
+                        <UI.Button
+                            className={`flex items-center justify-end gap-[0.8rem] border border-[var(--color-gray-200)] min-w-[calc(var(--size-tablet)/2-(1.6rem*10))] flex-1 p-[1.6rem] rounded-[1.6rem] hover:border-[var(--color-blue-500)] ${next ? "" : "pointer-events-none"}`}
+                            onClick={() => {
+                                if (next) {
+                                    pushToUrl(`/post/${next?.idx}`);
+                                } else {
+                                    setToast({ msg: "다음 글이 없어요", time: 2 });
+                                }
+                            }}
+                        >
+                            {next ? (
+                                <Fragment>
+                                    <div className="flex flex-col gap-[0.8em]">
+                                        <p className="text-right text-[1.2rem] font-semibold text-[var(--color-gray-500)]">다음글</p>
+                                        <p className="text-right text-[1.6rem] font-semibold">{next.title}</p>
+                                    </div>
+                                    <IconComponent
+                                        type="outlined-arrow-below"
+                                        alt="테스트"
+                                        className="rotate-270"
+                                    />
+                                </Fragment>
+                            ) : (
+                                <p className="text-[var(--color-gray-500)]">다음글이 없습니다.</p>
+                            )}
+                        </UI.Button>
+                    </section>
+
+                    <PostDetailActions postIdx={parseInt(postId)} />
+
+                    <GiscusComments
+                        term={`post-${postId}`}
+                        className="w-full pt-[2.4rem]"
+                    />
+                </section>
+            </article>
+        </>
     );
 };
 

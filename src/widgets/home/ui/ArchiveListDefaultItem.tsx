@@ -63,7 +63,7 @@ const ArchiveListDefaultItem = forwardRef<HTMLElement, ArchiveListDefaultItemPro
             {/* <p>
                 {post.category?.title} ・ {util.string.getCurrentDate(post.created_at)} ・ {post.likes ?? 0} likes
             </p> */}
-            <p className="[text-align-last:justify]">
+            <p className="[text-align-last:justify] bg-black font-bold p-[0.6rem] text-white">
                 {post.category?.title} ・ {util.string.getCurrentDate(post.created_at)} ・ {post.likes ?? 0} likes
             </p>
         </motion.section>

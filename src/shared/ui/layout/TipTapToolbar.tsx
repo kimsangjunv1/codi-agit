@@ -6,6 +6,8 @@ import type { Editor } from "@tiptap/react";
 import { MaterialIcon } from "@/shared/ui/common/MaterialIcon";
 import {
     applyHeading,
+    DEFAULT_FONT_SIZE,
+    DEFAULT_LINE_HEIGHT,
     FONT_SIZES,
     getActiveHeading,
     LINE_HEIGHTS,
@@ -173,26 +175,54 @@ const TipTapToolbar = ({ editor }: TipTapToolbarProps) => {
 
                     <ToolbarDivider variant={TOOLBAR_VARIANT} />
 
+                    <ToolbarIconButton
+                        label="왼쪽 정렬"
+                        title="왼쪽 정렬"
+                        variant={TOOLBAR_VARIANT}
+                        active={state.isAlignLeft}
+                        onClick={() => editor.chain().focus().setTextAlign("left").run()}
+                    >
+                        <MaterialIcon name="format_align_left" />
+                    </ToolbarIconButton>
+                    <ToolbarIconButton
+                        label="가운데 정렬"
+                        title="가운데 정렬"
+                        variant={TOOLBAR_VARIANT}
+                        active={state.isAlignCenter}
+                        onClick={() => editor.chain().focus().setTextAlign("center").run()}
+                    >
+                        <MaterialIcon name="format_align_center" />
+                    </ToolbarIconButton>
+                    <ToolbarIconButton
+                        label="오른쪽 정렬"
+                        title="오른쪽 정렬"
+                        variant={TOOLBAR_VARIANT}
+                        active={state.isAlignRight}
+                        onClick={() => editor.chain().focus().setTextAlign("right").run()}
+                    >
+                        <MaterialIcon name="format_align_right" />
+                    </ToolbarIconButton>
+
+                    <ToolbarDivider variant={TOOLBAR_VARIANT} />
+
                     <ToolbarSelect
                         label="글자 크기"
                         variant={TOOLBAR_VARIANT}
-                        value="16"
+                        value={FONT_SIZES.includes(state.activeFontSize as (typeof FONT_SIZES)[number]) ? state.activeFontSize : DEFAULT_FONT_SIZE}
                         options={FONT_SIZES.map((size) => ({
-                            label: `${size}px`,
-                            value: String(size),
+                            label: size,
+                            value: size,
                         }))}
-                        onChange={(value) =>
-                            editor
-                                .chain()
-                                .focus()
-                                .setMark("textStyle", { fontSize: `${value}px` })
-                                .run()
-                        }
+                        onChange={(value) => editor.chain().focus().setMark("textStyle", { fontSize: value }).run()}
                     />
                     <ToolbarSelect
                         label="줄간격"
                         variant={TOOLBAR_VARIANT}
-                        value="1.5"
+                        value={
+                            LINE_HEIGHTS.includes(state.activeLineHeight as (typeof LINE_HEIGHTS)[number])
+                                ? state.activeLineHeight
+                                : DEFAULT_LINE_HEIGHT
+                        }
                         options={LINE_HEIGHTS.map((lh) => ({
                             label: lh,
                             value: lh,

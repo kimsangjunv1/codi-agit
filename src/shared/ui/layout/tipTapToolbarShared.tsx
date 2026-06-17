@@ -3,8 +3,11 @@
 import type { Editor } from "@tiptap/react";
 import { useEditorState } from "@tiptap/react";
 
-export const FONT_SIZES = [14, 16, 18, 20, 24] as const;
+export const DEFAULT_FONT_SIZE = "1.8rem";
+export const DEFAULT_LINE_HEIGHT = "1.5";
+export const FONT_SIZES = ["1.4rem", "1.6rem", "1.8rem", "2.0rem", "2.4rem"] as const;
 export const LINE_HEIGHTS = ["1", "1.2", "1.5", "1.8", "2"] as const;
+export type TextAlignValue = "left" | "center" | "right";
 
 export type HeadingValue = "paragraph" | "h1" | "h2" | "h3";
 export type ToolbarVariant = "default" | "glass";
@@ -32,6 +35,11 @@ export const useTipTapToolbarState = (editor: Editor) =>
             isCodeBlock: ctx.editor.isActive("codeBlock"),
             isBlockquote: ctx.editor.isActive("blockquote"),
             isHighlight: ctx.editor.isActive("highlight"),
+            isAlignLeft: ctx.editor.isActive({ textAlign: "left" }),
+            isAlignCenter: ctx.editor.isActive({ textAlign: "center" }),
+            isAlignRight: ctx.editor.isActive({ textAlign: "right" }),
+            activeFontSize: ctx.editor.getAttributes("textStyle").fontSize ?? DEFAULT_FONT_SIZE,
+            activeLineHeight: ctx.editor.getAttributes("textStyle").lineHeight ?? DEFAULT_LINE_HEIGHT,
             canUndo: ctx.editor.can().chain().undo().run(),
             canRedo: ctx.editor.can().chain().redo().run(),
         }),

@@ -89,8 +89,7 @@ const PostHero = (props: PostHeroProps) => {
 
     return (
         <motion.article
-            // className="relative flex flex-col items-end justify-end gap-[1.6rem] w-full h-full rounded-[calc(1.6rem*3)] overflow-hidden"
-            className="relative flex flex-col items-end justify-end gap-[1.6rem] w-full h-full overflow-hidden"
+            className="relative flex flex-col items-end justify-end gap-[1.6rem] w-full h-full rounded-[calc(1.6rem*3)] overflow-hidden"
             initial={reducedMotion ? false : { opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: reducedMotion ? 0 : 0.45, ease: [0.25, 0.8, 0.25, 1] }}
@@ -99,15 +98,15 @@ const PostHero = (props: PostHeroProps) => {
             onDragOver={props.mode === "edit" ? handleThumbnailDragOver : undefined}
             onDrop={props.mode === "edit" ? handleThumbnailDrop : undefined}
         >
-            <section className="flex flex-col items-start justify-end gap-[2.4rem] h-full w-full max-w-[var(--size-tablet)] px-[1.2rem] py-[7.2rem] z-[100] absolute left-[50%] top-[50%] transform translate-x-[-50%] translate-y-[-50%] pointer-events-none">
+            <section
+                className="flex flex-col items-start justify-end gap-[2.4rem] h-full w-full max-w-[var(--size-tablet)] px-[1.2rem] py-[7.2rem] z-[100] absolute left-[50%] top-[50%] transform translate-x-[-50%] translate-y-[-50%] pointer-events-none"
+            >
                 {props.mode === "edit" ? <PostHeroEditContent {...props} /> : <PostHeroViewContent {...props} />}
             </section>
 
-            <div className="absolute top-0 left-[50%] transform translate-x-[-50%] w-full h-full bg-[linear-gradient(0deg,_#000,_#00000000)] z-[1] pointer-events-none" />
-            {/* <div className="absolute top-0 left-[50%] transform translate-x-[-50%] w-full h-full bg-[linear-gradient(0deg,_#000,_#00000000)] z-[1] rounded-[2.4rem] pointer-events-none" /> */}
+            <div className="absolute top-0 left-[50%] transform translate-x-[-50%] w-full h-full bg-[linear-gradient(0deg,_#000,_#00000000)] z-[1] rounded-[2.4rem] pointer-events-none" />
 
-            {/* <div className="absolute inset-0 rounded-[2.4rem] overflow-hidden z-0 relative w-full h-full"> */}
-            <div className="absolute inset-0 overflow-hidden z-0 relative w-full h-full">
+            <div className="absolute inset-0 rounded-[2.4rem] overflow-hidden z-0 relative w-full h-full">
                 {heroImageSrc ? (
                     canOptimizeImage ? (
                         <Image

@@ -8,6 +8,7 @@ import Underline from "@tiptap/extension-underline";
 import { TextStyle } from "@tiptap/extension-text-style";
 import { TaskItem, TaskList } from "@tiptap/extension-list";
 import { Highlight } from "@tiptap/extension-highlight";
+import TextAlign from "@tiptap/extension-text-align";
 import { Selection } from "@tiptap/extensions";
 import { useEffect, useState } from "react";
 
@@ -58,7 +59,25 @@ const Normal = ({ content = "", onChange, showToolbar = true, onEditorFocus, onE
                 autocorrect: "off",
                 autocapitalize: "off",
                 "aria-label": "본문 입력",
-                class: "tiptap-editor-content min-h-[12rem] px-[0.4rem] py-[0.8rem] outline-none focus:outline-none [&_.rich-text-image-node]:w-full",
+                class: "tiptap-editor-content min-h-[12rem] px-[0.4rem] py-[0.8rem] text-[1.8rem] leading-[1.5] outline-none focus:outline-none [&_.rich-text-image-node]:w-full",
+            },
+            handlePaste: (view, event) => {
+                const html = event.clipboardData?.getData("text/html") ?? "";
+                const isInternalPaste = html.includes("data-pm-slice") || html.includes("data-pm-context");
+
+                if (isInternalPaste) {
+                    return false;
+                }
+
+                const text = event.clipboardData?.getData("text/plain");
+                if (!text) {
+                    return false;
+                }
+
+                const { state, dispatch } = view;
+                const { from, to } = state.selection;
+                dispatch(state.tr.insertText(text, from, to).scrollIntoView());
+                return true;
             },
         },
         extensions: [
@@ -73,6 +92,9 @@ const Normal = ({ content = "", onChange, showToolbar = true, onEditorFocus, onE
             Italic,
             Underline,
             CustomTextStyle,
+            TextAlign.configure({
+                types: ["heading", "paragraph"],
+            }),
             TaskList,
             TaskItem.configure({ nested: true }),
             Highlight.configure({ multicolor: true }),
@@ -112,7 +134,7 @@ const Normal = ({ content = "", onChange, showToolbar = true, onEditorFocus, onE
             <TipTapImageBubbleMenu editor={editor} />
             <EditorContent
                 editor={editor}
-                className="min-h-[12rem] h-full rounded-[1.6rem] outline-none [&_.tiptap-editor-content]:min-h-[12rem] [&_.tiptap-editor-content_p]:my-[0.4rem] [&_.tiptap-editor-content_ul]:list-disc [&_.tiptap-editor-content_ul]:pl-[2rem] [&_.tiptap-editor-content_ol]:list-decimal [&_.tiptap-editor-content_ol]:pl-[2rem] [&_.tiptap-editor-content_blockquote]:border-l-[0.4rem] [&_.tiptap-editor-content_blockquote]:border-[var(--color-gray-300)] [&_.tiptap-editor-content_blockquote]:pl-[1.2rem] [&_.tiptap-editor-content_blockquote]:text-[var(--color-gray-600)] [&_.rich-text-image-node]:w-full"
+                className="min-h-[12rem] h-full rounded-[1.6rem] outline-none [&_.tiptap-editor-content]:min-h-[12rem] [&_.tiptap-editor-content]:text-[1.8rem] [&_.tiptap-editor-content]:leading-[1.5] [&_.tiptap-editor-content_p]:my-[0.4rem] [&_.tiptap-editor-content_ul]:list-disc [&_.tiptap-editor-content_ul]:pl-[2rem] [&_.tiptap-editor-content_ol]:list-decimal [&_.tiptap-editor-content_ol]:pl-[2rem] [&_.tiptap-editor-content_blockquote]:border-l-[0.4rem] [&_.tiptap-editor-content_blockquote]:border-[var(--color-gray-300)] [&_.tiptap-editor-content_blockquote]:pl-[1.2rem] [&_.tiptap-editor-content_blockquote]:text-[var(--color-gray-600)] [&_.rich-text-image-node]:w-full"
             />
         </div>
     );

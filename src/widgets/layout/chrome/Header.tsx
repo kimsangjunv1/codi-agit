@@ -48,7 +48,7 @@ const Header = () => {
                             alt={"코디 아지트"}
                             width={138}
                             height={42}
-                            className="mobile:h-[calc(1.6rem*2)] mobile:w-[calc(1.6rem*7)] pc:h-auto pc:w-auto"
+                            className="mobile:h-[calc(1.6rem*2.2)] mobile:w-[calc(1.6rem*7)] pc:h-auto pc:w-auto"
                         />
                     </button>
 
