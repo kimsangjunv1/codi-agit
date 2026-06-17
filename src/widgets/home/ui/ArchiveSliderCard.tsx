@@ -7,6 +7,7 @@ import { motion } from "motion/react";
 import { PostLatestItem } from "@/entities/post/model/post.type";
 import TransitionAwareImage from "@/shared/ui/common/TransitionAwareImage";
 import useNavigate from "@/shared/hooks/useNavigate";
+import Marquee from "@/shared/ui/layout/Marquee";
 
 const MotionLink = motion.create(Link);
 
@@ -60,19 +61,32 @@ const ArchiveSliderCard = ({ post, index, cardRef }: ArchiveSliderCardProps) => 
                 alt={post.title}
                 className="object-cover h-full pointer-events-none"
             />
-            <div className="absolute h-[30%] mask-[linear-gradient(0deg,_#000,_#000_2.5%,_#000_50%,_#0000)] bottom-0 left-0 w-full bg-[#00000000] backdrop-blur-[30px]" />
-            <motion.div
-                className="absolute bottom-0 left-[50%] bg-[linear-gradient(0deg,#00000000_0%,#00000000)] transform translate-x-[-50%] w-full flex flex-col justify-center items-center"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{
-                    type: "spring",
-                    mass: 0.1,
-                    stiffness: 100,
-                    damping: 10,
-                }}
+            {/* <div className="absolute h-[30%] mask-[linear-gradient(0deg,_#000,_#000_2.5%,_#000_50%,_#0000)] bottom-0 left-0 w-full bg-[#00000000] backdrop-blur-[30px]" /> */}
+            <div className="absolute top-[1.6rem] left-[1.6rem] w-full flex flex-col justify-start items-start">
+                {/* {post.category?.title} ・ 2025.01.01 ・ 2달전 ・ {post.views} views ・ {post.likes ?? 0} likes */}
+                {post.created_at}
+                <Marquee
+                    content="NEW"
+                    className={{ container: "bg-black gap-[1.2rem]", marquee: "text-white gap-[1.2rem]" }}
+                />
+            </div>
+
+            <div
+                className="absolute bottom-[1.6rem] left-[1.6rem] w-full flex flex-col justify-start items-start"
+                // initial={{ opacity: 0 }}
+                // animate={{ opacity: 1 }}
+                // transition={{
+                //     type: "spring",
+                //     mass: 0.1,
+                //     stiffness: 100,
+                //     damping: 10,
+                // }}
             >
-                <div className="p-[2.4rem] flex flex-col justify-center gap-[0.8rem] drop-shadow-[0_0_20px_#000]">
+                <h5 className="bg-[#000000] text-white text-left mobile:text-[2.0rem] pc:text-[2.4rem] font-bold p-[0.4rem_0.4rem_0_0.4rem]">{post.title}</h5>
+                <p className="bg-[#000000] text-[#ffffffd0] text-left font-semibold leading-[1.5] text-[#00000090] line-clamp-2 mobile:text-[1.6rem] tablet:text-[2.0rem] p-[0.8rem_0.4rem_0.4rem_0.4rem]">
+                    &quot;{post.summary}&quot;
+                </p>
+                {/* <div className="p-[2.4rem] flex flex-col justify-center gap-[0.8rem] drop-shadow-[0_0_20px_#000]">
                     <div className="relative overflow-hidden">
                         <motion.h5
                             className="text-center text-white font-extrabold text-[calc(1svh+1.8rem)] leading-[1.5] whitespace-break-spaces"
@@ -123,8 +137,8 @@ const ArchiveSliderCard = ({ post, index, cardRef }: ArchiveSliderCardProps) => 
                             {post.summary}
                         </motion.p>
                     </div>
-                </div>
-            </motion.div>
+                </div> */}
+            </div>
         </MotionLink>
     );
 };
