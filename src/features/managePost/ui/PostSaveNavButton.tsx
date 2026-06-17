@@ -14,18 +14,17 @@ const PostSaveNavButton = ({ isCreate, isPending, onSave }: PostSaveNavButtonPro
         type="button"
         disabled={isPending}
         onClick={onSave}
-        className="bg-[#00000090] hover:bg-[var(--color-blue-500)] transition-colors p-[1.2rem] rounded-full flex gap-[0.8rem] items-center disabled:opacity-60"
+        className="bg-white hover:bg-[var(--color-blue-500)] transition-colors p-[1.2rem] rounded-full shadow-[var(--shadow-normal)] flex gap-[0.8rem] items-center disabled:opacity-60"
     >
+        <p className="text-black mr-[1.6rem] text-[1.6rem] font-semibold tablet:block mobile:hidden">{isCreate ? "작성하기" : "수정완료"}</p>
+
         <IconComponent
             type="outlined-arrow-below"
             alt="나가기"
             width={32}
             height={32}
-            className="rotate-90 invert-100"
+            className="rotate-90"
         />
-        <p className="text-white mr-[1.6rem] text-[1.6rem] font-semibold tablet:block mobile:hidden">
-            {isCreate ? "작성하기" : "수정완료"}
-        </p>
     </UI.Button>
 );
 

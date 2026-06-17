@@ -54,16 +54,16 @@ const Navigation = () => {
                 <UI.Button
                     type="button"
                     onClick={() => pushToUrl("/")}
-                    className="bg-[#00000090] hover:bg-[var(--color-blue-500)] transition-colors p-[1.2rem] rounded-full flex gap-[0.8rem] items-center"
+                    className="bg-white hover:bg-[var(--color-blue-500)] transition-colors p-[1.2rem] rounded-full shadow-[var(--shadow-normal)] flex gap-[0.8rem] items-center"
                 >
                     <IconComponent
                         type={`outlined-arrow-below`}
                         alt={"나가기"}
                         width={32}
                         height={32}
-                        className="rotate-90 invert-100"
+                        className="rotate-90"
                     />
-                    <p className="text-white mr-[1.6rem] text-[1.6rem] font-semibold tablet:block mobile:hidden">{IS_ROUTE_POST_VIEW ? "돌아가기" : "이전으로"}</p>
+                    <p className="text-black mr-[1.6rem] text-[1.6rem] font-semibold tablet:block mobile:hidden">{IS_ROUTE_POST_VIEW ? "돌아가기" : "이전으로"}</p>
                 </UI.Button>
 
                 <section className="flex flex-col items-center justify-center gap-[1.6rem] flex-1 absolute left-[50%] translate-x-[-50%]">

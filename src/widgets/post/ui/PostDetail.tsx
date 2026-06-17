@@ -253,7 +253,7 @@ const Contents = ({ contents, prev, next, postId, imageUrl, title, summary, crea
 
     return (
         <>
-            <section className="flex flex-col justify-center items-center gap-[3.2rem] h-[100svh] p-[0.8rem] w-full">
+            <section className="flex flex-col justify-center items-center gap-[3.2rem] h-[100svh] w-full">
                 <PostHero
                     mode="view"
                     imageUrl={imageUrl}
@@ -284,6 +284,12 @@ const Contents = ({ contents, prev, next, postId, imageUrl, title, summary, crea
                         </section>
                     ))}
 
+                    <PostDetailActions postIdx={parseInt(postId)} />
+
+                    <GiscusComments
+                        term={`post-${postId}`}
+                        className="w-full pt-[2.4rem]"
+                    />
                     <section className="flex gap-[1.6rem] flex-wrap">
                         <UI.Button
                             className={`flex items-center justify-start gap-[0.8rem] border border-[var(--color-gray-200)] min-w-[calc(var(--size-tablet)/2-(1.6rem*10))] flex-1 p-[1.6rem] rounded-[1.6rem] hover:border-[var(--color-blue-500)] ${prev ? "" : "pointer-events-none"}`}
@@ -340,13 +346,6 @@ const Contents = ({ contents, prev, next, postId, imageUrl, title, summary, crea
                             )}
                         </UI.Button>
                     </section>
-
-                    <PostDetailActions postIdx={parseInt(postId)} />
-
-                    <GiscusComments
-                        term={`post-${postId}`}
-                        className="w-full pt-[2.4rem]"
-                    />
                 </section>
             </article>
         </>
