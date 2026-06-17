@@ -142,8 +142,8 @@ const ContentColumn = memo(({ col, rowLength, onCopySentence }: { col: SectionCo
                 <Fragment>
                     {showHeading ? (
                         <section className="flex flex-col gap-[0.8rem]">
-                            {subtitle ? <p className="leading-[1.5] text-[#676767]">{subtitle}</p> : null}
-                            {title ? <h5 className="text-[2.0rem] tablet:text-[2.4rem] leading-[1.5] font-bold text-[var(--color-gray-1000)]">{title}</h5> : null}
+                            {subtitle ? <p className="mobile:text-[1.6rem] pc:text-[2.0rem] leading-[1.5] font-semibold">{subtitle}</p> : null}
+                            {title ? <h5 className="mobile:text-[2.4rem] pc:text-[2.8rem] leading-[1.5] font-bold">{title}</h5> : null}
                         </section>
                     ) : null}
 
@@ -173,7 +173,7 @@ const ContentColumn = memo(({ col, rowLength, onCopySentence }: { col: SectionCo
                                             textAlign: itemInfo.style?.textAlign as React.CSSProperties["textAlign"],
                                             background: `${itemInfo.style?.backgroundColor}`,
                                         }}
-                                        className="whitespace-break-spaces transition-colors border border-transparent cursor-pointer hover:border-[var(--color-gray-400)] rounded-[0.8rem]"
+                                        className="whitespace-break-spaces transition-colors border border-transparent cursor-pointer hover:bg-black hover:text-white rounded-[0.8rem]"
                                         onClick={() => onCopySentence(itemInfo.value)}
                                     >
                                         {itemInfo.value}
@@ -267,7 +267,7 @@ const Contents = ({ contents, prev, next, postId, imageUrl, title, summary, crea
             </section>
 
             <article className="flex gap-[0.4rem] w-full max-w-[var(--size-tablet)] min-w-0 px-[1.2rem] [content-visibility:auto]">
-                <section className="flex flex-col gap-[2.4rem] flex-1 min-w-0">
+                <section className="flex flex-col gap-[7.2rem] flex-1 min-w-0">
                     {contents?.map((row, rowIdx) => (
                         <section
                             key={rowIdx}

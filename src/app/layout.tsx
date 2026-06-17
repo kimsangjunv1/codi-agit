@@ -9,7 +9,7 @@ import AuthProvider from "@/app/providers/AuthProvider";
 import PopupProvider from "@/app/providers/PopupProvider";
 import LenisProvider from "@/app/providers/LenisProvider";
 
-import Toast from "@/shared/ui/layout/Toast";
+// import Toast from "@/shared/ui/layout/Toast";
 import PathCheckComponent from "@/shared/ui/common/PathCheckComponent";
 import PageRevealOverlay from "@/shared/ui/common/PageRevealOverlay";
 import PageContentGate from "@/shared/ui/common/PageContentGate";
@@ -19,6 +19,7 @@ import "lenis/dist/lenis.css";
 
 import "@/shared/styles/scss/global.css";
 import "@/shared/styles/scss/index.scss";
+import { Toast } from "@/shared/ui/layout/Toast";
 
 export const metadata: Metadata = {
     metadataBase: new URL(getSiteUrl()),
@@ -46,8 +47,7 @@ export const metadata: Metadata = {
     },
 };
 
-const MATERIAL_SYMBOLS_FONT_URL =
-    "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400,0,0&display=block";
+const MATERIAL_SYMBOLS_FONT_URL = "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400,0,0&display=block";
 
 export default function RootLayout({ children, modal }: Readonly<{ children: React.ReactNode; modal: React.ReactNode }>) {
     return (

@@ -6,13 +6,13 @@
     font-size: var(--root-font-size);
     font-weight: 400;
     letter-spacing: -0.025rem;
-  
+
     font-synthesis: none;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-  
-    background: var( --color-background-light);
+
+    background: var(--color-background-light);
 
     color: #000;
     // color: var(--color-main-text-light);
@@ -24,7 +24,7 @@ html {
     -webkit-text-size-adjust: 100%; /* 2 */
     max-width: 100%;
     // overflow-x: hidden;
-    background: var( --color-background-light);
+    background: var(--color-background-light);
     scrollbar-width: none;
     // scrollbar-color: rgba(0,29,58,0.18) transparent;
 }
@@ -44,7 +44,7 @@ body {
     // overflow-y: hidden;
     width: 100%;
     background-color: var(--color-background-light);
-    
+
     &::-webkit-scrollbar {
         display: none;
     }
@@ -70,9 +70,8 @@ body {
 }
 
 main {
-    scrollbar-color: rgba(0,29,58,0.18) transparent;
+    scrollbar-color: rgba(0, 29, 58, 0.18) transparent;
     scrollbar-width: thin;
-
 }
 
 html,
@@ -195,7 +194,7 @@ ul {
 
 // ul {
 //     padding-left: 0.8rem;
-    
+
 //     > li {
 //         position: relative;
 //         &::after {
@@ -270,6 +269,10 @@ button {
     padding: 0;
     margin: 0;
     background: none;
+}
+
+::marker {
+    font-size: 1.8rem;
 }
 
 // .switch {
