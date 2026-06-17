@@ -704,9 +704,7 @@ const Filter = forwardRef<{ reset: () => void }, FilterProps>(({ list = [], defa
                     >
                         {activeItems.length === allItems.length ? ` ・ 전체` : ` ・ ${activeItems.length}개`}
                     </motion.p>
-                ) : (
-                    ""
-                )}
+                ) : null}
 
                 <IconComponent
                     type="colored-arrow-below"

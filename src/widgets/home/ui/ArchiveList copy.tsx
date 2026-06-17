@@ -76,8 +76,7 @@ const ArchiveList = () => {
                 // className={listViewMode === "grid" ? "relative grid grid-cols-4 gap-[4px] px-[1.2rem] mx-auto max-w-[var(--size-tablet)]" : "relative flex flex-col gap-6"}
             >
                 {/* grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6 gap-4 */}
-                <div className="relative w-full grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-[2.4rem_0.4rem] max-w-[var(--size-pc)] mx-auto mobile:px-[0.4rem] pc:px-[2.0rem]">
-                    {/* <div className="relative w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6 gap-[2.4rem_0.4rem] max-w-[var(--size-pc)] mx-auto px-[2.0rem]"> */}
+                <div className="relative w-full grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6 gap-[2.4rem_0.4rem] max-w-[var(--size-pc)] mx-auto px-[2.0rem]">
                     {/* <div className="relative w-full grid grid-cols-[repeat(auto-fit,minmax(calc(1.6rem*16),1fr))] gap-[2.4rem_0.4rem] max-w-[var(--size-pc)] mx-auto px-[2.0rem]"> */}
                     <AnimatePresence mode="popLayout">
                         {filtered.map(

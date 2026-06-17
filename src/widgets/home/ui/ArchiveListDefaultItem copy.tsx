@@ -29,7 +29,7 @@ const ArchiveListDefaultItem = forwardRef<HTMLElement, ArchiveListDefaultItemPro
         <motion.section
             ref={ref}
             layout="position"
-            // className="max-w-[calc(1.6rem*16)]"
+            className="max-w-[calc(1.6rem*16)]"
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
@@ -37,7 +37,7 @@ const ArchiveListDefaultItem = forwardRef<HTMLElement, ArchiveListDefaultItemPro
         >
             <TransitionLink
                 href={`/post/${post.idx}`}
-                className="relative flex flex-col justify-start items-center gap-[1.6rem] overflow-hidden"
+                className="relative flex flex-col justify-start items-center gap-[1.6rem] hover:scale-[1.04] transition-transform"
             >
                 <TransitionAwareImage
                     readinessKey={`archive-list-thumbnail-${post.idx}`}
@@ -45,12 +45,12 @@ const ArchiveListDefaultItem = forwardRef<HTMLElement, ArchiveListDefaultItemPro
                     alt={post.title}
                     // className={`${post.idx % 3 === 0 ? "mobile:w-[calc(1.6rem*(12*1))] pc:w-[calc(1.6rem*(12*2))]" : "mobile:w-[calc(1.6rem*(12*1))] pc:w-[calc(1.6rem*(12*3))]"} h-[calc(1.6rem*20)] object-cover`}
                     // className="h-[calc(1.6rem*20)] object-cover"
-                    className="w-full h-[calc(1.6rem*24)] object-cover hover:scale-[1.2] transition-transform"
+                    className="w-full h-[calc(1.6rem*20)] object-cover"
                     // className="w-[calc(1.6rem*(17))] h-[calc(1.6rem*20)] object-cover"
                     // className="w-[calc(1.6rem*6)] h-[calc(1.6rem*9)] object-cover rounded-[1.6rem] shadow-[var(--shadow-normal)]"
                 />
-                <div className="pointer-events-none absolute h-[50%] mask-[linear-gradient(0deg,_#000,_#000_2.5%,_#000_50%,_#0000)] bottom-0 left-0 w-full bg-[#00000000] backdrop-blur-[30px]" />
-                <div className="pointer-events-none flex flex-col gap-[0.8rem] flex-1 w-full absolute bottom-0 p-[0.8rem]">
+                <div className="absolute h-[50%] mask-[linear-gradient(0deg,_#000,_#000_2.5%,_#000_50%,_#0000)] bottom-0 left-0 w-full bg-[#00000000] backdrop-blur-[30px]" />
+                <div className="flex flex-col gap-[0.8rem] flex-1 w-full absolute bottom-0 p-[0.8rem]">
                     {/* className="absolute bottom-0 left-[50%] bg-[linear-gradient(0deg,#00000000_0%,#00000000)] transform translate-x-[-50%] w-full flex flex-col justify-center items-center" */}
                     <h5 className="text-white text-left text-[1.8rem] font-semibold">{post.title}</h5>
                     <p className="text-white text-left font-semibold leading-[1.5] text-[#00000090] line-clamp-2 mobile:text-[1.4rem] tablet:text-[1.6rem]">{post.summary}</p>

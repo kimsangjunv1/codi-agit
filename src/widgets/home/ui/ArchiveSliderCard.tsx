@@ -16,8 +16,7 @@ type ArchiveSliderCardProps = {
     cardRef: (element: HTMLElement | null) => void;
 };
 
-const isModifiedClick = (event: React.MouseEvent<HTMLAnchorElement>) =>
-    event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0;
+const isModifiedClick = (event: React.MouseEvent<HTMLAnchorElement>) => event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0;
 
 const ArchiveSliderCard = ({ post, index, cardRef }: ArchiveSliderCardProps) => {
     const router = useRouter();
@@ -29,7 +28,8 @@ const ArchiveSliderCard = ({ post, index, cardRef }: ArchiveSliderCardProps) => 
             href={postHref}
             date-idx={post.idx}
             ref={cardRef}
-            className="item w-[36.0rem] relative flex shrink-0 flex-col gap-[1.2rem] overflow-hidden h-[30dvh] rounded-[3.2rem] shadow-[var(--shadow-normal)]"
+            className="item w-[36.0rem] relative flex shrink-0 flex-col gap-[1.2rem] overflow-hidden h-[30dvh]"
+            // className="item w-[36.0rem] relative flex shrink-0 flex-col gap-[1.2rem] overflow-hidden h-[30dvh] rounded-[3.2rem] shadow-[var(--shadow-normal)]"
             initial={{
                 opacity: 0,
                 y: "100dvh",

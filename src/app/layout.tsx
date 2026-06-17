@@ -17,6 +17,8 @@ import PageRevealOverlay from "@/shared/ui/common/PageRevealOverlay";
 import PageContentGate from "@/shared/ui/common/PageContentGate";
 import RootChromeView from "@/views/layout/RootChromeView";
 
+import "lenis/dist/lenis.css";
+
 import "@/shared/styles/scss/global.css";
 import "@/shared/styles/scss/index.scss";
 
@@ -46,16 +48,34 @@ export const metadata: Metadata = {
     },
 };
 
+const MATERIAL_SYMBOLS_FONT_URL =
+    "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400,0,0&display=block";
+
 export default function RootLayout({ children, modal }: Readonly<{ children: React.ReactNode; modal: React.ReactNode }>) {
     return (
         <html lang="ko">
+            <head>
+                <link
+                    rel="preconnect"
+                    href="https://fonts.googleapis.com"
+                />
+                <link
+                    rel="preconnect"
+                    href="https://fonts.gstatic.com"
+                    crossOrigin="anonymous"
+                />
+                <link
+                    rel="stylesheet"
+                    href={MATERIAL_SYMBOLS_FONT_URL}
+                />
+            </head>
             <body>
                 <GlobalErrorBoundary>
                     <QueryProvider>
                         <AuthProvider>
                             <PopupProvider>
                                 <PageProgress />
-                                {/* <LenisProvider /> */}
+                                <LenisProvider />
                                 <PageRevealOverlay />
                                 <PageContentGate>
                                     <RootChromeView>
