@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { motion } from "motion/react";
 
 import { PostLatestItem } from "@/entities/post/model/post.type";
-import { useLightMotion } from "@/shared/hooks/useLightMotion";
 import TransitionAwareImage from "@/shared/ui/common/TransitionAwareImage";
 import useNavigate from "@/shared/hooks/useNavigate";
 
@@ -14,35 +13,36 @@ const MotionLink = motion.create(Link);
 type ArchiveSliderCardProps = {
     post: PostLatestItem;
     index: number;
+    cardRef: (element: HTMLElement | null) => void;
 };
 
 const isModifiedClick = (event: React.MouseEvent<HTMLAnchorElement>) => event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0;
 
-const ArchiveSliderCard = ({ post, index }: ArchiveSliderCardProps) => {
+const ArchiveSliderCard = ({ post, index, cardRef }: ArchiveSliderCardProps) => {
     const router = useRouter();
     const { pushToUrl } = useNavigate();
-    const lightMotion = useLightMotion();
     const postHref = `/post/${post.idx}`;
 
     return (
         <MotionLink
             href={postHref}
             date-idx={post.idx}
-            className="item w-[36.0rem] relative flex shrink-0 flex-col gap-[1.2rem] overflow-hidden h-[50svh]"
+            ref={cardRef}
+            className="item w-[36.0rem] relative flex shrink-0 flex-col gap-[1.2rem] overflow-hidden h-[30svh]"
+            // className="item w-[36.0rem] relative flex shrink-0 flex-col gap-[1.2rem] overflow-hidden h-[30svh] rounded-[3.2rem] shadow-[var(--shadow-normal)]"
             initial={{
                 opacity: 0,
-                y: lightMotion ? 0 : "100svh",
-                filter: lightMotion ? "blur(0px)" : "blur(20px)",
+                y: "100svh",
+                filter: "blur(20px)",
             }}
             animate={{
-                y: lightMotion ? 0 : Math.sin(index * 0.8 + 6 * 0.5) * 90,
+                y: Math.sin(index * 0.8 + 6 * 0.5) * 90,
                 opacity: 1,
                 filter: "blur(0px)",
             }}
             transition={{
-                delay: lightMotion ? 0 : 0.1 * (index + 1),
-                type: lightMotion ? "tween" : "spring",
-                duration: lightMotion ? 0.35 : undefined,
+                delay: 0.1 * (index + 1),
+                type: "spring",
                 stiffness: 100,
                 damping: 15,
             }}
@@ -60,14 +60,13 @@ const ArchiveSliderCard = ({ post, index }: ArchiveSliderCardProps) => {
                 alt={post.title}
                 className="object-cover h-full pointer-events-none"
             />
-            <div className="absolute h-[30%] mask-[linear-gradient(0deg,_#000,_#000_2.5%,_#000_50%,_#0000)] bottom-0 left-0 w-full bg-[linear-gradient(0deg,rgba(0,0,0,0.72)_0%,rgba(0,0,0,0)_100%)] mobile:bg-[linear-gradient(0deg,rgba(0,0,0,0.82)_0%,rgba(0,0,0,0)_100%)] pc:backdrop-blur-[30px]" />
+            <div className="absolute h-[30%] mask-[linear-gradient(0deg,_#000,_#000_2.5%,_#000_50%,_#0000)] bottom-0 left-0 w-full bg-[#00000000] backdrop-blur-[30px]" />
             <motion.div
                 className="absolute bottom-0 left-[50%] bg-[linear-gradient(0deg,#00000000_0%,#00000000)] transform translate-x-[-50%] w-full flex flex-col justify-center items-center"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{
-                    type: lightMotion ? "tween" : "spring",
-                    duration: lightMotion ? 0.25 : undefined,
+                    type: "spring",
                     mass: 0.1,
                     stiffness: 100,
                     damping: 10,
@@ -77,12 +76,11 @@ const ArchiveSliderCard = ({ post, index }: ArchiveSliderCardProps) => {
                     <div className="relative overflow-hidden">
                         <motion.h5
                             className="text-center text-white font-extrabold text-[calc(1svh+1.8rem)] leading-[1.5] whitespace-break-spaces"
-                            initial={{ opacity: 0, y: lightMotion ? 0 : -20 }}
+                            initial={{ opacity: 0, y: -20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{
-                                delay: lightMotion ? 0 : 0.2,
-                                type: lightMotion ? "tween" : "spring",
-                                duration: lightMotion ? 0.25 : undefined,
+                                delay: 0.2,
+                                type: "spring",
                                 mass: 0.1,
                                 stiffness: 100,
                                 damping: 10,
@@ -95,12 +93,11 @@ const ArchiveSliderCard = ({ post, index }: ArchiveSliderCardProps) => {
                     <div className="relative overflow-hidden">
                         <motion.p
                             className="text-center text-[#ffffff99] text-[1.4rem] font-bold whitespace-break-spaces"
-                            initial={{ opacity: 0, y: lightMotion ? 0 : -20 }}
+                            initial={{ opacity: 0, y: -20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{
-                                delay: lightMotion ? 0 : 0.3,
-                                type: lightMotion ? "tween" : "spring",
-                                duration: lightMotion ? 0.25 : undefined,
+                                delay: 0.3,
+                                type: "spring",
                                 mass: 0.1,
                                 stiffness: 100,
                                 damping: 10,
@@ -113,12 +110,11 @@ const ArchiveSliderCard = ({ post, index }: ArchiveSliderCardProps) => {
                     <div className="relative overflow-hidden">
                         <motion.p
                             className="text-center text-[#ffffff99] text-[1.4rem] leading-[1.5] font-bold whitespace-break-spaces"
-                            initial={{ opacity: 0, y: lightMotion ? 0 : -20 }}
+                            initial={{ opacity: 0, y: -20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{
-                                delay: lightMotion ? 0 : 0.4,
-                                type: lightMotion ? "tween" : "spring",
-                                duration: lightMotion ? 0.25 : undefined,
+                                delay: 0.4,
+                                type: "spring",
                                 mass: 0.1,
                                 stiffness: 100,
                                 damping: 10,

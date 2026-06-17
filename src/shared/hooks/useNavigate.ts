@@ -1,8 +1,6 @@
 import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
-import { finishNProgress } from "@/shared/lib/nprogress";
-
 import { useDirtyStore } from "@/shared/stores/useDirtyStore";
 import { useModalStore } from "@/shared/stores/useModalStore";
 import { useLayoutStore } from "@/shared/stores/useLayoutStore";
@@ -64,7 +62,6 @@ const useNavigate = (_fallbackUrl = "/new-home") => {
                 return;
             }
 
-            finishNProgress();
             router.replace(url);
         };
 
@@ -91,12 +88,6 @@ const useNavigate = (_fallbackUrl = "/new-home") => {
             MOVE();
         }
     };
-
-    useEffect(() => {
-        if (transitionPhase === "idle") {
-            finishNProgress();
-        }
-    }, [pathName, transitionPhase]);
 
     useEffect(() => {
         const handleBeforeUnload = (e: BeforeUnloadEvent) => {

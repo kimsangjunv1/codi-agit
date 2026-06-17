@@ -4,9 +4,7 @@ import { useEffect, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { motion } from "motion/react";
 
-import { useLightMotion } from "@/shared/hooks/useLightMotion";
 import { useReducedMotion } from "@/shared/hooks/useReducedMotion";
-import { finishNProgress } from "@/shared/lib/nprogress";
 import { PAGE_REVEAL_COVER_DURATION, PAGE_REVEAL_COVER_EASE, PAGE_REVEAL_READY_TIMEOUT, PAGE_REVEAL_UNCOVER_DURATION, PAGE_REVEAL_UNCOVER_EASE } from "@/shared/constants/pageTransition";
 import { useLayoutStore } from "@/shared/stores/useLayoutStore";
 import IconComponent from "./IconComponent";
@@ -23,36 +21,10 @@ const CLIP_BACK = {
     revealed: "inset(0 100% 0 0)",
 } as const;
 
-type ClipState = {
-    hidden: string;
-    covered: string;
-    revealed: string;
-};
-
-const getScaleReveal = (isForward: boolean, clip: ClipState, initialKey: string, targetKey: string) => {
-    const originFor = (key: string) => {
-        if (key === clip.covered) return isForward ? "left center" : "right center";
-        if (key === clip.hidden) return isForward ? "left center" : "right center";
-        return isForward ? "right center" : "left center";
-    };
-
-    return {
-        initial: {
-            scaleX: initialKey === clip.covered ? 1 : 0,
-            transformOrigin: originFor(initialKey),
-        },
-        animate: {
-            scaleX: targetKey === clip.covered ? 1 : 0,
-            transformOrigin: originFor(targetKey),
-        },
-    };
-};
-
 const PageRevealOverlay = () => {
     const router = useRouter();
     const pathname = usePathname();
     const reducedMotion = useReducedMotion();
-    const lightMotion = useLightMotion();
     const pathnameAtNavStart = useRef(pathname);
     const hasExecutedNavigation = useRef(false);
     const hasStartedInitialReveal = useRef(false);
@@ -126,7 +98,6 @@ const PageRevealOverlay = () => {
 
         if (pathname === pathnameAtNavStart.current) return;
 
-        finishNProgress();
         resetPageReadiness();
 
         if (reducedMotion) {
@@ -176,8 +147,6 @@ const PageRevealOverlay = () => {
     const isCovering = transitionPhase === "covering";
     const duration = reducedMotion ? 0 : isCovering ? PAGE_REVEAL_COVER_DURATION : PAGE_REVEAL_UNCOVER_DURATION;
     const ease = isCovering ? PAGE_REVEAL_COVER_EASE : PAGE_REVEAL_UNCOVER_EASE;
-    const useTransformReveal = lightMotion && !reducedMotion;
-    const scaleReveal = useTransformReveal ? getScaleReveal(isForward, clip, clipInitial, clipTarget) : null;
 
     return (
         <>
@@ -191,13 +160,9 @@ const PageRevealOverlay = () => {
             {isActive ? (
                 <motion.div
                     aria-hidden
-                    className="fixed inset-0 z-[1000000001] bg-black pointer-events-auto flex items-center justify-center will-change-transform"
-                    {...(scaleReveal
-                        ? scaleReveal
-                        : {
-                              initial: { clipPath: clipInitial },
-                              animate: { clipPath: clipTarget },
-                          })}
+                    className="fixed inset-0 z-[1000000001] bg-black pointer-events-auto flex items-center justify-center"
+                    initial={{ clipPath: clipInitial }}
+                    animate={{ clipPath: clipTarget }}
                     transition={{
                         duration,
                         ease,

@@ -10,7 +10,6 @@ import PopupProvider from "@/app/providers/PopupProvider";
 import LenisProvider from "@/app/providers/LenisProvider";
 
 import Toast from "@/shared/ui/layout/Toast";
-import PageProgress from "@/shared/ui/common/PageProgress";
 import PathCheckComponent from "@/shared/ui/common/PathCheckComponent";
 import PageRevealOverlay from "@/shared/ui/common/PageRevealOverlay";
 import PageContentGate from "@/shared/ui/common/PageContentGate";
@@ -73,7 +72,6 @@ export default function RootLayout({ children, modal }: Readonly<{ children: Rea
                     <QueryProvider>
                         <AuthProvider>
                             <PopupProvider>
-                                <PageProgress />
                                 <LenisProvider />
                                 <PageRevealOverlay />
                                 <PageContentGate>

@@ -5,7 +5,7 @@ import { signOut, useSession } from "next-auth/react";
 import { AnimatePresence, motion } from "motion/react";
 
 import { PAGE_REVEAL_COVER_DURATION, PAGE_REVEAL_COVER_EASE, PAGE_REVEAL_UNCOVER_DURATION, PAGE_REVEAL_UNCOVER_EASE } from "@/shared/constants/pageTransition";
-import { useLightMotion } from "@/shared/hooks/useLightMotion";
+import { useReducedMotion } from "@/shared/hooks/useReducedMotion";
 import { useLayoutStore } from "@/shared/stores/useLayoutStore";
 import { useServiceStore } from "@/shared/stores/useServiceStore";
 
@@ -16,15 +16,15 @@ import TextShimmer from "../common/TextShimmerComponent";
 import useNavigate from "@/shared/hooks/useNavigate";
 import { headerMenuList } from "@/shared/constants/lists/configServiceList";
 
-const MENU_MOTION = {
-    hidden: { x: "100%" },
-    visible: { x: 0 },
-    exit: { x: "100%" },
+const CLIP_MENU = {
+    hidden: "inset(0 100% 0 0)",
+    visible: "inset(0 0 0 0)",
+    exit: "inset(0 0 0 100%)",
 } as const;
 
 const MobileMenu = () => {
-    const lightMotion = useLightMotion();
-    const { isMobile, isMobileMenuOpen, setIsMobileMenuOpen } = useLayoutStore();
+    const reducedMotion = useReducedMotion();
+    const { isMobileMenuOpen, setIsMobileMenuOpen } = useLayoutStore();
     const { data: session } = useSession();
     const { pushToUrl, currentPathName } = useNavigate();
     const { reset } = useServiceStore();
@@ -46,18 +46,18 @@ const MobileMenu = () => {
             <AnimatePresence mode="wait">
                 {isMobileMenuOpen ? (
                     <motion.article
-                        className="mobile flex flex-col justify-center items-center gap-[1.6rem] fixed top-0 left-0 w-full h-full bg-[#232323] z-10000 will-change-transform"
-                        initial={MENU_MOTION.hidden}
-                        animate={MENU_MOTION.visible}
+                        className="mobile flex flex-col justify-center items-center gap-[1.6rem] fixed top-0 left-0 w-full h-full bg-[#232323] z-10000"
+                        initial={{ clipPath: CLIP_MENU.hidden }}
+                        animate={{ clipPath: CLIP_MENU.visible }}
                         exit={{
-                            ...MENU_MOTION.exit,
+                            clipPath: CLIP_MENU.exit,
                             transition: {
-                                duration: lightMotion ? 0 : PAGE_REVEAL_UNCOVER_DURATION,
+                                duration: reducedMotion ? 0 : PAGE_REVEAL_UNCOVER_DURATION,
                                 ease: PAGE_REVEAL_UNCOVER_EASE,
                             },
                         }}
                         transition={{
-                            duration: lightMotion ? 0 : PAGE_REVEAL_COVER_DURATION,
+                            duration: reducedMotion ? 0 : PAGE_REVEAL_COVER_DURATION,
                             ease: PAGE_REVEAL_COVER_EASE,
                         }}
                     >
@@ -93,15 +93,15 @@ const MobileMenu = () => {
 
                                 {headerMenuList.map((e, i) => (
                                     <div
-                                        key={`${e.route}-${i}`}
+                                        key={`${e}-${i}-${isMobileMenuOpen}`}
                                         className="h-[4.8rem] overflow-hidden"
                                     >
                                         <motion.div
                                             initial={{ y: "4.8rem" }}
                                             animate={{ y: "0rem" }}
                                             transition={{
-                                                delay: lightMotion ? 0 : 0.1 * (i + 1),
-                                                duration: lightMotion ? 0 : PAGE_REVEAL_COVER_DURATION,
+                                                delay: reducedMotion ? 0 : 0.1 * (i + 1),
+                                                duration: reducedMotion ? 0 : PAGE_REVEAL_COVER_DURATION,
                                                 ease: PAGE_REVEAL_COVER_EASE,
                                             }}
                                         >
@@ -113,26 +113,32 @@ const MobileMenu = () => {
                                     </div>
                                 ))}
 
-                                <div className="w-full h-auto overflow-hidden">
+                                <div
+                                    key={`static-1-${isMobileMenuOpen}`}
+                                    className="w-full h-auto overflow-hidden"
+                                >
                                     <motion.div
                                         className="w-full bg-[#ffffff]/30 my-[1.6rem] h-[0.1rem]"
                                         initial={{ y: "4.8rem" }}
                                         animate={{ y: "0rem" }}
                                         transition={{
-                                            delay: lightMotion ? 0 : 0.1 * (headerMenuList.length + 1),
-                                            duration: lightMotion ? 0 : PAGE_REVEAL_COVER_DURATION,
+                                            delay: reducedMotion ? 0 : 0.1 * (headerMenuList.length + 1),
+                                            duration: reducedMotion ? 0 : PAGE_REVEAL_COVER_DURATION,
                                             ease: PAGE_REVEAL_COVER_EASE,
                                         }}
                                     />
                                 </div>
 
-                                <div className="h-[4.8rem] overflow-hidden">
+                                <div
+                                    key={`static-2-${isMobileMenuOpen}`}
+                                    className="h-[4.8rem] overflow-hidden"
+                                >
                                     <motion.div
                                         initial={{ y: "4.8rem" }}
                                         animate={{ y: "0rem" }}
                                         transition={{
-                                            delay: lightMotion ? 0 : 0.1 * (headerMenuList.length + 2),
-                                            duration: lightMotion ? 0 : PAGE_REVEAL_COVER_DURATION,
+                                            delay: reducedMotion ? 0 : 0.1 * (headerMenuList.length + 2),
+                                            duration: reducedMotion ? 0 : PAGE_REVEAL_COVER_DURATION,
                                             ease: PAGE_REVEAL_COVER_EASE,
                                         }}
                                     >
@@ -165,27 +171,21 @@ const MobileMenu = () => {
                                         className="invert"
                                     />
 
-                                    {isMobile ? (
-                                        <p className="h-[2.1rem] leading-[1.7] text-[1.4rem] text-[#ffffff]">
-                                            © kimsangjunv1. All rights reserved.
-                                        </p>
-                                    ) : (
-                                        <TextShimmer
-                                            as="p"
-                                            duration={3}
-                                            style={{
-                                                color: "#ffffff",
-                                                fontSize: "1.4rem",
-                                            }}
-                                            color={{
-                                                start: "#ffffff",
-                                                end: "#8c8c8c",
-                                            }}
-                                            className="h-[2.1rem] leading-[1.7]"
-                                        >
-                                            © kimsangjunv1. All rights reserved.
-                                        </TextShimmer>
-                                    )}
+                                    <TextShimmer
+                                        as="p"
+                                        duration={3}
+                                        style={{
+                                            color: "#ffffff",
+                                            fontSize: "1.4rem",
+                                        }}
+                                        color={{
+                                            start: "#ffffff",
+                                            end: "#8c8c8c",
+                                        }}
+                                        className="h-[2.1rem] leading-[1.7]"
+                                    >
+                                        © kimsangjunv1. All rights reserved.
+                                    </TextShimmer>
                                 </section>
 
                                 <UI.Button

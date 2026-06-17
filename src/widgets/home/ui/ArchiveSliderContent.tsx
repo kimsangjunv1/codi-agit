@@ -11,13 +11,8 @@ type ArchiveSliderContentProps = {
     posts: PostLatestItem[];
 };
 
-const CARD_WIDTH_REM = 36;
-const GAP_REM = 2.4;
-const MAX_CARD_SCALE = 1;
-const MIN_CARD_SCALE = 0.6;
-
 const ArchiveSliderContent = ({ posts }: ArchiveSliderContentProps) => {
-    const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+    const cardRefs = useRef<(HTMLElement | null)[]>([]);
     const scrollRef = useRef<HTMLDivElement | null>(null);
     const sliderRef = useRef<HTMLDivElement | null>(null);
     const containerRef = useRef<HTMLDivElement | null>(null);
@@ -92,38 +87,33 @@ const ArchiveSliderContent = ({ posts }: ArchiveSliderContentProps) => {
         window.scrollTo({ top: Math.round(targetScrollTop), behavior: "smooth" });
     };
 
-    const updateCardScales = useCallback(() => {
-        const viewport = containerRef.current;
+    const updateCardHeights = useCallback(() => {
+        const container = containerRef.current;
 
-        if (!viewport) return;
+        if (!container) return;
 
-        const viewportWidth = viewport.clientWidth;
-        const containerCenter = viewportWidth / 2;
-        const sliderX = x.get();
-        const remPx = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
-        const cardWidth = CARD_WIDTH_REM * remPx;
-        const gap = GAP_REM * remPx;
-        const trackPaddingLeft = viewportWidth / 2 - cardWidth / 2;
+        const containerRect = container.getBoundingClientRect();
+        const containerCenter = containerRect.left + containerRect.width / 2;
 
-        cardRefs.current.forEach((wrapper, index) => {
-            if (!wrapper) return;
+        cardRefs.current.forEach((card) => {
+            if (!card) return;
 
-            const cardCenter = trackPaddingLeft + index * (cardWidth + gap) + cardWidth / 2 + sliderX;
+            const cardRect = card.getBoundingClientRect();
+            const cardCenter = cardRect.left + cardRect.width / 2;
             const distance = Math.abs(containerCenter - cardCenter);
-            const maxDistance = viewportWidth / 2;
+            const maxDistance = containerRect.width / 2;
             const ratio = Math.max(0, 1 - distance / maxDistance);
-            const scaleY = MIN_CARD_SCALE + (MAX_CARD_SCALE - MIN_CARD_SCALE) * ratio;
 
-            wrapper.style.transform = `scaleY(${scaleY})`;
+            card.style.height = `${30 + 20 * ratio}svh`;
         });
-    }, [x]);
+    }, []);
 
     useEffect(() => {
-        const unsub = x.on("change", updateCardScales);
-        updateCardScales();
+        const unsub = x.onChange(() => requestAnimationFrame(updateCardHeights));
+        updateCardHeights();
 
         return () => unsub();
-    }, [x, posts, updateCardScales]);
+    }, [x, posts, updateCardHeights]);
 
     return (
         <div
@@ -137,29 +127,24 @@ const ArchiveSliderContent = ({ posts }: ArchiveSliderContentProps) => {
                 >
                     <motion.div
                         ref={sliderRef}
-                        className="flex gap-[2.4rem] items-center px-[calc(50dvw-(36.0rem/2))] cursor-grab touch-pan-y will-change-transform"
+                        className="flex gap-[2.4rem] items-center px-[calc(50dvw-(36.0rem/2))] cursor-grab"
                         style={{ x }}
                         drag={maxTranslate > 0 ? "x" : false}
                         dragConstraints={{ left: -maxTranslate, right: 0 }}
                         dragElastic={0.12}
-                        dragMomentum={false}
                         onDragStart={handleDragStart}
                         onDragEnd={handleDragEnd}
                         whileTap={{ cursor: "grabbing" }}
                     >
                         {posts.map((post, index) => (
-                            <div
+                            <ArchiveSliderCard
                                 key={post.idx}
-                                ref={(element) => {
+                                post={post}
+                                index={index}
+                                cardRef={(element) => {
                                     cardRefs.current[index] = element;
                                 }}
-                                className="flex h-[50svh] shrink-0 items-center origin-center will-change-transform"
-                            >
-                                <ArchiveSliderCard
-                                    post={post}
-                                    index={index}
-                                />
-                            </div>
+                            />
                         ))}
                     </motion.div>
                 </div>
