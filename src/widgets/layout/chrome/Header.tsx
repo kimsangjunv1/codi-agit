@@ -12,6 +12,7 @@ import { getPostRouteFlags } from "@/features/managePost";
 
 import { useLayoutStore } from "@/shared/stores/useLayoutStore";
 import HomeViewModeNav from "@/widgets/home/ui/HomeViewModeNav";
+import Marquee from "@/shared/ui/layout/Marquee";
 
 const Header = () => {
     const [showMenu, setShowMenu] = useState(false);
@@ -125,6 +126,17 @@ const Header = () => {
                         </AnimatePresence>
                     </section>
                 </section>
+
+                {/* <section className="absolute right-[calc(1.6rem*3)]">
+                    <Marquee
+                        content={"현재 구직중이에요"}
+                        duration={10}
+                        className={{
+                            container: "bg-black rounded-full p-[0.8rem]",
+                            marquee: "gap-[1.2rem] text-white font-bold",
+                        }}
+                    />
+                </section> */}
 
                 {/* 모바일 버튼 */}
                 <button
