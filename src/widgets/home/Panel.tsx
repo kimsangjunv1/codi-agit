@@ -13,6 +13,7 @@ export default function Panel({ initialData }: HomePanelProps) {
     return (
         <HomePageProvider>
             <HomeLayer.ArchiveFeed initialData={initialData} />
+            <HomeLayer.Search />
             <HomeLayer.Modal />
         </HomePageProvider>
     );

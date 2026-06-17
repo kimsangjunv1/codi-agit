@@ -19,7 +19,7 @@ type HomeViewModeNavProps = {
 };
 
 const HomeViewModeNav = ({ variant }: HomeViewModeNavProps) => {
-    const { mainViewMode, setMainViewMode, categoryFilter, setCategoryFilter } = useLayoutStore();
+    const { mainViewMode, setMainViewMode, categoryFilter, setCategoryFilter, setIsSearchOpen } = useLayoutStore();
     const { data: getCategoryListData } = useGetCategoryListQuery();
 
     const isFloating = variant === "floating";
@@ -32,6 +32,14 @@ const HomeViewModeNav = ({ variant }: HomeViewModeNavProps) => {
 
     return (
         <AnimatePresence mode="popLayout">
+            <UI.Button
+                onClick={() => setIsSearchOpen(true)}
+                className={`${inactiveTextClass} flex h-[2.8rem] w-[2.8rem] shrink-0 items-center justify-center`}
+            >
+                <span className="relative h-[1.6rem] w-[1.6rem] rounded-full border-[0.18rem] border-current after:absolute after:right-[-0.45rem] after:bottom-[-0.35rem] after:h-[0.7rem] after:w-[0.18rem] after:rotate-[-45deg] after:rounded-full after:bg-current" />
+                <span className="sr-only">검색</span>
+            </UI.Button>
+
             <UI.Button
                 onClick={() => {
                     window.scrollTo({ top: 0, left: 0 });
