@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import NProgress from "nprogress";
+
+import { finishNProgress } from "@/shared/lib/nprogress";
 
 import { useDirtyStore } from "@/shared/stores/useDirtyStore";
 import { useModalStore } from "@/shared/stores/useModalStore";
@@ -38,7 +39,6 @@ const useNavigate = (_fallbackUrl = "/new-home") => {
         if (isTransitioning) return;
 
         const MOVE = () => {
-            NProgress.start();
             beginRouteTransition({
                 direction: "forward",
                 navigation: { type: "push", url },
@@ -56,8 +56,6 @@ const useNavigate = (_fallbackUrl = "/new-home") => {
         if (isTransitioning) return;
 
         const MOVE = () => {
-            NProgress.start();
-
             if (animation) {
                 beginRouteTransition({
                     direction: "forward",
@@ -66,7 +64,7 @@ const useNavigate = (_fallbackUrl = "/new-home") => {
                 return;
             }
 
-            NProgress.done();
+            finishNProgress();
             router.replace(url);
         };
 
@@ -81,7 +79,6 @@ const useNavigate = (_fallbackUrl = "/new-home") => {
         if (isTransitioning) return;
 
         const MOVE = () => {
-            NProgress.start();
             beginRouteTransition({
                 direction: "back",
                 navigation: { type: "back" },
@@ -97,7 +94,7 @@ const useNavigate = (_fallbackUrl = "/new-home") => {
 
     useEffect(() => {
         if (transitionPhase === "idle") {
-            NProgress.done();
+            finishNProgress();
         }
     }, [pathName, transitionPhase]);
 

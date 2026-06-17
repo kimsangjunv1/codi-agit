@@ -63,7 +63,7 @@ const RenderContents = ({
 
     return (
         <Fragment>
-            <section className="flex flex-col justify-center items-center gap-[3.2rem] h-[100dvh] p-[0.8rem] w-full">
+            <section className="flex flex-col justify-center items-center gap-[3.2rem] h-[100svh] p-[0.8rem] w-full">
                 <PostHero
                     mode="edit"
                     imageUrl={thumbnail}

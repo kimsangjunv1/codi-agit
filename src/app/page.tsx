@@ -34,7 +34,10 @@ const Page = async () => {
     return (
         <>
             <JsonLd data={buildWebsiteJsonLd()} />
-            <Main id="home" className={{ inner: "min-h-[100dvh]", container: "" }}>
+            <Main
+                id="home"
+                className={{ inner: "min-h-[100svh]", container: "" }}
+            >
                 <HomeView initialData={initialData} />
             </Main>
         </>

@@ -12,7 +12,6 @@ import LenisProvider from "@/app/providers/LenisProvider";
 import Toast from "@/shared/ui/layout/Toast";
 import PageProgress from "@/shared/ui/common/PageProgress";
 import PathCheckComponent from "@/shared/ui/common/PathCheckComponent";
-import ClientPageProgress from "@/shared/ui/common/ClientComponent";
 import PageRevealOverlay from "@/shared/ui/common/PageRevealOverlay";
 import PageContentGate from "@/shared/ui/common/PageContentGate";
 import RootChromeView from "@/views/layout/RootChromeView";
@@ -85,7 +84,6 @@ export default function RootLayout({ children, modal }: Readonly<{ children: Rea
                                         </PathCheckComponent>
                                     </RootChromeView>
                                 </PageContentGate>
-                                <ClientPageProgress />
                             </PopupProvider>
                             <Toast />
                         </AuthProvider>

@@ -3,12 +3,15 @@
 import ReactLenis from "lenis/react";
 import { usePathname } from "next/navigation";
 
+import { useLayoutStore } from "@/shared/stores/useLayoutStore";
+
 const LENIS_ROUTES = new Set(["/resume"]);
 
 export default function LenisProvider() {
     const pathname = usePathname();
+    const isMobile = useLayoutStore((state) => state.isMobile);
 
-    if (!LENIS_ROUTES.has(pathname)) {
+    if (!LENIS_ROUTES.has(pathname) || isMobile) {
         return null;
     }
 

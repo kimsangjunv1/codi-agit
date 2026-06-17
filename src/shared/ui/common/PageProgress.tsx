@@ -1,20 +1,22 @@
 "use client";
 
 import { useEffect } from "react";
-import NProgress from "nprogress";
 import { usePathname } from "next/navigation";
 
-import "nprogress/nprogress.css";
+import { finishNProgress, configureNProgress } from "@/shared/lib/nprogress";
 
 const PageProgress = () => {
-	const pathname = usePathname();
-	// const searchParams = useSearchParams();
+    const pathname = usePathname();
 
-	useEffect(() => {
-		NProgress.done();
-	}, [ pathname ]);
+    useEffect(() => {
+        configureNProgress();
+    }, []);
 
-	return null;
-}
+    useEffect(() => {
+        finishNProgress();
+    }, [pathname]);
 
-export default PageProgress
+    return null;
+};
+
+export default PageProgress;

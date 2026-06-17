@@ -5,7 +5,7 @@ type PerformanceTestLayoutProps = {
 };
 
 const PerformanceTestLayout = ({ children }: PerformanceTestLayoutProps) => {
-    return <div className="min-h-[100dvh] w-full bg-white">{children}</div>;
+    return <div className="min-h-[100svh] w-full bg-white">{children}</div>;
 };
 
 export default PerformanceTestLayout;

@@ -64,7 +64,7 @@ const RenderContents = ({ id, initialData }: { id: string; initialData: GetPostD
 
     if (isLoading && !hasContent) {
         return (
-            <section className="flex items-center justify-center w-full h-[100dvh]">
+            <section className="flex items-center justify-center w-full h-[100svh]">
                 <UI.Loading />
             </section>
         );
@@ -76,7 +76,7 @@ const RenderContents = ({ id, initialData }: { id: string; initialData: GetPostD
                 title="게시물을 불러오지 못했습니다"
                 message={error?.message}
                 onRetry={() => refetch()}
-                className="h-[100dvh]"
+                className="h-[100svh]"
             />
         );
     }
@@ -87,7 +87,7 @@ const RenderContents = ({ id, initialData }: { id: string; initialData: GetPostD
                 title="게시물을 불러오지 못했습니다"
                 message={getPostListData.resultMessage}
                 onRetry={() => refetch()}
-                className="h-[100dvh]"
+                className="h-[100svh]"
             />
         );
     }
@@ -96,7 +96,7 @@ const RenderContents = ({ id, initialData }: { id: string; initialData: GetPostD
 
     return (
         <>
-            <section className="flex flex-col justify-center items-center gap-[3.2rem] h-[100dvh] p-[0.8rem] w-full">
+            <section className="flex flex-col justify-center items-center gap-[3.2rem] h-[100svh] p-[0.8rem] w-full">
                 <PostHero
                     mode="view"
                     imageUrl={DATA?.thumbnail ?? ""}

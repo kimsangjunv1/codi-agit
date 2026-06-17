@@ -2115,7 +2115,7 @@ const Loading = () => {
 const ErrorRetry = ({ onRetry }: { onRetry?: () => void }) => (
     <article
         role="alert"
-        className="h-[100dvh!important] w-[100dvw!important] flex flex-col items-center justify-center gap-[1.6rem]"
+        className="h-[100svh!important] w-[100dvw!important] flex flex-col items-center justify-center gap-[1.6rem]"
     >
         <div className="alert-inner flex flex-col gap-[1.6rem] shadow-[var(--shadow-normal)] rounded-[1.6rem] bg-white p-[0.4rem]">
             <section className="flex flex-col gap-[1.6rem] px-[1.6rem] py-[0.8rem]">
@@ -2138,7 +2138,7 @@ const Error = ({ error, resetErrorBoundary }: FallbackProps) => {
     return (
         <article
             role="alert"
-            className="h-[100dvh!important] w-[100dvw!important] flex flex-col items-center justify-center gap-[1.6rem]"
+            className="h-[100svh!important] w-[100dvw!important] flex flex-col items-center justify-center gap-[1.6rem]"
         >
             <div className="alert-inner flex flex-col gap-[1.6rem] shadow-[var(--shadow-normal)] rounded-[1.6rem] bg-white p-[0.4rem]">
                 <section className="flex flex-col gap-[1.6rem] px-[1.6rem] py-[0.8rem]">
