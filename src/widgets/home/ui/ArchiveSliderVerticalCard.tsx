@@ -74,7 +74,7 @@ const ArchiveSliderVerticalCard = ({ post, index, pauseAnimations = false, cardR
 
                 <div className="absolute bottom-[1.6rem] left-[1.6rem] w-full flex flex-col justify-start items-start">
                     <h5 className="bg-[#000000] text-white text-left text-[2.0rem] font-bold p-[0.4rem_0.4rem_0_0.4rem]">{post.title}</h5>
-                    <p className="bg-[#000000] text-[#ffffffb5] text-left font-semibold leading-[1.5] line-clamp-2 text-[1.6rem] p-[0.8rem_0.4rem_0.4rem_0.4rem]">&quot;{post.summary}&quot;</p>
+                    <p className="bg-[#000000] text-[#ffffffc7] text-left font-semibold leading-[1.5] line-clamp-2 text-[1.6rem] p-[0.8rem_0.4rem_0.4rem_0.4rem]">&quot;{post.summary}&quot;</p>
                 </div>
             </MotionLink>
         </div>
