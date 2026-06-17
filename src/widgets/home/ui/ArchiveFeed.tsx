@@ -9,6 +9,7 @@ import { clampPageScroll } from "@/widgets/home/lib/clampPageScroll";
 
 import ArchiveList from "./ArchiveList";
 import ArchiveSlider from "./ArchiveSlider";
+import ArchiveSliderVertical from "./ArchiveSliderVertical";
 import HomeViewModeFloatingMenu from "./HomeViewModeFloatingMenu";
 
 type ArchiveFeedProps = {
@@ -16,7 +17,7 @@ type ArchiveFeedProps = {
 };
 
 const ArchiveFeed = ({ initialData }: ArchiveFeedProps) => {
-    const { mainViewMode, categoryFilter } = useLayoutStore();
+    const { mainViewMode, categoryFilter, isMobile } = useLayoutStore();
 
     useEffect(() => {
         window.scrollTo({ top: 0 });
@@ -32,7 +33,11 @@ const ArchiveFeed = ({ initialData }: ArchiveFeedProps) => {
             <>
                 <section className="flex-1 w-full h-full overflow-hidden">
                     <UI.ErrorBoundaryWrapper>
-                        <ArchiveSlider initialData={initialData} />
+                        {isMobile ? (
+                            <ArchiveSliderVertical initialData={initialData} />
+                        ) : (
+                            <ArchiveSlider initialData={initialData} />
+                        )}
                     </UI.ErrorBoundaryWrapper>
                 </section>
                 <HomeViewModeFloatingMenu />
