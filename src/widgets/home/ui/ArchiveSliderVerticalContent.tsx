@@ -20,7 +20,6 @@ const ArchiveSliderVerticalContent = ({ posts }: ArchiveSliderVerticalContentPro
     const y = useMotionValue(0);
 
     const [maxTranslate, setMaxTranslate] = useState(0);
-    const [isDragging, setIsDragging] = useState(false);
 
     const { scrollYProgress } = useScroll({
         target: scrollRef,
@@ -63,29 +62,11 @@ const ArchiveSliderVerticalContent = ({ posts }: ArchiveSliderVerticalContentPro
         if (maxTranslate <= 0) return;
 
         const unsub = scrollYProgress.on("change", (value) => {
-            if (!isDragging) y.set(-value * maxTranslate);
+            y.set(-value * maxTranslate);
         });
 
         return () => unsub();
-    }, [scrollYProgress, maxTranslate, isDragging, y]);
-
-    const handleDragStart = () => setIsDragging(true);
-
-    const handleDragEnd = () => {
-        setIsDragging(false);
-
-        const finalY = y.get();
-        const progress = maxTranslate > 0 ? Math.max(0, Math.min(1, -finalY / maxTranslate)) : 0;
-        const scrollEl = scrollRef.current;
-
-        if (!scrollEl) return;
-
-        const startScroll = scrollEl.offsetTop;
-        const endScroll = scrollEl.offsetTop + scrollEl.offsetHeight - window.innerHeight;
-        const targetScrollTop = startScroll + progress * (endScroll - startScroll);
-
-        window.scrollTo({ top: Math.round(targetScrollTop), behavior: "smooth" });
-    };
+    }, [scrollYProgress, maxTranslate, y]);
 
     const updateCardWidths = useCallback(() => {
         const container = containerRef.current;
@@ -127,14 +108,8 @@ const ArchiveSliderVerticalContent = ({ posts }: ArchiveSliderVerticalContentPro
                 >
                     <motion.div
                         ref={sliderRef}
-                        className="flex flex-col gap-[2.4rem] items-center py-[calc(50dvh-(30svh/2))] cursor-grab"
+                        className="flex flex-col gap-[2.4rem] items-center py-[calc(50dvh-(30svh/2))]"
                         style={{ y }}
-                        drag={maxTranslate > 0 ? "y" : false}
-                        dragConstraints={{ top: -maxTranslate, bottom: 0 }}
-                        dragElastic={0.12}
-                        onDragStart={handleDragStart}
-                        onDragEnd={handleDragEnd}
-                        whileTap={{ cursor: "grabbing" }}
                     >
                         {posts.map((post, index) => (
                             <ArchiveSliderVerticalCard
