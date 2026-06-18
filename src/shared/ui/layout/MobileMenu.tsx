@@ -84,7 +84,7 @@ const MobileMenu = () => {
                             />
                         </UI.Button>
                         {/* 목록 */}
-                        <section className="mobile-inner max-w-[var(--size-tablet)] px-[2.4rem] py-[2.4rem] w-full h-full flex flex-col items-start justify-between">
+                        <section className="mobile-inner max-w-[calc(var(--size-tablet)/2)] px-[2.4rem] py-[2.4rem] w-full h-full flex flex-col items-start justify-between">
                             <section className="flex flex-col items-start">
                                 <div className="w-full overflow-hidden mb-[2.4rem]">
                                     <p className="text-[5.2rem] font-bold leading-[1.5] text-[#ffffff]">Hej!</p>

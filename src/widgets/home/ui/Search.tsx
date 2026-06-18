@@ -9,11 +9,11 @@ import useNavigate from "@/shared/hooks/useNavigate";
 import { useLayoutStore } from "@/shared/stores/useLayoutStore";
 
 const quickActions = [
-    { title: "Documentation", url: "/resume" },
-    { title: "Components", url: "/" },
-    { title: "Blocks", url: "/manager/post", badge: "PRO" },
-    { title: "Templates", url: "/manager/category", badge: "PRO", active: true },
-    { title: "Figma File", url: "/manager", badge: "PRO" },
+    { title: "이력서", url: "/resume" },
+    { title: "메인", url: "/" },
+    { title: "포스트 관리", url: "/manager/post", badge: "ADMIN" },
+    { title: "카테고리 관리", url: "/manager/category", badge: "ADMIN", active: true },
+    { title: "어드민", url: "/manager", badge: "ADMIN" },
 ];
 
 const Search = () => {
@@ -29,14 +29,7 @@ const Search = () => {
     const [selectedIndex, setSelectedIndex] = useState(0);
 
     const shouldSearch = debouncedKeyword.trim().length >= 2;
-    const baseActions = useMemo(
-        () => [
-            ...quickActions,
-            { title: "Introduction", url: "/" },
-            { title: "Installation", url: "/resume" },
-        ],
-        [],
-    );
+    const baseActions = useMemo(() => [...quickActions, { title: "Introduction", url: "/" }, { title: "Installation", url: "/resume" }], []);
     const selectableItems = shouldSearch ? results : baseActions;
 
     const groupedResults = useMemo(
@@ -151,7 +144,7 @@ const Search = () => {
                         role="dialog"
                         aria-modal="true"
                         aria-label="통합 검색"
-                        className="w-full max-w-[53.6rem] overflow-hidden rounded-[1.6rem] border border-[#e9e9e9] bg-white shadow-[0_2.4rem_6.4rem_rgba(0,0,0,0.22)]"
+                        className="w-full max-w-[53.6rem] overflow-hidden border border-[#e9e9e9] bg-white shadow-[0_2.4rem_6.4rem_rgba(0,0,0,0.22)]"
                         initial={{ opacity: 0, scale: 0.96, y: 10 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.96, y: 10 }}
@@ -192,16 +185,13 @@ const Search = () => {
                                                 className={`flex h-[4.8rem] items-center rounded-[1.1rem] px-[1.2rem] text-left text-[1.6rem] text-[#171717] transition-colors ${selectedIndex === index ? "bg-[#f5f5f5]" : "hover:bg-[#f5f5f5]"}`}
                                             >
                                                 <span>{action.title}</span>
-                                                {action.badge && (
-                                                    <span className="ml-[1.0rem] rounded-[0.5rem] bg-[#ffe8e2] px-[0.6rem] py-[0.25rem] text-[1.0rem] font-bold text-[#ff3d00]">
-                                                        {action.badge}
-                                                    </span>
-                                                )}
+                                                {action.badge && <span className="ml-[1.0rem] bg-[#000000] px-[0.6rem] py-[0.25rem] text-[1.0rem] font-bold text-[#77ff00]">{action.badge}</span>}
                                                 {selectedIndex === index && <span className="ml-auto text-[2.0rem] text-[#787878]">›</span>}
                                             </button>
                                         ))}
                                     </section>
-                                    <section className="mt-[1.2rem] border-t border-[#eeeeee] pt-[1.8rem]">
+
+                                    {/* <section className="mt-[1.2rem] border-t border-[#eeeeee] pt-[1.8rem]">
                                         <p className="mb-[1.8rem] text-[1.4rem] text-[#777777]">Getting Started</p>
                                         <button
                                             type="button"
@@ -219,16 +209,14 @@ const Search = () => {
                                         >
                                             Installation
                                         </button>
-                                    </section>
+                                    </section> */}
                                 </>
                             ) : (
                                 <>
                                     <p className="mb-[1.8rem] text-[1.4rem] text-[#777777]">Search Results</p>
                                     {isLoading && <p className="px-[1.2rem] text-[1.5rem] text-[#777777]">검색 중...</p>}
                                     {errorMessage && <p className="px-[1.2rem] text-[1.5rem] text-[#ff3d00]">{errorMessage}</p>}
-                                    {!isLoading && !errorMessage && results.length === 0 && (
-                                        <p className="px-[1.2rem] text-[1.5rem] text-[#777777]">검색 결과가 없습니다</p>
-                                    )}
+                                    {!isLoading && !errorMessage && results.length === 0 && <p className="px-[1.2rem] text-[1.5rem] text-[#777777]">검색 결과가 없습니다</p>}
                                     {!isLoading &&
                                         Object.entries(groupedResults).map(([group, items]) => (
                                             <section
@@ -240,20 +228,16 @@ const Search = () => {
                                                     const resultIndex = results.findIndex((result) => result.id === item.id);
 
                                                     return (
-                                                    <button
-                                                        key={item.id}
-                                                        type="button"
-                                                        onClick={() => moveToUrl(item.url)}
-                                                        onMouseEnter={() => setSelectedIndex(resultIndex)}
-                                                        className={`flex min-h-[5.6rem] w-full flex-col justify-center rounded-[1.1rem] px-[1.2rem] text-left transition-colors ${selectedIndex === resultIndex ? "bg-[#f5f5f5]" : "hover:bg-[#f5f5f5]"}`}
-                                                    >
-                                                        <span className="line-clamp-1 text-[1.6rem] text-[#171717]">{item.title}</span>
-                                                        {item.description && (
-                                                            <span className="mt-[0.4rem] line-clamp-1 text-[1.3rem] text-[#777777]">
-                                                                {item.description}
-                                                            </span>
-                                                        )}
-                                                    </button>
+                                                        <button
+                                                            key={item.id}
+                                                            type="button"
+                                                            onClick={() => moveToUrl(item.url)}
+                                                            onMouseEnter={() => setSelectedIndex(resultIndex)}
+                                                            className={`flex min-h-[5.6rem] w-full flex-col justify-center rounded-[1.1rem] px-[1.2rem] text-left transition-colors ${selectedIndex === resultIndex ? "bg-[#f5f5f5]" : "hover:bg-[#f5f5f5]"}`}
+                                                        >
+                                                            <span className="line-clamp-1 text-[1.6rem] text-[#171717]">{item.title}</span>
+                                                            {item.description && <span className="mt-[0.4rem] line-clamp-1 text-[1.3rem] text-[#777777]">{item.description}</span>}
+                                                        </button>
                                                     );
                                                 })}
                                             </section>

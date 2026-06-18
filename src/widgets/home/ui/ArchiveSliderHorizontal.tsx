@@ -41,17 +41,22 @@ const ArchiveSliderHorizontalCard = ({ post, index, containerRef, shouldBlockCli
         axis: "x",
         offset: ["start end", "center center", "end start"],
     });
-    const height = useTransform(scrollXProgress, [0, 0.5, 1], ["30svh", "65svh", "30svh"]);
-    // const height = useTransform(scrollXProgress, [0, 0.5, 1], ["30svh", "50svh", "30svh"]);
+    const height = useTransform(scrollXProgress, [0, 0.5, 1], ["30svh", "50svh", "30svh"]);
 
     return (
         <motion.button
             ref={cardRef}
-            // href={postHref}
             data-idx={post.idx}
             aria-label={post.title}
             draggable={false}
             className="block w-[36.0rem] shrink-0 will-change-[height,transform]"
+            whileHover={{
+                scale: 0.95,
+                transition: {
+                    duration: 0.1,
+                    delay: 0,
+                },
+            }}
             initial={{
                 opacity: 0,
                 y: "100svh",
@@ -62,9 +67,8 @@ const ArchiveSliderHorizontalCard = ({ post, index, containerRef, shouldBlockCli
             }}
             transition={{
                 delay: 0.1 * (index + 1),
-                type: "spring",
-                stiffness: 100,
-                damping: 15,
+                duration: 0.8,
+                ease: [0.22, 1, 0.36, 1], // cubic bezier
             }}
             onClick={(event) => {
                 if (shouldBlockClickRef.current) return;
