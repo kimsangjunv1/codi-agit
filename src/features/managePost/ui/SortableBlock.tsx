@@ -415,6 +415,7 @@ const Block = ({ block, rowIndex, blockIndex, last, blockCount }: { block: Secti
             {focusedEditor ? (
                 <div
                     className="pointer-events-auto absolute bottom-[calc((2.8rem/1)*-1)] left-[50%] transform translate-x-[-50%] mobile:w-[80%] pc:w-[50%]"
+                    // className="pointer-events-auto absolute bottom-[calc((2.8rem/1)*-1)] left-[50%] transform translate-x-[-50%] mobile:w-[80%] pc:w-[50%]"
                     // className="pointer-events-auto absolute bottom-0 left-1/2 z-20 w-full -translate-x-1/2 translate-y-1/2 flex justify-center"
                     onPointerDown={(event) => event.stopPropagation()}
                 >
