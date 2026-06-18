@@ -95,34 +95,15 @@ const SortableBlock = ({ contents }: { contents?: Row[] }) => {
 
 const Item = ({ row, rowIndex }: { row: Row; rowIndex: number }) => {
     const dragControls = useDragControls();
-    const groupRef = useRef<HTMLDivElement>(null);
 
     const [isGrabbing, setIsGrabbing] = useState(false);
-    const [focusedEditor, setFocusedEditor] = useState<Editor | null>(null);
 
     const { setToast } = useToastStore();
     const { rows, addBlock, deleteRow } = useBlockStore();
     const isSingleGroup = rows.length === 1;
 
-    const handleEditorFocus = useCallback((editor: Editor) => {
-        setFocusedEditor(editor);
-    }, []);
-
-    const handleEditorBlur = useCallback(() => {
-        requestAnimationFrame(() => {
-            const activeElement = document.activeElement;
-
-            if (groupRef.current?.contains(activeElement)) {
-                return;
-            }
-
-            setFocusedEditor(null);
-        });
-    }, []);
-
     return (
         <Reorder.Item
-            ref={groupRef}
             value={row}
             layout
             transition={REORDER_TRANSITION}
@@ -224,21 +205,10 @@ const Item = ({ row, rowIndex }: { row: Row; rowIndex: number }) => {
                             blockIndex={blockIndex}
                             last={row.length !== 1}
                             blockCount={row.length}
-                            onEditorFocus={handleEditorFocus}
-                            onEditorBlur={handleEditorBlur}
                         />
                     </motion.section>
                 ))}
             </section>
-
-            {focusedEditor ? (
-                <div
-                    className="pointer-events-auto absolute left-[0.4rem] right-[0.4rem] top-full z-20 pt-[0.8rem]"
-                    onPointerDown={(event) => event.stopPropagation()}
-                >
-                    <TipTapToolbar editor={focusedEditor} />
-                </div>
-            ) : null}
         </Reorder.Item>
     );
 };
@@ -249,24 +219,38 @@ const Block = ({
     blockIndex,
     last,
     blockCount,
-    onEditorFocus,
-    onEditorBlur,
 }: {
     block: SectionContent;
     rowIndex: number;
     blockIndex: number;
     last: boolean;
     blockCount: number;
-    onEditorFocus?: (editor: Editor) => void;
-    onEditorBlur?: () => void;
 }) => {
     const { updateBlock, deleteBlock, copyBlock, pasteBlock, selectBlock, unSelectBlock } = useBlockStore();
     const { setToast } = useToastStore();
     const addFromFile = usePostDraftImageStore((state) => state.addFromFile);
 
+    const blockRef = useRef<HTMLDivElement>(null);
     const imageInputRef = useRef<HTMLInputElement>(null);
     const [currentImageUrl, setCurrentImageUrl] = useState<string>(block.imageUrl ?? "/");
+    const [focusedEditor, setFocusedEditor] = useState<Editor | null>(null);
     const textContent = blockContentToHtml(block.content);
+
+    const handleEditorFocus = useCallback((editor: Editor) => {
+        setFocusedEditor(editor);
+    }, []);
+
+    const handleEditorBlur = useCallback(() => {
+        requestAnimationFrame(() => {
+            const activeElement = document.activeElement;
+
+            if (blockRef.current?.contains(activeElement)) {
+                return;
+            }
+
+            setFocusedEditor(null);
+        });
+    }, []);
 
     const columnClassName = `w-full min-w-0 flex flex-col gap-[1.6rem] h-full group/block ${block.type !== 0 ? "rounded-[2.4rem] overflow-hidden" : ""} ${blockCount === 1 && block.type !== 0 ? "tablet:col-span-2" : blockCount > 1 && block.type !== 0 ? "tablet:min-h-[36.0rem]" : ""}`;
 
@@ -295,10 +279,9 @@ const Block = ({
 
     return (
         <div
-            // <div
+            ref={blockRef}
             id={block.type === 0 ? getPostTocAnchorId(block.id) : undefined}
             tabIndex={0}
-            // layout="position"
             className={`${columnClassName} relative ${block.type === 0 ? "scroll-mt-[12rem]" : ""}`}
             onClick={() => {
                 selectBlock(rowIndex, blockIndex);
@@ -397,8 +380,8 @@ const Block = ({
                                 content={textContent}
                                 showToolbar={false}
                                 onChange={(html) => updateBlock(rowIndex, blockIndex, { content: html })}
-                                onEditorFocus={onEditorFocus}
-                                onEditorBlur={onEditorBlur}
+                                onEditorFocus={handleEditorFocus}
+                                onEditorBlur={handleEditorBlur}
                             />
                         </section>
                     </>
@@ -438,6 +421,15 @@ const Block = ({
                     />
                 ) : null}
             </section>
+
+            {focusedEditor ? (
+                <div
+                    className="pointer-events-auto absolute bottom-0 left-1/2 z-20 w-full -translate-x-1/2 translate-y-1/2 flex justify-center"
+                    onPointerDown={(event) => event.stopPropagation()}
+                >
+                    <TipTapToolbar editor={focusedEditor} />
+                </div>
+            ) : null}
         </div>
     );
 };

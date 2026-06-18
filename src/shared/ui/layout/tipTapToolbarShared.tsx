@@ -148,7 +148,7 @@ export const ToolbarSelect = ({
         <select
             aria-label={label}
             value={value}
-            onMouseDown={(e) => e.stopPropagation()}
+            onMouseDown={preventEditorBlur}
             onClick={(e) => e.stopPropagation()}
             onChange={(e) => onChange(e.target.value)}
             className={`relative z-20 h-[3.6rem] pl-[1rem] pr-[2.4rem] rounded-[1.2rem] text-[1.2rem] font-semibold outline-none cursor-pointer appearance-none ${
@@ -172,28 +172,16 @@ export const ToolbarSelect = ({
 );
 
 export const applyHeading = (editor: Editor, value: HeadingValue) => {
-    if (!editor.isFocused) {
-        return;
-    }
-
     if (value === "paragraph") {
-        if (!editor.isActive("heading")) {
-            return;
-        }
-
         editor.chain().focus().setParagraph().run();
         return;
     }
 
     const level = Number(value.replace("h", "")) as 1 | 2 | 3;
-    editor.chain().focus().toggleHeading({ level }).run();
+    editor.chain().focus().setHeading({ level }).run();
 };
 
 export const applyFontSize = (editor: Editor, value: string) => {
-    if (!editor.isFocused) {
-        return;
-    }
-
     const { lineHeight } = editor.getAttributes("textStyle");
 
     editor
@@ -207,10 +195,6 @@ export const applyFontSize = (editor: Editor, value: string) => {
 };
 
 export const applyLineHeight = (editor: Editor, value: string) => {
-    if (!editor.isFocused) {
-        return;
-    }
-
     const { fontSize } = editor.getAttributes("textStyle");
 
     editor

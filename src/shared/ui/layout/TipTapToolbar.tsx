@@ -25,7 +25,7 @@ type TipTapToolbarProps = {
     editor: Editor;
 };
 
-const TOOLBAR_VARIANT = "glass" as const;
+const TOOLBAR_VARIANT = "default" as const;
 
 const HEADING_OPTIONS = [
     { label: "본문", value: "paragraph" },
@@ -52,10 +52,7 @@ const TipTapToolbar = ({ editor }: TipTapToolbarProps) => {
     };
 
     return (
-        <div className="relative rounded-[1.6rem] bg-black/60 backdrop-blur-[2px]">
-            <div className="pointer-events-none absolute left-0 top-0 bottom-0 z-[1] w-[2.4rem] rounded-l-[1.6rem] bg-gradient-to-r from-black/20 to-transparent" />
-            <div className="pointer-events-none absolute right-0 top-0 bottom-0 z-[1] w-[2.4rem] rounded-r-[1.6rem] bg-gradient-to-l from-black/20 to-transparent" />
-
+        <div className="relative w-full max-w-[50%] rounded-[1.6rem] bg-white shadow-[var(--shadow-normal)]">
             <div className="overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
                 <section className="flex min-w-min flex-nowrap items-center gap-[0.2rem] p-[0.4rem]">
                     <ToolbarIconButton
