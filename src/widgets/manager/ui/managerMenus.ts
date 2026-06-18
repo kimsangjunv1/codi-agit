@@ -30,4 +30,9 @@ export const MANAGER_MENUS: ManagerMenuItem[] = [
         description: "댓글 조회·삭제",
         url: "/manager/comment",
     },
+    {
+        title: "이미지",
+        description: "업로드 이미지 사용 현황·용량·정리",
+        url: "/manager/images",
+    },
 ];

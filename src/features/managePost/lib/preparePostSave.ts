@@ -1,5 +1,6 @@
 import { uploadPostImageFetch } from "@/entities/post/api/post.image.api";
 import type { SectionContent } from "@/entities/post/model/post.type";
+import { collectPostImageUrls } from "@/shared/lib/image/collectPostImageUrls";
 import { usePostDraftImageStore } from "@/shared/stores/usePostDraftImageStore";
 
 type PostContentRow = SectionContent[];
@@ -66,23 +67,4 @@ export const preparePostPayloadForSave = async ({
     };
 };
 
-export const collectImagesFromPost = (thumbnail: string, contents: SectionContent[][]) => {
-    const urls = new Set<string>();
-
-    if (thumbnail) urls.add(thumbnail);
-
-    contents.forEach((row) => {
-        row.forEach((block) => {
-            if (block.imageUrl) urls.add(block.imageUrl);
-
-            if (typeof block.content === "string") {
-                const matches = block.content.matchAll(/<img[^>]+src=["']([^"']+)["']/gi);
-                for (const match of matches) {
-                    if (match[1]) urls.add(match[1]);
-                }
-            }
-        });
-    });
-
-    return Array.from(urls).filter((url) => url && url !== "/");
-};
+export const collectImagesFromPost = collectPostImageUrls;

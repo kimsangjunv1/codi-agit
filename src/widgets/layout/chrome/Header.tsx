@@ -30,6 +30,7 @@ const Header = () => {
         "/manager/post": "게시물 관리",
         "/manager/user": "유저 관리",
         "/manager/comment": "댓글 관리",
+        "/manager/images": "이미지 관리",
     };
     const managerHeaderTitle = MANAGER_HEADER_TITLE[currentPathName] ?? (IS_ROUTE_MANAGER ? "관리자" : "");
 
