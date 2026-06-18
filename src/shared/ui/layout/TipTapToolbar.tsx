@@ -5,7 +5,9 @@ import type { Editor } from "@tiptap/react";
 
 import { MaterialIcon } from "@/shared/ui/common/MaterialIcon";
 import {
+    applyFontSize,
     applyHeading,
+    applyLineHeight,
     DEFAULT_FONT_SIZE,
     DEFAULT_LINE_HEIGHT,
     FONT_SIZES,
@@ -213,7 +215,7 @@ const TipTapToolbar = ({ editor }: TipTapToolbarProps) => {
                             label: size,
                             value: size,
                         }))}
-                        onChange={(value) => editor.chain().focus().setMark("textStyle", { fontSize: value }).run()}
+                        onChange={(value) => applyFontSize(editor, value)}
                     />
                     <ToolbarSelect
                         label="줄간격"
@@ -227,7 +229,7 @@ const TipTapToolbar = ({ editor }: TipTapToolbarProps) => {
                             label: lh,
                             value: lh,
                         }))}
-                        onChange={(value) => editor.chain().focus().setMark("textStyle", { lineHeight: value }).run()}
+                        onChange={(value) => applyLineHeight(editor, value)}
                     />
 
                     <ToolbarDivider variant={TOOLBAR_VARIANT} />

@@ -131,7 +131,9 @@ const ContentColumn = memo(({ col, rowLength, onCopySentence }: { col: SectionCo
     const subtitle = col.subtitle?.trim() ?? "";
     const title = col.title?.trim() ?? "";
     const showHeading = isMainBlock(col) && Boolean(subtitle || title);
-    const columnClassName = `${BLOCK_COLUMN_CLASS} ${rowLength !== 0 ? "flex gap-[2.4rem]" : ""} ${rowLength === 1 ? "tablet:col-span-2" : "tablet:min-h-[36.0rem]"} ${col.type === 0 ? "flex flex-col gap-[1.6rem]" : ""} ${col.type === 1 || col.type === 2 ? "rounded-[2.4rem] overflow-hidden" : ""} ${col.type === 2 ? "flex-col" : ""}`;
+    const columnClassName = `${BLOCK_COLUMN_CLASS} ${rowLength !== 0 ? "" : ""} ${rowLength === 1 ? "tablet:col-span-2" : ""} ${col.type === 0 ? "" : ""} ${col.type === 1 || col.type === 2 ? "rounded-[2.4rem] overflow-hidden" : ""} ${col.type === 2 ? "flex-col" : ""}`;
+    // const columnClassName = `${BLOCK_COLUMN_CLASS} ${rowLength !== 0 ? "" : ""} ${rowLength === 1 ? "tablet:col-span-2" : ""} ${col.type === 0 ? "flex flex-col gap-[1.6rem]" : ""} ${col.type === 1 || col.type === 2 ? "rounded-[2.4rem] overflow-hidden" : ""} ${col.type === 2 ? "flex-col" : ""}`;
+    // const columnClassName = `${BLOCK_COLUMN_CLASS} ${rowLength !== 0 ? "flex gap-[2.4rem]" : ""} ${rowLength === 1 ? "tablet:col-span-2" : "tablet:min-h-[36.0rem]"} ${col.type === 0 ? "flex flex-col gap-[1.6rem]" : ""} ${col.type === 1 || col.type === 2 ? "rounded-[2.4rem] overflow-hidden" : ""} ${col.type === 2 ? "flex-col" : ""}`;
 
     return (
         <section
@@ -214,7 +216,7 @@ const PostDetailActions = ({ postIdx }: { postIdx: number }) => {
     }
 
     return (
-        <section className="flex justify-center gap-[0.8rem] flex-wrap w-full pt-[0.8rem]">
+        <section className="sticky bottom-[3.2rem] flex justify-center gap-[0.8rem] flex-wrap w-full pt-[0.8rem]">
             <PostNavigationActions
                 actions={visibleActions}
                 alreadyLiked={alreadyLiked}
@@ -257,6 +259,7 @@ const Contents = ({ contents, prev, next, postId, imageUrl, title, summary, crea
                 <PostHero
                     mode="view"
                     imageUrl={imageUrl}
+                    placeholderSeed={postId}
                     title={title}
                     summary={summary}
                     createDate={createDate}
@@ -267,7 +270,7 @@ const Contents = ({ contents, prev, next, postId, imageUrl, title, summary, crea
             </section>
 
             <article className="flex gap-[0.4rem] w-full max-w-[var(--size-tablet)] min-w-0 px-[1.2rem] [content-visibility:auto]">
-                <section className="flex flex-col gap-[7.2rem] flex-1 min-w-0">
+                <section className="flex flex-col gap-[5.2rem] flex-1 min-w-0">
                     {contents?.map((row, rowIdx) => (
                         <section
                             key={rowIdx}

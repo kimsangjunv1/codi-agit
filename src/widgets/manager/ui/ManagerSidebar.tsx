@@ -31,7 +31,8 @@ const ManagerSidebar = ({ profile }: ManagerSidebarProps) => {
     const profileInitial = profileName.trim().charAt(0).toUpperCase() || "A";
 
     return (
-        <aside className="flex min-h-0 flex-col border-r border-[var(--color-gray-300)] bg-[var(--color-gray-100)] px-[2rem] py-[2.4rem]">
+        <>
+        <aside className="hidden h-full min-h-0 flex-col border-r border-[var(--color-gray-300)] bg-[var(--color-gray-100)] px-[2rem] py-[2.4rem] md:flex">
             <TransitionLink
                 href="/manager"
                 className="mb-[3.2rem] flex items-center gap-[1rem] text-[1.5rem] font-bold tracking-[0.08em]"
@@ -77,6 +78,20 @@ const ManagerSidebar = ({ profile }: ManagerSidebarProps) => {
                 </div>
             </div>
         </aside>
+        <details className="relative border-b border-[var(--color-gray-300)] bg-[var(--color-gray-100)] md:hidden">
+            <summary className="flex cursor-pointer list-none items-center justify-between px-[1.6rem] py-[1.2rem] text-[1.3rem] font-semibold">
+                관리자 메뉴
+                <MaterialIcon name="menu" size={18} />
+            </summary>
+            <nav className="absolute left-0 top-full z-[120] grid w-full grid-cols-2 gap-[0.6rem] border-b border-[var(--color-gray-300)] bg-[var(--color-gray-100)] p-[1.2rem] shadow-[var(--shadow-normal)]" aria-label="모바일 관리자 메뉴">
+                {MANAGER_MENUS.map((menu) => (
+                    <TransitionLink key={menu.url} href={menu.url} className={`rounded-[0.6rem] px-[1rem] py-[0.8rem] text-[1.2rem] ${pathname === menu.url ? "bg-white font-semibold" : "text-[var(--color-gray-600)]"}`}>
+                        {menu.title}
+                    </TransitionLink>
+                ))}
+            </nav>
+        </details>
+        </>
     );
 };
 

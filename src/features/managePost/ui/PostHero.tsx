@@ -12,8 +12,13 @@ import { useReducedMotion } from "@/shared/hooks/useReducedMotion";
 import { util } from "@/shared/lib/util";
 import { useGetCategoryListQuery } from "@/entities/category/api/category.query";
 import usePageTransitionReady from "@/shared/hooks/usePageTransitionReady";
+import PostThumbnailPlaceholder from "@/shared/ui/common/PostThumbnailPlaceholder";
 
-type PostHeroViewProps = {
+type PostHeroSharedProps = {
+    placeholderSeed?: string | number;
+};
+
+type PostHeroViewProps = PostHeroSharedProps & {
     mode: "view";
     imageUrl: string;
     title: string;
@@ -24,7 +29,7 @@ type PostHeroViewProps = {
     thumbnailAlt?: string;
 };
 
-type PostHeroEditProps = {
+type PostHeroEditProps = PostHeroSharedProps & {
     mode: "edit";
     imageUrl: string;
     title: string;
@@ -129,9 +134,11 @@ const PostHero = (props: PostHeroProps) => {
                         />
                     )
                 ) : (
-                    <div
-                        className="w-full h-full bg-[var(--color-gray-200)] pointer-events-none"
-                        aria-hidden
+                    <PostThumbnailPlaceholder
+                        seed={props.placeholderSeed ?? (props.title || "post-hero")}
+                        className="pointer-events-none"
+                        fill
+                        readinessKey="post-hero-image"
                     />
                 )}
             </div>

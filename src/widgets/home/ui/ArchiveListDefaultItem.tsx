@@ -3,7 +3,7 @@
 import { forwardRef } from "react";
 
 import TransitionLink from "@/shared/ui/common/TransitionLink";
-import TransitionAwareImage from "@/shared/ui/common/TransitionAwareImage";
+import PostThumbnail from "@/shared/ui/common/PostThumbnail";
 import { PostItem } from "@/entities/post/model/post.type";
 import { util } from "@/shared/lib/util";
 import { motion } from "motion/react";
@@ -39,8 +39,9 @@ const ArchiveListDefaultItem = forwardRef<HTMLElement, ArchiveListDefaultItemPro
                 href={`/post/${post.idx}`}
                 className="relative flex flex-col justify-start items-center overflow-hidden"
             >
-                <TransitionAwareImage
+                <PostThumbnail
                     readinessKey={`archive-list-thumbnail-${post.idx}`}
+                    seed={post.idx}
                     src={post.thumbnail}
                     alt={post.title}
                     // className={`${post.idx % 3 === 0 ? "mobile:w-[calc(1.6rem*(12*1))] pc:w-[calc(1.6rem*(12*2))]" : "mobile:w-[calc(1.6rem*(12*1))] pc:w-[calc(1.6rem*(12*3))]"} h-[calc(1.6rem*20)] object-cover`}

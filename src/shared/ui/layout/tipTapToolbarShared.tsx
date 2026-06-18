@@ -26,7 +26,6 @@ export const useTipTapToolbarState = (editor: Editor) =>
             canUnderline: ctx.editor.can().chain().toggleUnderline().run(),
             isCode: ctx.editor.isActive("code"),
             canCode: ctx.editor.can().chain().toggleCode().run(),
-            isParagraph: ctx.editor.isActive("paragraph"),
             isHeading1: ctx.editor.isActive("heading", { level: 1 }),
             isHeading2: ctx.editor.isActive("heading", { level: 2 }),
             isHeading3: ctx.editor.isActive("heading", { level: 3 }),
@@ -173,11 +172,53 @@ export const ToolbarSelect = ({
 );
 
 export const applyHeading = (editor: Editor, value: HeadingValue) => {
+    if (!editor.isFocused) {
+        return;
+    }
+
     if (value === "paragraph") {
+        if (!editor.isActive("heading")) {
+            return;
+        }
+
         editor.chain().focus().setParagraph().run();
         return;
     }
 
     const level = Number(value.replace("h", "")) as 1 | 2 | 3;
     editor.chain().focus().toggleHeading({ level }).run();
+};
+
+export const applyFontSize = (editor: Editor, value: string) => {
+    if (!editor.isFocused) {
+        return;
+    }
+
+    const { lineHeight } = editor.getAttributes("textStyle");
+
+    editor
+        .chain()
+        .focus()
+        .setMark("textStyle", {
+            fontSize: value,
+            lineHeight: lineHeight ?? DEFAULT_LINE_HEIGHT,
+        })
+        .run();
+};
+
+export const applyLineHeight = (editor: Editor, value: string) => {
+    if (!editor.isFocused) {
+        return;
+    }
+
+    const { fontSize } = editor.getAttributes("textStyle");
+
+    editor
+        .chain()
+        .focus()
+        .setMark("textStyle", {
+            fontSize: fontSize ?? DEFAULT_FONT_SIZE,
+            lineHeight: value,
+        })
+        .run();
 };

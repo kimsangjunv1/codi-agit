@@ -22,7 +22,7 @@ import type { SectionContent } from "@/entities/post/model/post.type";
 
 const REORDER_TRANSITION = { type: "spring" as const, stiffness: 500, damping: 42 };
 
-const GROUP_ACTION_BUTTON_CLASS = "flex h-[2.4rem] w-[3.6rem] items-center justify-center rounded-[1.2rem] text-[var(--color-gray-900)] transition-colors hover:bg-[var(--color-gray-100)]";
+const GROUP_ACTION_BUTTON_CLASS = "flex h-[3.6rem] w-[3.6rem] items-center justify-center rounded-[1.2rem] text-[var(--color-gray-900)] transition-colors hover:bg-[var(--color-gray-100)]";
 
 const getRowKey = (row: Row) => row.map((b) => b.id).join("-");
 
@@ -99,13 +99,16 @@ const Item = ({ row, rowIndex }: { row: Row; rowIndex: number }) => {
 
     const [isGrabbing, setIsGrabbing] = useState(false);
     const [focusedEditor, setFocusedEditor] = useState<Editor | null>(null);
+    const [isGroupHovered, setIsGroupHovered] = useState(false);
 
     const { setToast } = useToastStore();
     const { rows, addBlock, deleteRow } = useBlockStore();
     const isSingleGroup = rows.length === 1;
+    const showToolbar = focusedEditor !== null && isGroupHovered;
 
     const handleEditorFocus = useCallback((editor: Editor) => {
         setFocusedEditor(editor);
+        setIsGroupHovered(true);
     }, []);
 
     const handleEditorBlur = useCallback(() => {
@@ -120,31 +123,43 @@ const Item = ({ row, rowIndex }: { row: Row; rowIndex: number }) => {
         });
     }, []);
 
+    const handleGroupMouseLeave = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
+        const relatedTarget = event.relatedTarget as Node | null;
+
+        if (relatedTarget && groupRef.current?.contains(relatedTarget)) {
+            return;
+        }
+
+        setIsGroupHovered(false);
+    }, []);
+
     return (
         <Reorder.Item
             ref={groupRef}
             value={row}
             layout
             transition={REORDER_TRANSITION}
-            className="group/row relative flex flex-col gap-[0.8rem]"
+            className="group/row relative flex flex-col gap-[0.8rem] bg-[#f4f4f4] shadow-[var(--shadow-normal)] rounded-[2.4rem] p-[0.4rem]"
+            // className="group/row relative flex flex-col gap-[0.8rem]"
             as="div"
             dragControls={dragControls}
             dragListener={false}
+            onMouseEnter={() => setIsGroupHovered(true)}
+            onMouseLeave={handleGroupMouseLeave}
         >
-            <section className="absolute top-0 left-[-10%] flex items-center gap-[0.4rem] bg-[#00000090] rounded-full p-[0.4rem_0.8rem]">
-                <MaterialIcon
-                    name="deployed_code"
-                    size={16}
-                    className="invert"
-                />
-                <p className="text-[#ffffff] font-mono">group</p>
-            </section>
-
-            <motion.section
-                layout="position"
-                className="absolute top-0 right-[-4.8rem] flex flex-col items-center gap-[1.2rem]"
+            <section
+                className={`flex gap-[0.8rem] w-full justify-between ${isGrabbing ? "cursor-grabbing" : "cursor-grab"}`}
+                onPointerDown={(e) => {
+                    e.preventDefault();
+                    setIsGrabbing(true);
+                    dragControls.start(e);
+                }}
+                onPointerUp={() => setIsGrabbing(false)}
             >
-                <section className="shadow-[var(--shadow-normal)] bg-white rounded-full py-[0.8rem]">
+                <motion.section
+                    layout="position"
+                    className="flex max-w-full flex-wrap items-center justify-center rounded-full shadow-[var(--shadow-normal)] bg-white"
+                >
                     <UI.Button
                         onClick={() => addBlock(rowIndex, "down")}
                         className={GROUP_ACTION_BUTTON_CLASS}
@@ -176,46 +191,39 @@ const Item = ({ row, rowIndex }: { row: Row; rowIndex: number }) => {
                             size={18}
                         />
                     </UI.Button>
+                </motion.section>
 
-                    <section className="flex max-w-full flex-wrap items-center justify-center bg-[#ededed] rounded-full">
-                        {!isSingleGroup ? (
-                            <UI.Button
-                                onClick={() => {
-                                    setToast({ msg: "그룹을 제거했어요", time: 2 });
-                                    deleteRow(rowIndex);
-                                }}
-                                className={`${GROUP_ACTION_BUTTON_CLASS}`}
-                            >
-                                <IconComponent
-                                    type="outlined-cross"
-                                    alt="블록 지우기"
-                                />
-                            </UI.Button>
-                        ) : null}
-                    </section>
-                </section>
-
-                <section
-                    className={`flex justify-center items-center gap-[0.8rem] w-full shadow-[var(--shadow-normal)] h-[3.6rem] bg-white rounded-full ${isGrabbing ? "cursor-grabbing" : "cursor-grab"}`}
-                    onPointerDown={(e) => {
-                        e.preventDefault();
-                        setIsGrabbing(true);
-                        dragControls.start(e);
-                    }}
-                    onPointerUp={() => setIsGrabbing(false)}
-                >
+                <section className="flex items-center">
                     <MaterialIcon
-                        name="reorder"
-                        size={16}
+                        name="deployed_code"
+                        size={18}
                     />
+                    <p className="text-[1.6rem]">group</p>
                 </section>
-            </motion.section>
+
+                <section className="flex max-w-full flex-wrap items-center justify-center bg-[var(--color-red-600)] rounded-full shadow-[var(--shadow-normal)] border border-[var(--color-gray-200)]">
+                    {!isSingleGroup ? (
+                        <UI.Button
+                            onClick={() => {
+                                setToast({ msg: "그룹을 제거했어요", time: 2 });
+                                deleteRow(rowIndex);
+                            }}
+                            className={`${GROUP_ACTION_BUTTON_CLASS} invert brightness-0`}
+                        >
+                            <span className="sr-only">그룹 삭제</span>
+                            <MaterialIcon
+                                name="delete"
+                                size={18}
+                            />
+                        </UI.Button>
+                    ) : null}
+                </section>
+            </section>
 
             <section className={BLOCK_ROW_CLASS}>
                 {row.map((block, blockIndex) => (
-                    <motion.section
+                    <section
                         key={block.id}
-                        layout="position"
                         className={BLOCK_COLUMN_CLASS}
                     >
                         <Block
@@ -227,11 +235,11 @@ const Item = ({ row, rowIndex }: { row: Row; rowIndex: number }) => {
                             onEditorFocus={handleEditorFocus}
                             onEditorBlur={handleEditorBlur}
                         />
-                    </motion.section>
+                    </section>
                 ))}
             </section>
 
-            {focusedEditor ? (
+            {showToolbar && focusedEditor ? (
                 <div
                     className="pointer-events-auto absolute left-[0.4rem] right-[0.4rem] top-full z-20 pt-[0.8rem]"
                     onPointerDown={(event) => event.stopPropagation()}
@@ -260,13 +268,14 @@ const Block = ({
     onEditorFocus?: (editor: Editor) => void;
     onEditorBlur?: () => void;
 }) => {
-    const { updateBlock, deleteBlock, copyBlock, pasteBlock, selectBlock, unSelectBlock } = useBlockStore();
+    const { selectedPosition, updateBlock, deleteBlock, copyBlock, pasteBlock, selectBlock, unSelectBlock } = useBlockStore();
     const { setToast } = useToastStore();
     const addFromFile = usePostDraftImageStore((state) => state.addFromFile);
 
     const imageInputRef = useRef<HTMLInputElement>(null);
     const [currentImageUrl, setCurrentImageUrl] = useState<string>(block.imageUrl ?? "/");
     const textContent = blockContentToHtml(block.content);
+    const containerRef = useRef<HTMLDivElement>(null);
 
     const columnClassName = `w-full min-w-0 flex flex-col gap-[1.6rem] h-full group/block ${block.type !== 0 ? "rounded-[2.4rem] overflow-hidden" : ""} ${blockCount === 1 && block.type !== 0 ? "tablet:col-span-2" : blockCount > 1 && block.type !== 0 ? "tablet:min-h-[36.0rem]" : ""}`;
 
@@ -287,6 +296,7 @@ const Block = ({
         }
     };
 
+    const isSelected = selectedPosition?.rowIndex === rowIndex && selectedPosition?.blockIndex === blockIndex;
     const showHeadingFields = block.type === 0 && isMainBlock(block);
 
     useEffect(() => {
@@ -294,12 +304,13 @@ const Block = ({
     }, [block.imageUrl]);
 
     return (
-        <div
-            // <div
+        <motion.div
+            ref={containerRef}
             id={block.type === 0 ? getPostTocAnchorId(block.id) : undefined}
             tabIndex={0}
-            // layout="position"
-            className={`${columnClassName} relative ${block.type === 0 ? "scroll-mt-[12rem]" : ""}`}
+            layout="position"
+            className={`${columnClassName} relative ${block.type === 0 ? "scroll-mt-[12rem]" : ""} ${isSelected ? "" : ""}`}
+            // className={`${columnClassName} relative outline-none ring-offset-2 ${isSelected ? "ring-2 ring-[var(--color-brand-500)] rounded-[2.4rem]" : "hover:ring-1 hover:ring-[var(--color-gray-300)] rounded-[2.4rem]"}`}
             onClick={() => {
                 selectBlock(rowIndex, blockIndex);
             }}
@@ -331,7 +342,7 @@ const Block = ({
         >
             {block.type === 0 || last ? (
                 <section
-                    className="absolute top-[calc((2.8rem/1)*-1)] left-[50%] transform translate-x-[-50%] z-10 flex items-center rounded-full overflow-hidden bg-white p-[0.4rem]"
+                    className="absolute top-0 right-0 z-10 flex items-center gap-[0.4rem]"
                     onClick={(event) => event.stopPropagation()}
                 >
                     {block.type === 0 ? (
@@ -341,29 +352,28 @@ const Block = ({
                                     blockMode: showHeadingFields ? "sub" : "main",
                                 });
                             }}
-                            className={`flex px-[0.8rem] py-[0.4rem] gap-[0.4rem] items-center justify-center rounded-full transition-colors ${
-                                showHeadingFields ? "bg-[var(--color-blue-100)] text-[var(--color-blue-600)]" : "bg-[var(--color-gray-200)] text-[var(--color-gray-900)]"
+                            className={`flex h-[3.2rem] px-[1.2rem] items-center justify-center rounded-full shadow-[var(--shadow-normal)] transition-colors ${
+                                showHeadingFields ? "bg-[var(--color-blue-500)] text-white" : "border border-[var(--color-gray-200)] bg-white text-[var(--color-gray-900)]"
                             }`}
                         >
-                            {/* showHeadingFields ? "bg-[var(--color-blue-500)] text-white" : "bg-[#ededed] text-[var(--color-gray-900)]" */}
-
+                            <p>{showHeadingFields ? "메인 블록" : "서브 블록"}</p>
+                            {/* <span className="sr-only">{showHeadingFields ? "메인 블록" : "서브 블록"}</span> */}
                             <MaterialIcon
-                                name={"refresh"}
-                                size={16}
+                                name={showHeadingFields ? "view_headline" : "article"}
+                                size={20}
                             />
-                            <p>{showHeadingFields ? "메인" : "서브"}</p>
                         </UI.Button>
                     ) : null}
 
                     {last ? (
                         <UI.Button
                             onClick={() => deleteBlock(rowIndex, blockIndex)}
-                            className="cursor-pointer rounded-full"
+                            className="cursor-pointer rounded-full bg-[var(--color-gray-900)] p-[0.2rem] shadow-[var(--shadow-normal)]"
                         >
                             <IconComponent
                                 type="outlined-cross"
                                 alt="블록 지우기"
-                                // className="invert brightness-0"
+                                className="invert brightness-0"
                             />
                         </UI.Button>
                     ) : null}
@@ -391,9 +401,8 @@ const Block = ({
                                 />
                             </section>
                         ) : null}
-                        <section className="w-full min-h-[12rem] flex-1">
+                        <section className="w-full min-h-[12rem]">
                             <TipTap.Normal
-                                key={block.id}
                                 content={textContent}
                                 showToolbar={false}
                                 onChange={(html) => updateBlock(rowIndex, blockIndex, { content: html })}
@@ -438,7 +447,7 @@ const Block = ({
                     />
                 ) : null}
             </section>
-        </div>
+        </motion.div>
     );
 };
 

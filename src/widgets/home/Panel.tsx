@@ -12,6 +12,7 @@ type HomePanelProps = {
 export default function Panel({ initialData }: HomePanelProps) {
     return (
         <HomePageProvider>
+            <HomeLayer.Navigation />
             <HomeLayer.ArchiveFeed initialData={initialData} />
             <HomeLayer.Search />
             <HomeLayer.Modal />

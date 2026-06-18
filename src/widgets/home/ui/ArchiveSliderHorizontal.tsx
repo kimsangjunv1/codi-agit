@@ -11,7 +11,7 @@ import usePageTransitionReady from "@/shared/hooks/usePageTransitionReady";
 import { FeedEmpty, FeedError, FeedLoading } from "./FeedStatus";
 import useNavigate from "@/shared/hooks/useNavigate";
 import Marquee from "@/shared/ui/layout/Marquee";
-import TransitionAwareImage from "@/shared/ui/common/TransitionAwareImage";
+import PostThumbnail from "@/shared/ui/common/PostThumbnail";
 import { util } from "@/shared/lib/util";
 
 const MotionLink = motion.create(Link);
@@ -50,13 +50,6 @@ const ArchiveSliderHorizontalCard = ({ post, index, containerRef, shouldBlockCli
             aria-label={post.title}
             draggable={false}
             className="block w-[36.0rem] shrink-0 will-change-[height,transform]"
-            whileHover={{
-                scale: 0.95,
-                transition: {
-                    duration: 0.1,
-                    delay: 0,
-                },
-            }}
             initial={{
                 opacity: 0,
                 y: "100svh",
@@ -79,25 +72,26 @@ const ArchiveSliderHorizontalCard = ({ post, index, containerRef, shouldBlockCli
             }}
             style={{ height }}
         >
-            <TransitionAwareImage
+            <PostThumbnail
                 readinessKey={`archive-slider-thumbnail-${post.idx}`}
+                seed={post.idx}
                 src={post.thumbnail}
                 alt={post.title}
                 className="object-cover h-full w-full pointer-events-none"
             />
 
-            <div className="absolute top-[1.6rem] left-[1.6rem] w-full flex flex-col justify-start items-start">
-                <p className="bg-black p-[0.4rem] text-white font-mono">{util.string.getCurrentFullTime(post.created_at)}</p>
+            <div className="absolute top-0 left-0 w-full flex flex-col justify-start items-start">
+                <p className="bg-white p-[0.4rem] text-black font-mono">{util.string.getCurrentFullTime(post.created_at)}</p>
 
                 <Marquee
                     content="NEW"
-                    className={{ container: "bg-black gap-[1.2rem] p-[0.4rem]", marquee: "text-white gap-[1.2rem] font-mono" }}
+                    className={{ container: "bg-white gap-[1.2rem] p-[0.4rem]", marquee: "text-black gap-[1.2rem] font-mono" }}
                 />
             </div>
 
             <div className="absolute bottom-[1.6rem] left-[1.6rem] w-full flex flex-col justify-start items-start">
                 <h5 className="bg-[#000000] text-white text-left mobile:text-[1.4rem] pc:text-[1.8rem] font-semibold p-[0.4rem_0.4rem_0_0.4rem]">{post.title}</h5>
-                <p className="bg-[#000000] text-[#39ff28] text-left font-bold leading-[1.5] line-clamp-2 mobile:text-[1.6rem] tablet:text-[2.0rem] p-[0.8rem_0.4rem_0.4rem_0.4rem]">
+                <p className="bg-[#000000] text-[#ffffff] text-left font-bold leading-[1.5] line-clamp-2 mobile:text-[1.6rem] tablet:text-[2.0rem] p-[0.8rem_0.4rem_0.4rem_0.4rem]">
                     &quot;{post.summary}&quot;
                 </p>
             </div>
@@ -150,7 +144,8 @@ const ArchiveSliderHorizontalContent = ({ posts }: ArchiveSliderHorizontalConten
     };
 
     return (
-        <section className="flex h-[100svh] w-full items-center overflow-hidden">
+        <section className="flex h-[calc(100svh-var(--header-height)-2.4rem)] w-full items-center overflow-hidden">
+            {/* <section className="flex h-[100svh] w-full items-center overflow-hidden"> */}
             <div
                 ref={containerRef}
                 className="flex h-full w-full cursor-grab touch-pan-x select-none items-center gap-[2.4rem] overflow-x-auto px-[calc(50dvw-(36.0rem/2))] scrollbar-hide active:cursor-grabbing"

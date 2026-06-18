@@ -22,7 +22,7 @@ const PostModifyEditor = ({ id }: { id: string }) => {
 
     return (
         <section className="flex flex-col w-full post pb-[7.2rem]">
-            <section className="mx-auto post-inner flex flex-col gap-[5.2rem] w-full items-center">
+            <section className="mx-auto post-inner flex flex-col gap-[5.2rem] w-full items-center bg-[#efefef]">
                 <RenderContents id={id} />
             </section>
 
@@ -62,10 +62,11 @@ const RenderContents = ({ id }: { id: string }) => {
 
     return (
         <Fragment>
-            <section className="flex flex-col justify-center items-center gap-[3.2rem] h-[100svh] p-[0.8rem] w-full">
+            <section className="flex flex-col justify-center items-center gap-[3.2rem] h-[100svh] w-full">
                 <PostHero
                     mode="edit"
                     imageUrl={thumbnail}
+                    placeholderSeed={id}
                     title={title}
                     summary={summary}
                     categoryIdx={category_idx}

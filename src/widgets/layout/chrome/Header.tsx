@@ -22,24 +22,14 @@ const Header = () => {
     const { IS_ROUTE_POST } = getPostRouteFlags(currentPathName);
     const IS_ROUTE_HOME = currentPathName === "/";
     const IS_ROUTE_RESUME = currentPathName === "/resume";
-    const IS_ROUTE_MANAGER = currentPathName.startsWith("/manager");
-    const MANAGER_HEADER_TITLE: Record<string, string> = {
-        "/manager": "관리자",
-        "/manager/category": "카테고리 관리",
-        "/manager/invitation": "초대코드 관리",
-        "/manager/post": "게시물 관리",
-        "/manager/user": "유저 관리",
-        "/manager/comment": "댓글 관리",
-        "/manager/images": "이미지 관리",
-    };
-    const managerHeaderTitle = MANAGER_HEADER_TITLE[currentPathName] ?? (IS_ROUTE_MANAGER ? "관리자" : "");
 
     if (IS_ROUTE_POST) return null;
 
     return (
         <header className="fixed left-0 z-[100] mx-auto h-[calc(var(--header-height)/2)] pc:h-[var(--header-height)] w-[100svw]">
             {/* <header className="fixed left-0 z-[100] mx-auto h-[calc(var(--header-height)/2)] pc:h-[var(--header-height)] w-full after:absolute after:top-0 after:left-0 after:-z-[1] after:mx-auto after:h-[var(--header-height)] after:w-full after:backdrop-blur-[20px] after:content-[''] after:[mask-image:linear-gradient(rgb(0,0,0),rgb(0,0,0)_0%,rgb(0,0,0)_20%,rgba(0,0,0,0))]"> */}
-            <div className="relative mx-auto flex h-full w-full mobile:max-w-[calc(100dvw-(1.6rem*2))] tablet:max-w-[calc(100dvw-(2.0rem*2))] items-center pc:h-full">
+            <div className="relative mx-auto flex h-full w-full mobile:max-w-[calc(100dvw-(1.6rem*2))] tablet:max-w-[var(--size-pc)] items-center pc:h-full px-[2.0rem]">
+                {/* <div className="relative mx-auto flex h-full w-full mobile:max-w-[calc(100dvw-(1.6rem*2))] tablet:max-w-[calc(100dvw-(2.0rem*2))] items-center pc:h-full px-[2.0rem]"> */}
                 <section className="menu flex gap-[4.8rem]">
                     <button
                         type="button"
@@ -50,48 +40,13 @@ const Header = () => {
                             alt={"코디 아지트"}
                             width={138}
                             height={42}
-                            className="mobile:h-[calc(1.6rem*2.2)] mobile:w-[calc(1.6rem*7)] pc:h-auto pc:w-auto"
+                            className="mobile:h-[calc(1.6rem*2.2)] mobile:w-[calc(1.6rem*7)] pc:h-[5.2rem] pc:w-auto"
                         />
                     </button>
 
                     <section className="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%] flex items-center justify-center gap-[1.6rem]">
                         <AnimatePresence mode="popLayout">
-                            {IS_ROUTE_HOME && !isMobile && <HomeViewModeNav variant="header" />}
-
-                            {IS_ROUTE_MANAGER && (
-                                <section className="flex flex-col gap-[0.8rem]">
-                                    <motion.section
-                                        key={"post_title"}
-                                        initial={{ opacity: 0, transform: "scale(0.8)" }}
-                                        animate={{ opacity: 1, transform: "scale(1)" }}
-                                        exit={{ opacity: 0, transform: "scale(0.8)" }}
-                                        transition={{
-                                            // delay: 0.05 * (i + 1),
-                                            type: "spring",
-                                            mass: 0.1,
-                                            stiffness: 100,
-                                            damping: 10,
-                                        }}
-                                        className="flex gap-[1.6rem] flex-1 justify-center"
-                                    >
-                                        <TextShimmer
-                                            as="h2"
-                                            duration={3}
-                                            style={{
-                                                color: "#000000",
-                                                fontSize: "2.4rem",
-                                            }}
-                                            color={{
-                                                start: "#000000",
-                                                end: "#9393a0",
-                                            }}
-                                            className="font-extrabold"
-                                        >
-                                            {managerHeaderTitle}
-                                        </TextShimmer>
-                                    </motion.section>
-                                </section>
-                            )}
+                            {/* {IS_ROUTE_HOME && !isMobile && <HomeViewModeNav variant="header" />} */}
 
                             {IS_ROUTE_RESUME && (
                                 <motion.section
@@ -141,7 +96,7 @@ const Header = () => {
 
                 {/* 모바일 버튼 */}
                 <button
-                    className="hamburger w-[2.4rem] h-[1.2rem] absolute top-[50%] right-0 transform translate-x-[0] translate-y-[-50%] text-[2.4rem] z-[10000]"
+                    className="hamburger w-[2.4rem] h-[1.2rem] absolute top-[50%] right-[2.0rem] transform translate-x-[0] translate-y-[-50%] text-[2.4rem] z-[10000]"
                     // className="hamburger w-[1.6rem] h-[1.6rem] px-[4.0rem] py-[2.0rem] absolute top-[50%] right-0 transform translate-x-[0] translate-y-[-50%] text-[2.4rem] z-[10000]"
                     onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 >
