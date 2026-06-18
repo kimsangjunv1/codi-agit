@@ -49,7 +49,7 @@ export async function GET(req: Request) {
 
         const [currentResult, postsResult] = await Promise.all([
             supabase.from("posts").select("*").eq("idx", idx).single(),
-            supabase.from("posts").select("idx, title, summary").or(`idx.lt.${idx},idx.gt.${idx}`),
+            supabase.from("posts").select("idx, title, summary, thumbnail").or(`idx.lt.${idx},idx.gt.${idx}`),
         ]);
 
         const currentData = currentResult.data;

@@ -59,6 +59,7 @@ export interface PostPrevNextInfo {
     idx: number;
     title: string;
     summary: string;
+    thumbnail: string;
 }
 
 export interface PostItem {

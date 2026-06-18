@@ -19,6 +19,7 @@ import PostHero from "@/features/managePost/ui/PostHero";
 import PostTocPanel from "@/features/managePost/ui/PostTocPanel";
 import { isMainBlock } from "@/widgets/post/lib/blockMode";
 import { getPostTocAnchorId } from "@/widgets/post/lib/postToc";
+import PostThumbnail from "@/shared/ui/common/PostThumbnail";
 import GiscusComments from "@/shared/ui/common/GiscusComments";
 import AsyncErrorState from "@/shared/ui/common/AsyncErrorState";
 import { PostNavigationActions, usePostNavigationActions } from "@/features/managePost";
@@ -42,7 +43,7 @@ const PostDetail = ({ id, initialData }: PostDetailProps) => {
     }, [postIdx, setPostIdx]);
 
     return (
-        <section className="flex flex-col w-full post pb-[7.2rem]">
+        <section className="flex flex-col w-full post">
             <section className="mx-auto post-inner flex flex-col gap-[5.2rem] w-full items-center">
                 <RenderContents
                     id={id}
@@ -269,12 +270,13 @@ const Contents = ({ contents, prev, next, postId, imageUrl, title, summary, crea
                 />
             </section>
 
-            <article className="flex gap-[0.4rem] w-full max-w-[var(--size-tablet)] min-w-0 px-[1.2rem] [content-visibility:auto]">
+            {/* <article className="flex gap-[0.4rem] w-full max-w-[var(--size-tablet)] min-w-0 px-[1.2rem] [content-visibility:auto]"> */}
+            <article className="flex gap-[0.4rem] w-full ">
                 <section className="flex flex-col gap-[5.2rem] flex-1 min-w-0">
                     {contents?.map((row, rowIdx) => (
                         <section
                             key={rowIdx}
-                            className={BLOCK_ROW_CLASS}
+                            className={`${BLOCK_ROW_CLASS} max-w-[var(--size-tablet)] mx-auto`}
                         >
                             {row.map((col) => (
                                 <ContentColumn
@@ -289,13 +291,14 @@ const Contents = ({ contents, prev, next, postId, imageUrl, title, summary, crea
 
                     <PostDetailActions postIdx={parseInt(postId)} />
 
-                    <GiscusComments
+                    {/* <GiscusComments
                         term={`post-${postId}`}
                         className="w-full pt-[2.4rem]"
-                    />
-                    <section className="flex gap-[1.6rem] flex-wrap">
+                    /> */}
+
+                    <section className="flex mobile:flex-col tablet:flex-row flex-wrap">
                         <UI.Button
-                            className={`flex items-center justify-start gap-[0.8rem] border border-[var(--color-gray-200)] min-w-[calc(var(--size-tablet)/2-(1.6rem*10))] flex-1 p-[1.6rem] rounded-[1.6rem] hover:border-[var(--color-blue-500)] ${prev ? "" : "pointer-events-none"}`}
+                            className={`hover:brightness-50 flex-1 flex items-center justify-start gap-[0.8rem]  ${prev ? "" : "pointer-events-none"}`}
                             onClick={() => {
                                 if (prev) {
                                     pushToUrl(`/post/${prev?.idx}`);
@@ -305,25 +308,33 @@ const Contents = ({ contents, prev, next, postId, imageUrl, title, summary, crea
                             }}
                         >
                             {prev ? (
-                                <Fragment>
-                                    <IconComponent
-                                        type="outlined-arrow-below"
-                                        alt="테스트"
-                                        className="rotate-90"
+                                <div className="relative h-[50svh] w-full shrink-0 overflow-hidden">
+                                    <PostThumbnail
+                                        readinessKey={`post-prev-thumbnail-${prev.idx}`}
+                                        seed={prev.idx}
+                                        src={prev.thumbnail}
+                                        alt={prev.title}
+                                        fill
+                                        className="object-cover sacle-[1] hover:scale-[1.1] transition-transform"
                                     />
 
-                                    <div className="flex flex-col gap-[0.8rem]">
-                                        <p className="text-left text-[1.2rem] font-semibold text-[var(--color-gray-500)]">이전글</p>
-                                        <p className="text-left text-[1.6rem] font-semibold">{prev.title}</p>
+                                    <div className="absolute left-[1.6rem] top-[50%] transform translate-y-[-50%] flex min-w-0 flex-col items-start">
+                                        <p className="bg-black text-white text-left text-[2.0rem] font-semibold p-[0.6rem_0.8rem]">PREV</p>
+                                        <p className="bg-black text-white text-left text-[3.2rem] font-semibold p-[0.6rem_0.8rem] line-clamp-2">{prev.title}</p>
                                     </div>
-                                </Fragment>
+                                </div>
                             ) : (
-                                <p className="text-[var(--color-gray-500)]">이전글이 없습니다.</p>
+                                <div className="relative h-[50svh] w-full shrink-0 overflow-hidden bg-black">
+                                    <div className="absolute left-[1.6rem] top-[50%] transform translate-y-[-50%] flex min-w-0 flex-col items-start">
+                                        <p className="bg-black text-white text-left text-[2.0rem] font-semibold p-[0.6rem_0.8rem]">PREV</p>
+                                        <p className="bg-black text-white text-left text-[3.2rem] font-semibold p-[0.6rem_0.8rem] line-clamp-2">이전글이 없습니다.</p>
+                                    </div>
+                                </div>
                             )}
                         </UI.Button>
 
                         <UI.Button
-                            className={`flex items-center justify-end gap-[0.8rem] border border-[var(--color-gray-200)] min-w-[calc(var(--size-tablet)/2-(1.6rem*10))] flex-1 p-[1.6rem] rounded-[1.6rem] hover:border-[var(--color-blue-500)] ${next ? "" : "pointer-events-none"}`}
+                            className={`hover:brightness-50 flex-1 flex items-center justify-end gap-[0.8rem]  ${next ? "" : "pointer-events-none"}`}
                             onClick={() => {
                                 if (next) {
                                     pushToUrl(`/post/${next?.idx}`);
@@ -334,18 +345,29 @@ const Contents = ({ contents, prev, next, postId, imageUrl, title, summary, crea
                         >
                             {next ? (
                                 <Fragment>
-                                    <div className="flex flex-col gap-[0.8em]">
-                                        <p className="text-right text-[1.2rem] font-semibold text-[var(--color-gray-500)]">다음글</p>
-                                        <p className="text-right text-[1.6rem] font-semibold">{next.title}</p>
+                                    <div className="relative h-[50svh] w-full shrink-0 overflow-hidden">
+                                        <PostThumbnail
+                                            readinessKey={`post-next-thumbnail-${next.idx}`}
+                                            seed={next.idx}
+                                            src={next.thumbnail}
+                                            alt={next.title}
+                                            fill
+                                            className="object-cover sacle-[1] hover:scale-[1.1] transition-transform"
+                                        />
+
+                                        <div className="absolute right-[1.6rem] top-[50%] transform translate-y-[-50%] flex min-w-0 flex-col">
+                                            <p className="bg-black text-white text-right text-[2.0rem] font-semibold p-[0.6rem_0.8rem]">NEXT</p>
+                                            <p className="bg-black text-white text-right text-[3.2rem] font-semibold p-[0.6rem_0.8rem] line-clamp-2">{next.title}</p>
+                                        </div>
                                     </div>
-                                    <IconComponent
-                                        type="outlined-arrow-below"
-                                        alt="테스트"
-                                        className="rotate-270"
-                                    />
                                 </Fragment>
                             ) : (
-                                <p className="text-[var(--color-gray-500)]">다음글이 없습니다.</p>
+                                <div className="relative h-[50svh] w-full shrink-0 overflow-hidden bg-black">
+                                    <div className="absolute right-[1.6rem] top-[50%] transform translate-y-[-50%] flex min-w-0 flex-col">
+                                        <p className="bg-black text-white text-right text-[2.0rem] font-semibold p-[0.6rem_0.8rem]">PREV</p>
+                                        <p className="bg-black text-white text-right text-[3.2rem] font-semibold p-[0.6rem_0.8rem] line-clamp-2">이전글이 없습니다.</p>
+                                    </div>
+                                </div>
                             )}
                         </UI.Button>
                     </section>

@@ -52,7 +52,7 @@ const TipTapToolbar = ({ editor }: TipTapToolbarProps) => {
     };
 
     return (
-        <div className="relative w-full max-w-[50%] rounded-[1.6rem] bg-white shadow-[var(--shadow-normal)]">
+        <div className="relative w-full mobile:max-w-[100%] pc:max-w-[50%] rounded-[1.6rem] bg-white shadow-[var(--shadow-normal)]">
             <div className="overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
                 <section className="flex min-w-min flex-nowrap items-center gap-[0.2rem] p-[0.4rem]">
                     <ToolbarIconButton
@@ -217,11 +217,7 @@ const TipTapToolbar = ({ editor }: TipTapToolbarProps) => {
                     <ToolbarSelect
                         label="줄간격"
                         variant={TOOLBAR_VARIANT}
-                        value={
-                            LINE_HEIGHTS.includes(state.activeLineHeight as (typeof LINE_HEIGHTS)[number])
-                                ? state.activeLineHeight
-                                : DEFAULT_LINE_HEIGHT
-                        }
+                        value={LINE_HEIGHTS.includes(state.activeLineHeight as (typeof LINE_HEIGHTS)[number]) ? state.activeLineHeight : DEFAULT_LINE_HEIGHT}
                         options={LINE_HEIGHTS.map((lh) => ({
                             label: lh,
                             value: lh,

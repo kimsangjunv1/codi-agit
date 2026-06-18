@@ -86,7 +86,7 @@ const RenderContents = ({
 const Contents = () => {
     return (
         <article className="flex gap-[0.4rem] w-full max-w-[var(--size-tablet)] min-w-0">
-            <section className="flex flex-col gap-[7.2rem] flex-1 min-w-0">
+            <section className="flex flex-col gap-[7.2rem] flex-1 min-w-0 mx-[1.6rem_6.2rem]">
                 <SortableBlock />
                 <PostAttachedImageList />
             </section>

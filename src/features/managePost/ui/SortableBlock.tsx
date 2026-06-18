@@ -80,7 +80,7 @@ const SortableBlock = ({ contents }: { contents?: Row[] }) => {
             values={rows}
             onReorder={(newRows) => useBlockStore.getState().setRows(newRows)}
             as="section"
-            className="flex flex-col flex-1 gap-[2.4rem] min-h-[51.2rem]"
+            className="flex flex-col flex-1 mobile:gap-[5.2rem] pc:gap-[2.4rem] min-h-[51.2rem]"
         >
             {rows.map((row, rowIndex) => (
                 <Item
@@ -112,7 +112,7 @@ const Item = ({ row, rowIndex }: { row: Row; rowIndex: number }) => {
             dragControls={dragControls}
             dragListener={false}
         >
-            <section className="absolute top-0 left-[-10%] flex items-center gap-[0.4rem] bg-[#00000090] rounded-full p-[0.4rem_0.8rem]">
+            <section className="mobile:hidden pc:flex absolute top-0 left-[-10%] items-center gap-[0.4rem] bg-[#00000090] rounded-full p-[0.4rem_0.8rem]">
                 <MaterialIcon
                     name="deployed_code"
                     size={16}
@@ -155,6 +155,7 @@ const Item = ({ row, rowIndex }: { row: Row; rowIndex: number }) => {
                         <MaterialIcon
                             name={row.length === 1 ? "view_column" : "swap_horiz"}
                             size={18}
+                            className="mobile:rotate-90 pc:rotate-0"
                         />
                     </UI.Button>
 
@@ -188,6 +189,7 @@ const Item = ({ row, rowIndex }: { row: Row; rowIndex: number }) => {
                     <MaterialIcon
                         name="reorder"
                         size={16}
+                        className="select-none"
                     />
                 </section>
             </motion.section>
@@ -213,19 +215,7 @@ const Item = ({ row, rowIndex }: { row: Row; rowIndex: number }) => {
     );
 };
 
-const Block = ({
-    block,
-    rowIndex,
-    blockIndex,
-    last,
-    blockCount,
-}: {
-    block: SectionContent;
-    rowIndex: number;
-    blockIndex: number;
-    last: boolean;
-    blockCount: number;
-}) => {
+const Block = ({ block, rowIndex, blockIndex, last, blockCount }: { block: SectionContent; rowIndex: number; blockIndex: number; last: boolean; blockCount: number }) => {
     const { updateBlock, deleteBlock, copyBlock, pasteBlock, selectBlock, unSelectBlock } = useBlockStore();
     const { setToast } = useToastStore();
     const addFromFile = usePostDraftImageStore((state) => state.addFromFile);
@@ -424,7 +414,8 @@ const Block = ({
 
             {focusedEditor ? (
                 <div
-                    className="pointer-events-auto absolute bottom-0 left-1/2 z-20 w-full -translate-x-1/2 translate-y-1/2 flex justify-center"
+                    className="pointer-events-auto absolute bottom-[calc((2.8rem/1)*-1)] left-[50%] transform translate-x-[-50%] mobile:w-[80%] pc:w-[50%]"
+                    // className="pointer-events-auto absolute bottom-0 left-1/2 z-20 w-full -translate-x-1/2 translate-y-1/2 flex justify-center"
                     onPointerDown={(event) => event.stopPropagation()}
                 >
                     <TipTapToolbar editor={focusedEditor} />
