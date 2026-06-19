@@ -231,7 +231,7 @@ const PostDetailActions = ({ postIdx }: { postIdx: number }) => {
     }
 
     return (
-        <section className="sticky bottom-0 flex h-[7.2rem] w-full flex-wrap justify-center bg-black">
+        <section className="sticky bottom-0 flex h-[5.2rem] w-full flex-wrap justify-center bg-black">
             <div className="mx-auto flex w-full max-w-[var(--size-tablet)] overflow-x-auto">
                 <PostNavigationActions
                     {...navVisibility}
@@ -294,7 +294,7 @@ const Contents = ({ contents, prev, next, postId, imageUrl, title, summary, crea
 
             {/* <article className="flex gap-[0.4rem] w-full max-w-[var(--size-tablet)] min-w-0 px-[1.2rem] [content-visibility:auto]"> */}
             <article
-                className="post-reading-root z-[100] mt-[100svh] flex w-full gap-[0.4rem] bg-white"
+                className="post-reading-root z-[100] mt-[100svh] pt-[10.0rem] flex w-full gap-[0.4rem] bg-white"
                 style={{
                     ["--post-read-scale" as string]: fontScale,
                     ["--post-read-line-height" as string]: lineHeight,
@@ -322,90 +322,94 @@ const Contents = ({ contents, prev, next, postId, imageUrl, title, summary, crea
                         className="max-w-[var(--size-tablet)] w-full mx-auto my-[5.2rem] px-[2.0rem]"
                     />
 
-                    <section className="flex mobile:flex-col tablet:flex-row flex-wrap">
-                        <UI.Button
-                            className={`hover:brightness-50 flex-1 flex items-center justify-start gap-[0.8rem]  ${prev ? "" : "pointer-events-none"}`}
-                            onClick={() => {
-                                if (prev) {
-                                    pushToUrl(`/post/${prev?.idx}`);
-                                } else {
-                                    setToast({ msg: "이전 글이 없어요", time: 2 });
-                                }
-                            }}
-                        >
-                            {prev ? (
-                                <div className="relative h-[50svh] w-full shrink-0 overflow-hidden">
-                                    <PostThumbnail
-                                        readinessKey={`post-prev-thumbnail-${prev.idx}`}
-                                        seed={prev.idx}
-                                        src={prev.thumbnail}
-                                        alt={prev.title}
-                                        fill
-                                        className="object-cover sacle-[1] hover:scale-[1.1] transition-transform"
-                                    />
+                    <section className="max-w-[2560px] w-full mx-auto">
+                        <p className="max-w-[var(--size-tablet)] mx-auto px-[2.0rem] text-[2.4rem] font-bold my-[9.8rem_4.2rem]">OTHER CONTENTS</p>
 
-                                    <div className="absolute left-[1.6rem] top-[50%] transform translate-y-[-50%] flex min-w-0 flex-col items-start">
-                                        <p className="bg-black text-[#13ff34] text-left text-[2.0rem] font-semibold p-[0.6rem_0.8rem]">PREV</p>
-                                        <p className="bg-black text-white text-left text-[3.2rem] font-semibold p-[0.6rem_0.8rem] line-clamp-2">{prev.title}</p>
-                                        <MaterialIcon
-                                            name={"arrow_back"}
-                                            size={24}
-                                            className="bg-black  text-white p-[0.6rem_0.8rem]"
-                                        />
-                                    </div>
-                                </div>
-                            ) : (
-                                <div className="relative h-[50svh] w-full shrink-0 overflow-hidden bg-black">
-                                    <div className="absolute left-[1.6rem] top-[50%] transform translate-y-[-50%] flex min-w-0 flex-col items-start">
-                                        <p className="bg-black text-[#13ff34] text-left text-[2.0rem] font-semibold p-[0.6rem_0.8rem]">PREV</p>
-                                        <p className="bg-black text-white text-left text-[3.2rem] font-semibold p-[0.6rem_0.8rem] line-clamp-2">이전글이 없어요</p>
-                                    </div>
-                                </div>
-                            )}
-                        </UI.Button>
-
-                        <UI.Button
-                            className={`hover:brightness-50 flex-1 flex items-center justify-end gap-[0.8rem]  ${next ? "" : "pointer-events-none"}`}
-                            onClick={() => {
-                                if (next) {
-                                    pushToUrl(`/post/${next?.idx}`);
-                                } else {
-                                    setToast({ msg: "다음 글이 없어요", time: 2 });
-                                }
-                            }}
-                        >
-                            {next ? (
-                                <Fragment>
+                        <section className="flex mobile:flex-col tablet:flex-row flex-wrap">
+                            <UI.Button
+                                className={`hover:brightness-50 flex-1 flex items-center justify-start gap-[0.8rem]  ${prev ? "" : "pointer-events-none"}`}
+                                onClick={() => {
+                                    if (prev) {
+                                        pushToUrl(`/post/${prev?.idx}`);
+                                    } else {
+                                        setToast({ msg: "이전 글이 없어요", time: 2 });
+                                    }
+                                }}
+                            >
+                                {prev ? (
                                     <div className="relative h-[50svh] w-full shrink-0 overflow-hidden">
                                         <PostThumbnail
-                                            readinessKey={`post-next-thumbnail-${next.idx}`}
-                                            seed={next.idx}
-                                            src={next.thumbnail}
-                                            alt={next.title}
+                                            readinessKey={`post-prev-thumbnail-${prev.idx}`}
+                                            seed={prev.idx}
+                                            src={prev.thumbnail}
+                                            alt={prev.title}
                                             fill
                                             className="object-cover sacle-[1] hover:scale-[1.1] transition-transform"
                                         />
 
-                                        <div className="absolute right-[1.6rem] top-[50%] transform translate-y-[-50%] flex min-w-0 flex-col items-end">
-                                            <p className="bg-black text-[#13ff34] text-right text-[2.0rem] font-semibold p-[0.6rem_0.8rem]">NEXT</p>
-                                            <p className="bg-black text-white text-right text-[3.2rem] font-semibold p-[0.6rem_0.8rem] line-clamp-2">{next.title}</p>
+                                        <div className="absolute left-[1.6rem] top-[50%] transform translate-y-[-50%] flex min-w-0 flex-col items-start">
+                                            <p className="bg-black text-[#13ff34] text-left text-[2.0rem] font-semibold p-[0.6rem_0.8rem]">PREV</p>
+                                            <p className="bg-black text-white text-left text-[3.2rem] font-semibold p-[0.6rem_0.8rem] line-clamp-2">{prev.title}</p>
                                             <MaterialIcon
                                                 name={"arrow_back"}
-                                                size={18}
-                                                className="bg-black text-white p-[0.6rem_0.8rem] rotate-180"
+                                                size={24}
+                                                className="bg-black  text-white p-[0.6rem_0.8rem]"
                                             />
                                         </div>
                                     </div>
-                                </Fragment>
-                            ) : (
-                                <div className="relative h-[50svh] w-full shrink-0 overflow-hidden bg-black">
-                                    <div className="absolute right-[1.6rem] top-[50%] transform translate-y-[-50%] flex min-w-0 flex-col">
-                                        <p className="bg-black text-[#13ff34] text-right text-[2.0rem] font-semibold p-[0.6rem_0.8rem]">NEXT</p>
-                                        <p className="bg-black text-white text-right text-[3.2rem] font-semibold p-[0.6rem_0.8rem] line-clamp-2">다음글이 없어요</p>
+                                ) : (
+                                    <div className="relative h-[50svh] w-full shrink-0 overflow-hidden bg-black">
+                                        <div className="absolute left-[1.6rem] top-[50%] transform translate-y-[-50%] flex min-w-0 flex-col items-start">
+                                            <p className="bg-black text-[#13ff34] text-left text-[2.0rem] font-semibold p-[0.6rem_0.8rem]">PREV</p>
+                                            <p className="bg-black text-white text-left text-[3.2rem] font-semibold p-[0.6rem_0.8rem] line-clamp-2">이전글이 없어요</p>
+                                        </div>
                                     </div>
-                                </div>
-                            )}
-                        </UI.Button>
+                                )}
+                            </UI.Button>
+
+                            <UI.Button
+                                className={`hover:brightness-50 flex-1 flex items-center justify-end gap-[0.8rem]  ${next ? "" : "pointer-events-none"}`}
+                                onClick={() => {
+                                    if (next) {
+                                        pushToUrl(`/post/${next?.idx}`);
+                                    } else {
+                                        setToast({ msg: "다음 글이 없어요", time: 2 });
+                                    }
+                                }}
+                            >
+                                {next ? (
+                                    <Fragment>
+                                        <div className="relative h-[50svh] w-full shrink-0 overflow-hidden">
+                                            <PostThumbnail
+                                                readinessKey={`post-next-thumbnail-${next.idx}`}
+                                                seed={next.idx}
+                                                src={next.thumbnail}
+                                                alt={next.title}
+                                                fill
+                                                className="object-cover sacle-[1] hover:scale-[1.1] transition-transform"
+                                            />
+
+                                            <div className="absolute right-[1.6rem] top-[50%] transform translate-y-[-50%] flex min-w-0 flex-col items-end">
+                                                <p className="bg-black text-[#13ff34] text-right text-[2.0rem] font-semibold p-[0.6rem_0.8rem]">NEXT</p>
+                                                <p className="bg-black text-white text-right text-[3.2rem] font-semibold p-[0.6rem_0.8rem] line-clamp-2">{next.title}</p>
+                                                <MaterialIcon
+                                                    name={"arrow_back"}
+                                                    size={18}
+                                                    className="bg-black text-white p-[0.6rem_0.8rem] rotate-180"
+                                                />
+                                            </div>
+                                        </div>
+                                    </Fragment>
+                                ) : (
+                                    <div className="relative h-[50svh] w-full shrink-0 overflow-hidden bg-black">
+                                        <div className="absolute right-[1.6rem] top-[50%] transform translate-y-[-50%] flex min-w-0 flex-col">
+                                            <p className="bg-black text-[#13ff34] text-right text-[2.0rem] font-semibold p-[0.6rem_0.8rem]">NEXT</p>
+                                            <p className="bg-black text-white text-right text-[3.2rem] font-semibold p-[0.6rem_0.8rem] line-clamp-2">다음글이 없어요</p>
+                                        </div>
+                                    </div>
+                                )}
+                            </UI.Button>
+                        </section>
                     </section>
 
                     <PostDetailActions postIdx={parseInt(postId)} />
