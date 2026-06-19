@@ -16,5 +16,5 @@ export default async function ManagerLayout({ children }: { children: ReactNode 
         redirect("/");
     }
 
-    return <ManagerLayoutView>{children}</ManagerLayoutView>;
+    return <ManagerLayoutView profile={{ name: session.user.name, email: session.user.email }}>{children}</ManagerLayoutView>;
 }

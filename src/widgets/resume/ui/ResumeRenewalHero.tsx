@@ -16,7 +16,7 @@ const ResumeRenewalHero = () => {
             left={<div className="tablet:sticky tablet:top-[var(--header-height)] w-full">{/* 프로필 이미지 영역 — 필요 시 RenewalFadeIn + Image 복원 */}</div>}
         >
             <RenewalRightBlocks
-                className="h-[calc(100svh-(var(--header-height)*2))] justify-center"
+                className="min-h-[calc(100svh-(var(--header-height)*2))] justify-center"
                 label={<p className={R.label}>{renewalHero.category}</p>}
                 headline={<h1 className={`${R.heroKeyline} whitespace-pre-line`}>{renewalHero.greeting}</h1>}
                 description={

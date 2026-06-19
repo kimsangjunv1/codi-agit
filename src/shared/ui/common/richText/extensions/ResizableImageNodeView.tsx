@@ -128,7 +128,8 @@ export function ResizableImageNodeView({ node, selected, updateAttributes, getPo
             style={getImageWrapperStyle()}
         >
             <div
-                className={`relative overflow-hidden rounded-[2.4rem] shadow-[var(--shadow-normal)] ${selected ? "outline outline-2 outline-[#3b82f6]" : ""} ${isDragging ? "cursor-grabbing opacity-60" : "cursor-grab"}`}
+                className={`relative overflow-hidden ${selected ? "outline outline-2 outline-[#3b82f6]" : ""} ${isDragging ? "cursor-grabbing opacity-60" : "cursor-grab"}`}
+                // className={`relative overflow-hidden rounded-[2.4rem] shadow-[var(--shadow-normal)] ${selected ? "outline outline-2 outline-[#3b82f6]" : ""} ${isDragging ? "cursor-grabbing opacity-60" : "cursor-grab"}`}
                 contentEditable={false}
                 onPointerDown={startMove}
                 ref={frameRef}
@@ -136,7 +137,7 @@ export function ResizableImageNodeView({ node, selected, updateAttributes, getPo
             >
                 <img
                     alt={String(node.attrs.alt ?? "")}
-                    className="rounded-[2.4rem]"
+                    // className="rounded-[2.4rem]"
                     draggable={false}
                     src={String(node.attrs.src ?? "")}
                     style={getImageElementStyle()}

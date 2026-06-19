@@ -3,7 +3,6 @@
 import { useEffect, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { motion } from "motion/react";
-import NProgress from "nprogress";
 
 import { useReducedMotion } from "@/shared/hooks/useReducedMotion";
 import { PAGE_REVEAL_COVER_DURATION, PAGE_REVEAL_COVER_EASE, PAGE_REVEAL_READY_TIMEOUT, PAGE_REVEAL_UNCOVER_DURATION, PAGE_REVEAL_UNCOVER_EASE } from "@/shared/constants/pageTransition";
@@ -30,8 +29,18 @@ const PageRevealOverlay = () => {
     const hasExecutedNavigation = useRef(false);
     const hasStartedInitialReveal = useRef(false);
 
-    const { transitionPhase, transitionDirection, pendingNavigation, isPageContentVisible, pageReadinessBlockers, setTransitionPhase, setIsPageContentVisible, beginInitialReveal, completeRouteTransition, resetPageReadiness } =
-        useLayoutStore();
+    const {
+        transitionPhase,
+        transitionDirection,
+        pendingNavigation,
+        isPageContentVisible,
+        pageReadinessBlockers,
+        setTransitionPhase,
+        setIsPageContentVisible,
+        beginInitialReveal,
+        completeRouteTransition,
+        resetPageReadiness,
+    } = useLayoutStore();
 
     const hasPageReadinessBlockers = Object.keys(pageReadinessBlockers).length > 0;
 
@@ -99,7 +108,6 @@ const PageRevealOverlay = () => {
 
         if (pathname === pathnameAtNavStart.current) return;
 
-        NProgress.done();
         resetPageReadiness();
 
         if (reducedMotion) {
@@ -138,11 +146,7 @@ const PageRevealOverlay = () => {
     }, [transitionPhase, reducedMotion, setTransitionPhase, completeRouteTransition]);
 
     const clipTarget =
-        transitionPhase === "covering" || transitionPhase === "waiting" || transitionPhase === "navigating"
-            ? clip.covered
-            : transitionPhase === "revealing"
-              ? clip.revealed
-              : clip.covered;
+        transitionPhase === "covering" || transitionPhase === "waiting" || transitionPhase === "navigating" ? clip.covered : transitionPhase === "revealing" ? clip.revealed : clip.covered;
 
     const clipInitial = transitionPhase === "revealing" ? clip.covered : clip.hidden;
 

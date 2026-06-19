@@ -9,22 +9,23 @@ import AuthProvider from "@/app/providers/AuthProvider";
 import PopupProvider from "@/app/providers/PopupProvider";
 import LenisProvider from "@/app/providers/LenisProvider";
 
-import Toast from "@/shared/ui/layout/Toast";
-import PageProgress from "@/shared/ui/common/PageProgress";
+// import Toast from "@/shared/ui/layout/Toast";
 import PathCheckComponent from "@/shared/ui/common/PathCheckComponent";
-import ClientPageProgress from "@/shared/ui/common/ClientComponent";
 import PageRevealOverlay from "@/shared/ui/common/PageRevealOverlay";
 import PageContentGate from "@/shared/ui/common/PageContentGate";
 import RootChromeView from "@/views/layout/RootChromeView";
 
+import "lenis/dist/lenis.css";
+
 import "@/shared/styles/scss/global.css";
 import "@/shared/styles/scss/index.scss";
+import { Toast } from "@/shared/ui/layout/Toast";
 
 export const metadata: Metadata = {
     metadataBase: new URL(getSiteUrl()),
     title: {
         default: SITE_NAME,
-        template: `%s | ${SITE_NAME}`,
+        template: `%s - ${SITE_NAME}`,
     },
     description: SITE_DESCRIPTION,
     keywords: SITE_KEYWORDS,
@@ -46,16 +47,32 @@ export const metadata: Metadata = {
     },
 };
 
+const MATERIAL_SYMBOLS_FONT_URL = "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400,0,0&display=block";
+
 export default function RootLayout({ children, modal }: Readonly<{ children: React.ReactNode; modal: React.ReactNode }>) {
     return (
         <html lang="ko">
+            <head>
+                <link
+                    rel="preconnect"
+                    href="https://fonts.googleapis.com"
+                />
+                <link
+                    rel="preconnect"
+                    href="https://fonts.gstatic.com"
+                    crossOrigin="anonymous"
+                />
+                <link
+                    rel="stylesheet"
+                    href={MATERIAL_SYMBOLS_FONT_URL}
+                />
+            </head>
             <body>
                 <GlobalErrorBoundary>
                     <QueryProvider>
                         <AuthProvider>
                             <PopupProvider>
-                                <PageProgress />
-                                {/* <LenisProvider /> */}
+                                <LenisProvider />
                                 <PageRevealOverlay />
                                 <PageContentGate>
                                     <RootChromeView>
@@ -65,7 +82,6 @@ export default function RootLayout({ children, modal }: Readonly<{ children: Rea
                                         </PathCheckComponent>
                                     </RootChromeView>
                                 </PageContentGate>
-                                <ClientPageProgress />
                             </PopupProvider>
                             <Toast />
                         </AuthProvider>

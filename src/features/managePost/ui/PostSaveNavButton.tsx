@@ -2,6 +2,7 @@
 
 import UI from "@/shared/ui/common/UIComponent";
 import IconComponent from "@/shared/ui/common/IconComponent";
+import { MaterialIcon } from "@/shared/ui/common/MaterialIcon";
 
 type PostSaveNavButtonProps = {
     isCreate: boolean;
@@ -10,22 +11,34 @@ type PostSaveNavButtonProps = {
 };
 
 const PostSaveNavButton = ({ isCreate, isPending, onSave }: PostSaveNavButtonProps) => (
+    // <UI.Button
+    //     type="button"
+    //     disabled={isPending}
+    //     onClick={onSave}
+    //     className="bg-white hover:bg-[var(--color-blue-500)] transition-colors p-[1.2rem] rounded-full shadow-[var(--shadow-normal)] flex gap-[0.8rem] items-center disabled:opacity-60"
+    // >
+    //     <p className="text-black mr-[1.6rem] text-[1.6rem] font-semibold tablet:block mobile:hidden">{isCreate ? "작성하기" : "수정완료"}</p>
+
+    //     <IconComponent
+    //         type="outlined-arrow-below"
+    //         alt="나가기"
+    //         width={32}
+    //         height={32}
+    //         className="rotate-90"
+    //     />
+    // </UI.Button>
     <UI.Button
         type="button"
         disabled={isPending}
         onClick={onSave}
-        className="bg-[#00000090] hover:bg-[var(--color-blue-500)] transition-colors p-[1.2rem] rounded-full flex gap-[0.8rem] items-center disabled:opacity-60"
+        className="transition-colors flex flex-col items-end z-1"
     >
-        <IconComponent
-            type="outlined-arrow-below"
-            alt="나가기"
-            width={32}
-            height={32}
-            className="rotate-90 invert-100"
+        <p className="bg-black text-[#00ff61] p-[2.0rem] text-[2.4rem] font-semibold tablet:block mobile:hidden">{isPending ? "로딩중..." : isCreate ? "작성하기" : "수정하기"}</p>
+        <MaterialIcon
+            name="check"
+            size={24}
+            className="bg-black text-[#00ff61] p-[2.0rem]"
         />
-        <p className="text-white mr-[1.6rem] text-[1.6rem] font-semibold tablet:block mobile:hidden">
-            {isCreate ? "작성하기" : "수정완료"}
-        </p>
     </UI.Button>
 );
 

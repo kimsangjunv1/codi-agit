@@ -2,7 +2,7 @@
 
 import { motion, Reorder, useDragControls } from "motion/react";
 import type { Editor } from "@tiptap/react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import TipTap from "@/shared/ui/layout/Tiptap";
 import TipTapToolbar from "@/shared/ui/layout/TipTapToolbar";
@@ -10,19 +10,23 @@ import UI from "@/shared/ui/common/UIComponent";
 import IconComponent from "@/shared/ui/common/IconComponent";
 import { MaterialIcon } from "@/shared/ui/common/MaterialIcon";
 import { blockContentToHtml } from "@/widgets/post/lib/blockContent";
-import { isMainBlock } from "@/widgets/post/lib/blockMode";
+import { getBlockModeLabel, getNextBlockModePatch, isCodeBlock, isMainBlock } from "@/widgets/post/lib/blockMode";
 import { getPostTocAnchorId } from "@/widgets/post/lib/postToc";
 
 import { usePostDraftImageStore } from "@/shared/stores/usePostDraftImageStore";
 import { useToastStore } from "@/shared/stores/useToastStore";
 import { Row, useBlockStore } from "@/features/managePost/model/useEditorBlockStore";
-import { BLOCK_COLUMN_CLASS, BLOCK_ROW_CLASS } from "@/features/managePost/ui/blockEditor/blockEditorStyles";
+import { normalizeBlocksForEditor } from "@/features/managePost/lib/normalizePostBlocks";
+import { BLOCK_COLUMN_CLASS, BLOCK_ROW_CLASS, CODE_BLOCK_COLUMN_CLASS } from "@/features/managePost/ui/blockEditor/blockEditorStyles";
+import { detectCodeLanguage, extractCodeFromContent, getDefaultCodeFileBaseName, toCodeBlockHtml } from "@/shared/lib/codeHighlight";
+import { formatCodeContent } from "@/shared/lib/formatCodeContent";
+import CodeBlockPanel from "@/shared/ui/common/CodeBlockPanel";
 
 import type { SectionContent } from "@/entities/post/model/post.type";
 
 const REORDER_TRANSITION = { type: "spring" as const, stiffness: 500, damping: 42 };
 
-const GROUP_ACTION_BUTTON_CLASS = "flex h-[3.6rem] w-[3.6rem] items-center justify-center rounded-[1.2rem] text-[var(--color-gray-900)] transition-colors hover:bg-[var(--color-gray-100)]";
+const GROUP_ACTION_BUTTON_CLASS = "flex h-[2.4rem] w-[3.6rem] items-center justify-center rounded-[1.2rem] text-[var(--color-gray-900)] transition-colors hover:bg-[var(--color-gray-100)]";
 
 const getRowKey = (row: Row) => row.map((b) => b.id).join("-");
 
@@ -40,15 +44,13 @@ const BlockEditableField = ({
     onChange: (value: string) => void;
 }) => {
     const ref = useRef<HTMLElement>(null);
-    const lastExternalValue = useRef(value);
 
-    useEffect(() => {
-        if (value === lastExternalValue.current) return;
+    useLayoutEffect(() => {
+        const el = ref.current;
+        if (!el || document.activeElement === el) return;
 
-        lastExternalValue.current = value;
-
-        if (ref.current && document.activeElement !== ref.current) {
-            ref.current.textContent = value;
+        if ((el.textContent ?? "") !== value) {
+            el.textContent = value;
         }
     }, [value]);
 
@@ -61,9 +63,7 @@ const BlockEditableField = ({
             className={`${className} outline-none empty:before:content-[attr(data-placeholder)] empty:before:text-[var(--color-gray-400)] empty:before:pointer-events-none`}
             onClick={(event) => event.stopPropagation()}
             onInput={(event) => {
-                const text = event.currentTarget.textContent ?? "";
-                lastExternalValue.current = text;
-                onChange(text);
+                onChange(event.currentTarget.textContent ?? "");
             }}
         />
     );
@@ -74,7 +74,7 @@ const SortableBlock = ({ contents }: { contents?: Row[] }) => {
 
     useEffect(() => {
         if (contents && contents.length > 0) {
-            setRows(contents);
+            setRows(normalizeBlocksForEditor(contents));
         }
     }, [contents, setRows]);
 
@@ -84,7 +84,7 @@ const SortableBlock = ({ contents }: { contents?: Row[] }) => {
             values={rows}
             onReorder={(newRows) => useBlockStore.getState().setRows(newRows)}
             as="section"
-            className="flex flex-col flex-1 gap-[2.4rem] min-h-[51.2rem]"
+            className="flex flex-col flex-1 mobile:gap-[5.2rem] pc:gap-[2.4rem] min-h-[51.2rem]"
         >
             {rows.map((row, rowIndex) => (
                 <Item
@@ -99,71 +99,37 @@ const SortableBlock = ({ contents }: { contents?: Row[] }) => {
 
 const Item = ({ row, rowIndex }: { row: Row; rowIndex: number }) => {
     const dragControls = useDragControls();
-    const groupRef = useRef<HTMLDivElement>(null);
 
     const [isGrabbing, setIsGrabbing] = useState(false);
-    const [focusedEditor, setFocusedEditor] = useState<Editor | null>(null);
-    const [isGroupHovered, setIsGroupHovered] = useState(false);
 
     const { setToast } = useToastStore();
     const { rows, addBlock, deleteRow } = useBlockStore();
     const isSingleGroup = rows.length === 1;
-    const showToolbar = focusedEditor !== null && isGroupHovered;
-
-    const handleEditorFocus = useCallback((editor: Editor) => {
-        setFocusedEditor(editor);
-        setIsGroupHovered(true);
-    }, []);
-
-    const handleEditorBlur = useCallback(() => {
-        requestAnimationFrame(() => {
-            const activeElement = document.activeElement;
-
-            if (groupRef.current?.contains(activeElement)) {
-                return;
-            }
-
-            setFocusedEditor(null);
-        });
-    }, []);
-
-    const handleGroupMouseLeave = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
-        const relatedTarget = event.relatedTarget as Node | null;
-
-        if (relatedTarget && groupRef.current?.contains(relatedTarget)) {
-            return;
-        }
-
-        setIsGroupHovered(false);
-    }, []);
 
     return (
         <Reorder.Item
-            ref={groupRef}
             value={row}
             layout
             transition={REORDER_TRANSITION}
-            className="group/row relative flex flex-col gap-[0.8rem] shadow-[var(--shadow-normal)] rounded-[2.4rem] p-[0.4rem]"
-            // className="group/row relative flex flex-col gap-[0.8rem]"
+            className="group/row relative flex flex-col gap-[0.8rem]"
             as="div"
             dragControls={dragControls}
             dragListener={false}
-            onMouseEnter={() => setIsGroupHovered(true)}
-            onMouseLeave={handleGroupMouseLeave}
         >
-            <section
-                className={`flex gap-[0.8rem] w-full justify-between ${isGrabbing ? "cursor-grabbing" : "cursor-grab"}`}
-                onPointerDown={(e) => {
-                    e.preventDefault();
-                    setIsGrabbing(true);
-                    dragControls.start(e);
-                }}
-                onPointerUp={() => setIsGrabbing(false)}
+            <section className="mobile:hidden pc:flex absolute top-0 left-[-10%] items-center gap-[0.4rem] bg-[#00000090] rounded-full p-[0.4rem_0.8rem]">
+                <MaterialIcon
+                    name="deployed_code"
+                    size={16}
+                    className="invert"
+                />
+                <p className="text-[#ffffff] font-mono">group</p>
+            </section>
+
+            <motion.section
+                layout="position"
+                className="absolute top-0 right-[-4.8rem] flex flex-col items-center gap-[1.2rem]"
             >
-                <motion.section
-                    layout="position"
-                    className="flex max-w-full flex-wrap items-center justify-center rounded-full shadow-[var(--shadow-normal)] border border-[var(--color-gray-200)]"
-                >
+                <section className="shadow-[var(--shadow-normal)] bg-white rounded-full py-[0.8rem]">
                     <UI.Button
                         onClick={() => addBlock(rowIndex, "down")}
                         className={GROUP_ACTION_BUTTON_CLASS}
@@ -193,34 +159,51 @@ const Item = ({ row, rowIndex }: { row: Row; rowIndex: number }) => {
                         <MaterialIcon
                             name={row.length === 1 ? "view_column" : "swap_horiz"}
                             size={18}
+                            className="mobile:rotate-90 pc:rotate-0"
                         />
                     </UI.Button>
-                </motion.section>
 
-                <section className="flex max-w-full flex-wrap items-center justify-center bg-[var(--color-red-600)] rounded-full shadow-[var(--shadow-normal)] border border-[var(--color-gray-200)]">
-                    {!isSingleGroup ? (
-                        <UI.Button
-                            onClick={() => {
-                                setToast({ msg: "그룹을 제거했어요", time: 2 });
-                                deleteRow(rowIndex);
-                            }}
-                            className={`${GROUP_ACTION_BUTTON_CLASS} invert brightness-0`}
-                        >
-                            <span className="sr-only">그룹 삭제</span>
-                            <MaterialIcon
-                                name="delete"
-                                size={18}
-                            />
-                        </UI.Button>
-                    ) : null}
+                    <section className="flex max-w-full flex-wrap items-center justify-center bg-[#ededed] rounded-full">
+                        {!isSingleGroup ? (
+                            <UI.Button
+                                onClick={() => {
+                                    setToast({ msg: "그룹을 제거했어요", time: 2 });
+                                    deleteRow(rowIndex);
+                                }}
+                                className={`${GROUP_ACTION_BUTTON_CLASS}`}
+                            >
+                                <IconComponent
+                                    type="outlined-cross"
+                                    alt="블록 지우기"
+                                />
+                            </UI.Button>
+                        ) : null}
+                    </section>
                 </section>
-            </section>
+
+                <section
+                    className={`flex justify-center items-center gap-[0.8rem] w-full shadow-[var(--shadow-normal)] h-[3.6rem] bg-white rounded-full ${isGrabbing ? "cursor-grabbing" : "cursor-grab"}`}
+                    onPointerDown={(e) => {
+                        e.preventDefault();
+                        setIsGrabbing(true);
+                        dragControls.start(e);
+                    }}
+                    onPointerUp={() => setIsGrabbing(false)}
+                >
+                    <MaterialIcon
+                        name="reorder"
+                        size={16}
+                        className="select-none"
+                    />
+                </section>
+            </motion.section>
 
             <section className={BLOCK_ROW_CLASS}>
                 {row.map((block, blockIndex) => (
-                    <section
+                    <motion.section
                         key={block.id}
-                        className={BLOCK_COLUMN_CLASS}
+                        layout="position"
+                        className={isCodeBlock(block) ? CODE_BLOCK_COLUMN_CLASS : BLOCK_COLUMN_CLASS}
                     >
                         <Block
                             block={block}
@@ -228,52 +211,70 @@ const Item = ({ row, rowIndex }: { row: Row; rowIndex: number }) => {
                             blockIndex={blockIndex}
                             last={row.length !== 1}
                             blockCount={row.length}
-                            onEditorFocus={handleEditorFocus}
-                            onEditorBlur={handleEditorBlur}
                         />
-                    </section>
+                    </motion.section>
                 ))}
             </section>
-
-            {showToolbar && focusedEditor ? (
-                <div
-                    className="pointer-events-auto absolute left-[0.4rem] right-[0.4rem] top-full z-20 pt-[0.8rem]"
-                    onPointerDown={(event) => event.stopPropagation()}
-                >
-                    <TipTapToolbar editor={focusedEditor} />
-                </div>
-            ) : null}
         </Reorder.Item>
     );
 };
 
-const Block = ({
-    block,
-    rowIndex,
-    blockIndex,
-    last,
-    blockCount,
-    onEditorFocus,
-    onEditorBlur,
-}: {
-    block: SectionContent;
-    rowIndex: number;
-    blockIndex: number;
-    last: boolean;
-    blockCount: number;
-    onEditorFocus?: (editor: Editor) => void;
-    onEditorBlur?: () => void;
-}) => {
-    const { selectedPosition, updateBlock, deleteBlock, copyBlock, pasteBlock, selectBlock, unSelectBlock } = useBlockStore();
+const Block = ({ block, rowIndex, blockIndex, last, blockCount }: { block: SectionContent; rowIndex: number; blockIndex: number; last: boolean; blockCount: number }) => {
+    const { updateBlock, deleteBlock, copyBlock, pasteBlock, selectBlock, unSelectBlock } = useBlockStore();
     const { setToast } = useToastStore();
     const addFromFile = usePostDraftImageStore((state) => state.addFromFile);
 
+    const blockRef = useRef<HTMLDivElement>(null);
     const imageInputRef = useRef<HTMLInputElement>(null);
     const [currentImageUrl, setCurrentImageUrl] = useState<string>(block.imageUrl ?? "/");
+    const [focusedEditor, setFocusedEditor] = useState<Editor | null>(null);
     const textContent = blockContentToHtml(block.content);
-    const containerRef = useRef<HTMLDivElement>(null);
 
-    const columnClassName = `w-full min-w-0 flex flex-col gap-[1.6rem] h-full group/block ${block.type !== 0 ? "rounded-[2.4rem] overflow-hidden" : ""} ${blockCount === 1 && block.type !== 0 ? "tablet:col-span-2" : blockCount > 1 && block.type !== 0 ? "tablet:min-h-[36.0rem]" : ""}`;
+    const handleEditorFocus = useCallback((editor: Editor) => {
+        setFocusedEditor(editor);
+    }, []);
+
+    const handleEditorBlur = useCallback(() => {
+        requestAnimationFrame(() => {
+            const activeElement = document.activeElement;
+
+            if (blockRef.current?.contains(activeElement)) {
+                return;
+            }
+
+            setFocusedEditor(null);
+        });
+    }, []);
+
+    const codeBlockMode = isCodeBlock(block);
+    const showHeadingFields = block.type === 0 && isMainBlock(block) && !codeBlockMode;
+    const blockModeLabel = getBlockModeLabel(block);
+    const blockMode = codeBlockMode ? "code" : isMainBlock(block) ? "main" : "sub";
+
+    const handleFormatCode = useCallback(async () => {
+        const { code } = extractCodeFromContent(textContent);
+        if (!code.trim()) {
+            setToast({ msg: "정렬할 코드가 없어요", time: 2 });
+            return;
+        }
+
+        const language = detectCodeLanguage(code);
+        const formatted = await formatCodeContent(code, language);
+
+        updateBlock(rowIndex, blockIndex, {
+            content: toCodeBlockHtml(formatted, language),
+        });
+        setToast({ msg: "코드를 정렬했어요", time: 2 });
+    }, [blockIndex, rowIndex, setToast, textContent, updateBlock]);
+
+    useEffect(() => {
+        if (codeBlockMode) {
+            setFocusedEditor(null);
+        }
+    }, [codeBlockMode]);
+
+    const columnClassName = `w-full min-w-0 flex flex-col gap-[1.6rem] h-full group/block ${!codeBlockMode && block.type !== 0 ? "rounded-[2.4rem]" : ""} ${blockCount === 1 && !codeBlockMode && block.type !== 0 ? "tablet:col-span-2" : blockCount > 1 && !codeBlockMode && block.type !== 0 ? "tablet:min-h-[36.0rem]" : ""} ${codeBlockMode ? "rounded-[2.4rem]" : ""}`;
+    // const columnClassName = `w-full min-w-0 flex flex-col gap-[1.6rem] h-full group/block ${!codeBlockMode && block.type !== 0 ? "rounded-[2.4rem]" : ""} ${blockCount === 1 && !codeBlockMode && block.type !== 0 ? "tablet:col-span-2" : blockCount > 1 && !codeBlockMode && block.type !== 0 ? "tablet:min-h-[36.0rem]" : ""} ${codeBlockMode ? "rounded-[2.4rem] overflow-hidden" : ""}`;
 
     const handleImageFile = (file: File) => {
         if (!file.type.startsWith("image/")) {
@@ -292,21 +293,16 @@ const Block = ({
         }
     };
 
-    const isSelected = selectedPosition?.rowIndex === rowIndex && selectedPosition?.blockIndex === blockIndex;
-    const showHeadingFields = block.type === 0 && isMainBlock(block);
-
     useEffect(() => {
         setCurrentImageUrl(block.imageUrl ?? "/");
     }, [block.imageUrl]);
 
     return (
-        <motion.div
-            ref={containerRef}
+        <div
+            ref={blockRef}
             id={block.type === 0 ? getPostTocAnchorId(block.id) : undefined}
             tabIndex={0}
-            layout="position"
-            className={`${columnClassName} relative ${block.type === 0 ? "scroll-mt-[12rem]" : ""} ${isSelected ? "" : ""}`}
-            // className={`${columnClassName} relative outline-none ring-offset-2 ${isSelected ? "ring-2 ring-[var(--color-brand-500)] rounded-[2.4rem]" : "hover:ring-1 hover:ring-[var(--color-gray-300)] rounded-[2.4rem]"}`}
+            className={`${columnClassName} relative ${block.type === 0 ? "scroll-mt-[12rem]" : ""}`}
             onClick={() => {
                 selectBlock(rowIndex, blockIndex);
             }}
@@ -338,37 +334,58 @@ const Block = ({
         >
             {block.type === 0 || last ? (
                 <section
-                    className="absolute top-[0.2rem] right-[0] z-10 flex items-center gap-[0.4rem]"
+                    className={`absolute top-[calc((2.8rem/1)*-1)] left-[50%] transform translate-x-[-50%] z-10 flex items-center rounded-full overflow-hidden p-[0.4rem] ${block.blockMode === "code" ? "bg-[#2d2d2d]" : "bg-white"}`}
                     onClick={(event) => event.stopPropagation()}
                 >
                     {block.type === 0 ? (
                         <UI.Button
                             onClick={() => {
-                                updateBlock(rowIndex, blockIndex, {
-                                    blockMode: showHeadingFields ? "sub" : "main",
-                                });
+                                const patch = getNextBlockModePatch(block);
+
+                                if (patch.blockMode === "code") {
+                                    setFocusedEditor(null);
+                                    const { code } = extractCodeFromContent(textContent);
+                                    const language = detectCodeLanguage(code);
+                                    const defaultFileName = getDefaultCodeFileBaseName(language);
+                                    updateBlock(rowIndex, blockIndex, {
+                                        ...patch,
+                                        title: block.title?.trim() || defaultFileName,
+                                        content: toCodeBlockHtml(code, language),
+                                    });
+                                    return;
+                                }
+
+                                if (codeBlockMode) {
+                                    setFocusedEditor(null);
+                                }
+
+                                updateBlock(rowIndex, blockIndex, patch);
                             }}
-                            className={`flex h-[3.2rem] w-[3.2rem] items-center justify-center rounded-full shadow-[var(--shadow-normal)] transition-colors ${
-                                showHeadingFields ? "bg-[var(--color-gray-900)] text-white" : "border border-[var(--color-gray-200)] bg-white text-[var(--color-gray-900)]"
+                            className={`flex px-[0.8rem] py-[0.4rem] gap-[0.4rem] items-center justify-center rounded-full transition-colors ${
+                                blockMode === "main"
+                                    ? "bg-[var(--color-blue-100)] text-[var(--color-blue-600)]"
+                                    : blockMode === "code"
+                                      ? "bg-[#131313] text-[#ffffff]"
+                                      : "bg-[var(--color-gray-200)] text-[var(--color-gray-900)]"
                             }`}
                         >
-                            <span className="sr-only">{showHeadingFields ? "메인 블록" : "서브 블록"}</span>
                             <MaterialIcon
-                                name={showHeadingFields ? "view_headline" : "article"}
-                                size={20}
+                                name={"refresh"}
+                                size={16}
                             />
+                            <p>{blockModeLabel}</p>
                         </UI.Button>
                     ) : null}
 
                     {last ? (
                         <UI.Button
                             onClick={() => deleteBlock(rowIndex, blockIndex)}
-                            className="cursor-pointer rounded-full bg-[var(--color-gray-900)] p-[0.2rem] shadow-[var(--shadow-normal)]"
+                            className="cursor-pointer rounded-full"
                         >
                             <IconComponent
                                 type="outlined-cross"
                                 alt="블록 지우기"
-                                className="invert brightness-0"
+                                // className="invert brightness-0"
                             />
                         </UI.Button>
                     ) : null}
@@ -376,7 +393,7 @@ const Block = ({
             ) : null}
 
             <section className="relative flex flex-col gap-[1.6rem] h-full">
-                {block.type === 0 ? (
+                {block.type === 0 && !codeBlockMode ? (
                     <>
                         {showHeadingFields ? (
                             <section className="flex flex-col gap-[0.8rem]">
@@ -384,28 +401,47 @@ const Block = ({
                                     as="p"
                                     value={block.subtitle}
                                     placeholder="부제목을 입력해주세요"
-                                    className="text-[1.4rem] text-[#676767]"
+                                    className="text-[1.4rem] leading-[1.5] text-[#676767]"
                                     onChange={(subtitle) => updateBlock(rowIndex, blockIndex, { subtitle })}
                                 />
                                 <BlockEditableField
                                     as="h5"
                                     value={block.title}
                                     placeholder="제목을 입력해주세요"
-                                    className="text-[2.0rem] tablet:text-[2.4rem] font-bold text-[var(--color-gray-1000)]"
+                                    className="text-[2.0rem] tablet:text-[2.4rem] leading-[1.5] font-bold text-[var(--color-gray-1000)]"
                                     onChange={(title) => updateBlock(rowIndex, blockIndex, { title })}
                                 />
                             </section>
                         ) : null}
-                        <section className="w-full min-h-[12rem]">
+                        <section className="w-full min-h-[12rem] flex-1">
                             <TipTap.Normal
+                                key={block.id}
                                 content={textContent}
                                 showToolbar={false}
                                 onChange={(html) => updateBlock(rowIndex, blockIndex, { content: html })}
-                                onEditorFocus={onEditorFocus}
-                                onEditorBlur={onEditorBlur}
+                                onEditorFocus={handleEditorFocus}
+                                onEditorBlur={handleEditorBlur}
                             />
                         </section>
                     </>
+                ) : null}
+
+                {codeBlockMode ? (
+                    <CodeBlockPanel
+                        content={textContent}
+                        fileName={block.title}
+                        editableFileName
+                        showFormat
+                        onFormat={handleFormatCode}
+                        onFileNameChange={(title) => updateBlock(rowIndex, blockIndex, { title })}
+                        bodyClassName="min-h-[12rem] p-0 px-[1.6rem] py-[1.4rem]"
+                    >
+                        <TipTap.Code
+                            key={`${block.id}-code`}
+                            content={textContent}
+                            onChange={(html) => updateBlock(rowIndex, blockIndex, { content: html })}
+                        />
+                    </CodeBlockPanel>
                 ) : null}
 
                 {block.type === 1 ? (
@@ -434,15 +470,17 @@ const Block = ({
                         />
                     </div>
                 ) : null}
-
-                {block.type === 2 ? (
-                    <TipTap.Code
-                        content={block.content as string}
-                        onChange={(html) => updateBlock(rowIndex, blockIndex, { content: html })}
-                    />
-                ) : null}
             </section>
-        </motion.div>
+
+            {focusedEditor && !codeBlockMode && !focusedEditor.isDestroyed ? (
+                <div
+                    className="pointer-events-auto absolute bottom-[calc((2.8rem/1)*-1)] left-[50%] transform translate-x-[-50%] mobile:w-[80%] pc:w-[50%]"
+                    onPointerDown={(event) => event.stopPropagation()}
+                >
+                    <TipTapToolbar editor={focusedEditor} />
+                </div>
+            ) : null}
+        </div>
     );
 };
 

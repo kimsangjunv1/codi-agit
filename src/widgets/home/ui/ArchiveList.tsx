@@ -8,9 +8,7 @@ import { useLayoutStore } from "@/shared/stores/useLayoutStore";
 import { clampPageScroll } from "@/widgets/home/lib/clampPageScroll";
 
 import ArchiveListDefaultItem from "./ArchiveListDefaultItem";
-import ArchiveListGridItem from "./ArchiveListGridItem";
 import { FeedEmpty, FeedError, FeedLoading } from "./FeedStatus";
-import ListViewModeToggle from "./ListViewModeToggle";
 import { AnimatePresence } from "motion/react";
 
 const ArchiveList = () => {
@@ -20,7 +18,7 @@ const ArchiveList = () => {
 
     const posts = data?.result ?? [];
     const filtered = categoryFilter !== 999 ? posts.filter((item) => item.category_idx === categoryFilter) : posts;
-    const isDataReady = (!isLoading || posts.length > 0) || isError || data?.resultCode === "ERROR";
+    const isDataReady = !isLoading || posts.length > 0 || isError || data?.resultCode === "ERROR";
 
     usePageTransitionReady("archive-list-data", isDataReady);
 
@@ -69,34 +67,18 @@ const ArchiveList = () => {
     }
 
     return (
-        <>
-            <article
-                ref={listRef}
-                className={
-                    listViewMode === "grid"
-                        ? "relative grid grid-cols-4 gap-[4px] px-[1.2rem] mx-auto max-w-[var(--size-tablet)]"
-                        : "relative flex flex-col gap-6"
-                }
-            >
+        <article ref={listRef}>
+            <div className="relative w-full grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-[2.4rem_0.4rem] max-w-[var(--size-pc)] mx-auto mobile:px-[0.4rem] pc:px-[2.0rem]">
                 <AnimatePresence mode="popLayout">
-                    {filtered.map((post) =>
-                        listViewMode === "grid" ? (
-                            <ArchiveListGridItem
-                                key={post.idx + post.title}
-                                post={post}
-                            />
-                        ) : (
-                            <ArchiveListDefaultItem
-                                key={post.idx + post.title}
-                                post={post}
-                            />
-                        ),
-                    )}
+                    {filtered.map((post) => (
+                        <ArchiveListDefaultItem
+                            key={post.idx + post.title}
+                            post={post}
+                        />
+                    ))}
                 </AnimatePresence>
-            </article>
-
-            <ListViewModeToggle />
-        </>
+            </div>
+        </article>
     );
 };
 

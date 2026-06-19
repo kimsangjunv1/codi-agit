@@ -34,7 +34,7 @@ const PostCreateEditor = () => {
 
     return (
         <section className="flex flex-col w-full post pb-[7.2rem]">
-            <section className="mx-auto post-inner flex flex-col gap-[5.2rem] w-full items-center">
+            <section className="mx-auto post-inner flex flex-col gap-[5.2rem] w-full items-center bg-[#efefef]">
                 <RenderContents
                     onTitleChange={setTitle}
                     onSummaryChange={setSummary}
@@ -63,7 +63,7 @@ const RenderContents = ({
 
     return (
         <Fragment>
-            <section className="flex flex-col justify-center items-center gap-[3.2rem] h-[100dvh] p-[0.8rem] w-full">
+            <section className="flex flex-col justify-center items-center gap-[3.2rem] h-[100svh] w-full">
                 <PostHero
                     mode="edit"
                     imageUrl={thumbnail}
@@ -86,7 +86,7 @@ const RenderContents = ({
 const Contents = () => {
     return (
         <article className="flex gap-[0.4rem] w-full max-w-[var(--size-tablet)] min-w-0">
-            <section className="flex flex-col gap-[7.2rem] flex-1 min-w-0">
+            <section className="flex flex-col gap-[7.2rem] flex-1 min-w-0 mx-[1.6rem_6.2rem]">
                 <SortableBlock />
                 <PostAttachedImageList />
             </section>

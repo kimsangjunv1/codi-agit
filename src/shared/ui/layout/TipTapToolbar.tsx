@@ -5,7 +5,11 @@ import type { Editor } from "@tiptap/react";
 
 import { MaterialIcon } from "@/shared/ui/common/MaterialIcon";
 import {
+    applyFontSize,
     applyHeading,
+    applyLineHeight,
+    DEFAULT_FONT_SIZE,
+    DEFAULT_LINE_HEIGHT,
     FONT_SIZES,
     getActiveHeading,
     LINE_HEIGHTS,
@@ -21,7 +25,7 @@ type TipTapToolbarProps = {
     editor: Editor;
 };
 
-const TOOLBAR_VARIANT = "glass" as const;
+const TOOLBAR_VARIANT = "default" as const;
 
 const HEADING_OPTIONS = [
     { label: "본문", value: "paragraph" },
@@ -48,10 +52,8 @@ const TipTapToolbar = ({ editor }: TipTapToolbarProps) => {
     };
 
     return (
-        <div className="relative rounded-[1.6rem] bg-black/60 backdrop-blur-[2px]">
-            <div className="pointer-events-none absolute left-0 top-0 bottom-0 z-[1] w-[2.4rem] rounded-l-[1.6rem] bg-gradient-to-r from-black/20 to-transparent" />
-            <div className="pointer-events-none absolute right-0 top-0 bottom-0 z-[1] w-[2.4rem] rounded-r-[1.6rem] bg-gradient-to-l from-black/20 to-transparent" />
-
+        // <div className="relative w-full mobile:max-w-[100%] pc:max-w-[50%] rounded-[1.6rem] bg-white shadow-[var(--shadow-normal)]">
+        <div className="relative w-full rounded-[1.6rem] bg-white shadow-[var(--shadow-normal)]">
             <div className="overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
                 <section className="flex min-w-min flex-nowrap items-center gap-[0.2rem] p-[0.4rem]">
                     <ToolbarIconButton
@@ -173,31 +175,55 @@ const TipTapToolbar = ({ editor }: TipTapToolbarProps) => {
 
                     <ToolbarDivider variant={TOOLBAR_VARIANT} />
 
+                    <ToolbarIconButton
+                        label="왼쪽 정렬"
+                        title="왼쪽 정렬"
+                        variant={TOOLBAR_VARIANT}
+                        active={state.isAlignLeft}
+                        onClick={() => editor.chain().focus().setTextAlign("left").run()}
+                    >
+                        <MaterialIcon name="format_align_left" />
+                    </ToolbarIconButton>
+                    <ToolbarIconButton
+                        label="가운데 정렬"
+                        title="가운데 정렬"
+                        variant={TOOLBAR_VARIANT}
+                        active={state.isAlignCenter}
+                        onClick={() => editor.chain().focus().setTextAlign("center").run()}
+                    >
+                        <MaterialIcon name="format_align_center" />
+                    </ToolbarIconButton>
+                    <ToolbarIconButton
+                        label="오른쪽 정렬"
+                        title="오른쪽 정렬"
+                        variant={TOOLBAR_VARIANT}
+                        active={state.isAlignRight}
+                        onClick={() => editor.chain().focus().setTextAlign("right").run()}
+                    >
+                        <MaterialIcon name="format_align_right" />
+                    </ToolbarIconButton>
+
+                    <ToolbarDivider variant={TOOLBAR_VARIANT} />
+
                     <ToolbarSelect
                         label="글자 크기"
                         variant={TOOLBAR_VARIANT}
-                        value="16"
+                        value={FONT_SIZES.includes(state.activeFontSize as (typeof FONT_SIZES)[number]) ? state.activeFontSize : DEFAULT_FONT_SIZE}
                         options={FONT_SIZES.map((size) => ({
-                            label: `${size}px`,
-                            value: String(size),
+                            label: size,
+                            value: size,
                         }))}
-                        onChange={(value) =>
-                            editor
-                                .chain()
-                                .focus()
-                                .setMark("textStyle", { fontSize: `${value}px` })
-                                .run()
-                        }
+                        onChange={(value) => applyFontSize(editor, value)}
                     />
                     <ToolbarSelect
                         label="줄간격"
                         variant={TOOLBAR_VARIANT}
-                        value="1.5"
+                        value={LINE_HEIGHTS.includes(state.activeLineHeight as (typeof LINE_HEIGHTS)[number]) ? state.activeLineHeight : DEFAULT_LINE_HEIGHT}
                         options={LINE_HEIGHTS.map((lh) => ({
                             label: lh,
                             value: lh,
                         }))}
-                        onChange={(value) => editor.chain().focus().setMark("textStyle", { lineHeight: value }).run()}
+                        onChange={(value) => applyLineHeight(editor, value)}
                     />
 
                     <ToolbarDivider variant={TOOLBAR_VARIANT} />

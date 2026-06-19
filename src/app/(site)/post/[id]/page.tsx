@@ -9,7 +9,6 @@ import JsonLd from "@/shared/ui/seo/JsonLd";
 import Main from "@/widgets/layout/Main";
 import PostDetailView from "@/views/post/PostDetailView";
 
-// POST_DETAIL_REVALIDATE_SECONDS 와 동일하게 유지
 export const revalidate = 300;
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {

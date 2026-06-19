@@ -11,6 +11,7 @@ import useNavigate from "@/shared/hooks/useNavigate";
 import { useScrollProgressBar } from "@/shared/hooks/useScrollProgress";
 import { getPostRouteFlags, PostSaveNavButton, usePostNavigationActions } from "@/features/managePost";
 import { useBlockStore } from "@/features/managePost/model/useEditorBlockStore";
+import { MaterialIcon } from "@/shared/ui/common/MaterialIcon";
 
 const springTransition = {
     type: "spring" as const,
@@ -49,21 +50,19 @@ const Navigation = () => {
     if (!IS_ROUTE_POST) return null;
 
     return (
-        <nav className="fixed tablet:top-[calc(1.6rem*3)] mobile:top-[calc(1.6rem*2)] left-[50%] tablet:px-[calc(1.6rem*2)] mobile:px-0 transform translate-x-[-50%] z-[1000] w-[calc(100dvw-(1.6rem*2))]">
+        <nav className="fixed tablet:top-[calc(1.6rem*3)] mobile:top-[calc(1.6rem*1)] left-[50%] tablet:px-[calc(1.6rem*2)] mobile:px-0 transform translate-x-[-50%] z-[1000] w-[calc(100dvw-(1.6rem*2))]">
             <div className="nav-inner menu flex justify-between gap-[4.8rem] w-full">
                 <UI.Button
                     type="button"
                     onClick={() => pushToUrl("/")}
-                    className="bg-[#00000090] hover:bg-[var(--color-blue-500)] transition-colors p-[1.2rem] rounded-full flex gap-[0.8rem] items-center"
+                    className="transition-colors flex flex-col items-start z-1"
                 >
-                    <IconComponent
-                        type={`outlined-arrow-below`}
-                        alt={"나가기"}
-                        width={32}
-                        height={32}
-                        className="rotate-90 invert-100"
+                    <p className="bg-black text-white p-[2.0rem] text-[2.4rem] font-semibold tablet:block mobile:hidden">{IS_ROUTE_POST_VIEW ? "메인으로" : "이전으로"}</p>
+                    <MaterialIcon
+                        name="arrow_back"
+                        size={24}
+                        className="bg-black text-white p-[2.0rem]"
                     />
-                    <p className="text-white mr-[1.6rem] text-[1.6rem] font-semibold tablet:block mobile:hidden">{IS_ROUTE_POST_VIEW ? "돌아가기" : "이전으로"}</p>
                 </UI.Button>
 
                 <section className="flex flex-col items-center justify-center gap-[1.6rem] flex-1 absolute left-[50%] translate-x-[-50%]">
@@ -78,7 +77,7 @@ const Navigation = () => {
                                     transition={springTransition}
                                     className="flex gap-[1.6rem] flex-1 justify-center"
                                 >
-                                    <h2 className="tablet:text-[2.4rem] mobile:text-[2.0rem] font-bold text-white">{postTitle}</h2>
+                                    <h2 className="tablet:text-[2.8rem] mobile:text-[2.4rem] text-center leading-[1.5] font-bold text-white">{postTitle}</h2>
                                 </motion.section>
                             </section>
                         )}
@@ -93,7 +92,7 @@ const Navigation = () => {
                                     transition={springTransition}
                                     className="flex gap-[1.6rem] flex-1 justify-center"
                                 >
-                                    <h2 className="tablet:text-[2.4rem] mobile:text-[2.0rem] font-bold text-white">{`${postTitle} | 수정중`}</h2>
+                                    <h2 className="tablet:text-[2.8rem] mobile:text-[2.4rem] text-center leading-[1.5] font-bold text-white">{`${postTitle} | 수정중`}</h2>
                                 </motion.section>
                             </section>
                         )}
@@ -108,7 +107,7 @@ const Navigation = () => {
                                     transition={springTransition}
                                     className="flex gap-[1.6rem] flex-1 justify-center"
                                 >
-                                    <h2 className="tablet:text-[2.4rem] mobile:text-[2.0rem] font-bold text-white">생성 중</h2>
+                                    <h2 className="tablet:text-[2.8rem] mobile:text-[2.4rem] text-center leading-[1.5] font-bold text-white">생성 중</h2>
                                 </motion.section>
                             </section>
                         )}
@@ -121,7 +120,7 @@ const Navigation = () => {
                         />
                     </div>
 
-                    <div className={`absolute top-0 left-0 w-full h-full bg-[linear-gradient(90deg,_transparent,_#000000ee,_transparent)] blur-lg z-[-1]`} />
+                    <div className={`absolute top-0 left-[50%] transform translate-x-[-50%] w-[calc(100%*2)] h-full bg-[linear-gradient(90deg,_transparent,_#000000ee,_transparent)] blur-lg z-[-1]`} />
                 </section>
 
                 {IS_ROUTE_POST_EDIT || IS_ROUTE_POST_CREATE ? (

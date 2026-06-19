@@ -13,7 +13,15 @@ import {
     useSetPostWithFeedback,
 } from "@/features/managePost/hooks/usePostMutations";
 import { preparePostPayloadForSave } from "@/features/managePost/lib/preparePostSave";
-import { canManagePost, getVisiblePostNavActions } from "@/features/managePost/lib/postPermissions";
+import type { PostNavAction } from "@/features/managePost/lib/postNavigationActions";
+import {
+    canManagePost,
+    getPostNavVisibility,
+    hasVisiblePostNavActions,
+} from "@/features/managePost/lib/postPermissions";
+import PostReadingSettingsContent from "@/features/managePost/ui/PostReadingSettingsContent";
+import PostTocModalContent from "@/features/managePost/ui/PostTocModalContent";
+import { buildPostToc } from "@/widgets/post/lib/postToc";
 import { util } from "@/shared/lib/util";
 import { useCreatePostStore } from "@/shared/stores/useCreatePostStore";
 import { useModalStore } from "@/shared/stores/useModalStore";
@@ -59,12 +67,17 @@ export const usePostNavigationActions = ({
         [postDetailData?.result?.user_id, session?.user?.id, session?.user?.role],
     );
 
-    const isLoggedIn = !!session?.user?.id;
-
-    const visibleActions = useMemo(
-        () => getVisiblePostNavActions({ canManage, isLoggedIn }),
-        [canManage, isLoggedIn],
+    const hasToc = useMemo(
+        () => buildPostToc(postDetailData?.result?.contents ?? []).length > 0,
+        [postDetailData?.result?.contents],
     );
+
+    const navVisibility = useMemo(
+        () => getPostNavVisibility({ canManage, isView, hasToc }),
+        [canManage, hasToc, isView],
+    );
+
+    const hasNavActions = hasVisiblePostNavActions(navVisibility);
 
     const savePost = async (contents: SectionContent[][]) => {
         if (!title) {
@@ -130,7 +143,48 @@ export const usePostNavigationActions = ({
         });
     };
 
-    const handleNavAction = (action: (typeof visibleActions)[number]["action"]) => {
+    const scrollToComments = () => {
+        document.getElementById("comments")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    };
+
+    const scrollToTocSection = (id: string) => {
+        setModal({ isOpen: false });
+        document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    };
+
+    const openTocModal = () => {
+        const items = buildPostToc(postDetailData?.result?.contents ?? []);
+
+        if (items.length === 0) {
+            setToast({ msg: "목차가 없어요", time: 2 });
+            return;
+        }
+
+        setModal({
+            type: "INFO",
+            title: "목차",
+            content: (
+                <PostTocModalContent
+                    items={items}
+                    onNavigate={scrollToTocSection}
+                />
+            ),
+            cancel: { text: "닫기" },
+            isOpen: true,
+        });
+    };
+
+    const openReadingSettingsModal = () => {
+        setModal({
+            type: "INFO",
+            title: "읽기 설정",
+            content: <PostReadingSettingsContent />,
+            cancel: { text: "닫기" },
+            isOpen: true,
+        });
+    };
+
+    const handleNavAction = (action: PostNavAction) => {
         if (action === "share") {
             util.dom.setCopyOnClipboard(window.location.href);
             setToast({ msg: "링크를 복사했어요", time: 2 });
@@ -147,6 +201,21 @@ export const usePostNavigationActions = ({
             return;
         }
 
+        if (action === "comments") {
+            scrollToComments();
+            return;
+        }
+
+        if (action === "toc") {
+            openTocModal();
+            return;
+        }
+
+        if (action === "reading") {
+            openReadingSettingsModal();
+            return;
+        }
+
         if (action === "edit") {
             pushToUrl(`/post/${post_idx}/modify`);
             return;
@@ -160,7 +229,9 @@ export const usePostNavigationActions = ({
     return {
         postTitle: postDetailData?.result?.title,
         alreadyLiked: postDetailData?.result?.alreadyLiked,
-        visibleActions,
+        likeCount: postDetailData?.result?.likes ?? 0,
+        navVisibility,
+        hasNavActions,
         isPatchPending,
         isSetPending,
         isDeletePending,
