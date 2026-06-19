@@ -19,6 +19,21 @@ export const POST_NAV_ACTIONS = [
         icon: "outlined-edit",
         action: "edit" as const,
     },
+    {
+        title: "댓글",
+        icon: "outlined-comment",
+        action: "comments" as const,
+    },
+    {
+        title: "목차",
+        icon: "outlined-toc",
+        action: "toc" as const,
+    },
+    {
+        title: "읽기 설정",
+        icon: "outlined-reading",
+        action: "reading" as const,
+    },
 ] as const;
 
 export type PostNavAction = (typeof POST_NAV_ACTIONS)[number]["action"];

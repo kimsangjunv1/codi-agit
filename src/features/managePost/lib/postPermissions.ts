@@ -1,9 +1,17 @@
-import { POST_NAV_ACTIONS } from "./postNavigationActions";
-
 type PostPermissionContext = {
     userId?: string;
     userRole?: string;
     postOwnerId?: string | null;
+};
+
+export type PostNavVisibility = {
+    showShare: boolean;
+    showLike: boolean;
+    showComments: boolean;
+    showToc: boolean;
+    showReading: boolean;
+    showEdit: boolean;
+    showDelete: boolean;
 };
 
 export const canManagePost = ({ userId, userRole, postOwnerId }: PostPermissionContext) => {
@@ -13,17 +21,23 @@ export const canManagePost = ({ userId, userRole, postOwnerId }: PostPermissionC
     return userId === postOwnerId;
 };
 
-export const getVisiblePostNavActions = ({
+export const getPostNavVisibility = ({
     canManage,
-    isLoggedIn,
+    isView,
+    hasToc,
 }: {
     canManage: boolean;
-    isLoggedIn: boolean;
-}) =>
-    POST_NAV_ACTIONS.filter((item) => {
-        if (item.action === "share") return true;
-        if (item.action === "like") return isLoggedIn;
-        if (item.action === "edit" || item.action === "delete") return canManage;
+    isView: boolean;
+    hasToc: boolean;
+}): PostNavVisibility => ({
+    showShare: isView,
+    showLike: isView,
+    showComments: isView,
+    showToc: isView && hasToc,
+    showReading: isView,
+    showEdit: canManage,
+    showDelete: canManage,
+});
 
-        return false;
-    });
+export const hasVisiblePostNavActions = (visibility: PostNavVisibility) =>
+    Object.values(visibility).some(Boolean);

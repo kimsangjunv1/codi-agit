@@ -1,4 +1,5 @@
 import { requireSession } from "@/shared/lib/auth/requireSession";
+import { optimizePostImage } from "@/shared/lib/image/optimizePostImage";
 import { supabaseAdmin } from "@/shared/lib/supabase/supabaseServer";
 import { ensurePostImagesBucket, POST_IMAGES_BUCKET } from "@/shared/lib/supabase/postImagesBucket";
 import { apiError, apiSuccess } from "@/shared/lib/apiResponse";
@@ -22,13 +23,13 @@ export async function POST(req: Request) {
         const supabase = supabaseAdmin();
         await ensurePostImagesBucket(supabase);
 
-        const extension = file.name.split(".").pop() ?? "jpg";
-        const filePath = `posts/${Date.now()}-${crypto.randomUUID()}.${extension}`;
+        const optimized = await optimizePostImage(file);
+        const filePath = `posts/${Date.now()}-${crypto.randomUUID()}.${optimized.extension}`;
 
-        const { error } = await supabase.storage.from(POST_IMAGES_BUCKET).upload(filePath, file, {
+        const { error } = await supabase.storage.from(POST_IMAGES_BUCKET).upload(filePath, optimized.buffer, {
             cacheControl: "3600",
             upsert: false,
-            contentType: file.type,
+            contentType: optimized.contentType,
         });
 
         if (error) {

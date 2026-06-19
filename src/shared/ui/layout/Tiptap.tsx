@@ -2,18 +2,19 @@
 
 import { useEditor, EditorContent, type Editor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import Bold from "@tiptap/extension-bold";
-import Italic from "@tiptap/extension-italic";
 import Underline from "@tiptap/extension-underline";
 import { TextStyle } from "@tiptap/extension-text-style";
 import { TaskItem, TaskList } from "@tiptap/extension-list";
 import { Highlight } from "@tiptap/extension-highlight";
-import { Selection } from "@tiptap/extensions";
-import { useEffect, useState } from "react";
+import TextAlign from "@tiptap/extension-text-align";
+import { useEffect, useRef } from "react";
 
 import TipTapBubbleMenu from "@/shared/ui/layout/TipTapBubbleMenu";
 import TipTapImageBubbleMenu from "@/shared/ui/layout/TipTapImageBubbleMenu";
 import TipTapToolbar from "@/shared/ui/layout/TipTapToolbar";
+import { TIPTAP_PROSE_CLASS } from "@/features/managePost/ui/blockEditor/blockEditorStyles";
+import { createCodeBlockEditorExtensions } from "@/shared/ui/common/richText/extensions/codeBlockEditor";
+import { DEFAULT_CODE_LANGUAGE } from "@/shared/lib/codeHighlight";
 import { ResizableImage } from "@/shared/ui/common/richText/extensions/resizableImage";
 
 type Props = {
@@ -23,6 +24,10 @@ type Props = {
     onEditorFocus?: (editor: Editor) => void;
     onEditorBlur?: () => void;
 };
+
+const TIPTAP_EDITOR_CLASS = ["tiptap-editor-content min-h-[12rem] outline-none focus:outline-none", TIPTAP_PROSE_CLASS, "[&_.rich-text-image-node]:w-full"].join(" ");
+
+const TIPTAP_WRAPPER_CLASS = "min-h-[12rem] h-full rounded-[1.6rem] outline-none";
 
 const CustomTextStyle = TextStyle.extend({
     addAttributes() {
@@ -49,6 +54,8 @@ const CustomTextStyle = TextStyle.extend({
 });
 
 const Normal = ({ content = "", onChange, showToolbar = true, onEditorFocus, onEditorBlur }: Props) => {
+    const lastEmittedHtml = useRef(content);
+
     const editor = useEditor({
         immediatelyRender: false,
         shouldRerenderOnTransaction: false,
@@ -58,7 +65,7 @@ const Normal = ({ content = "", onChange, showToolbar = true, onEditorFocus, onE
                 autocorrect: "off",
                 autocapitalize: "off",
                 "aria-label": "본문 입력",
-                class: "tiptap-editor-content min-h-[12rem] px-[0.4rem] py-[0.8rem] outline-none focus:outline-none [&_.rich-text-image-node]:w-full",
+                class: TIPTAP_EDITOR_CLASS,
             },
         },
         extensions: [
@@ -69,10 +76,11 @@ const Normal = ({ content = "", onChange, showToolbar = true, onEditorFocus, onE
                     enableClickSelection: true,
                 },
             }),
-            Bold,
-            Italic,
             Underline,
             CustomTextStyle,
+            TextAlign.configure({
+                types: ["heading", "paragraph"],
+            }),
             TaskList,
             TaskItem.configure({ nested: true }),
             Highlight.configure({ multicolor: true }),
@@ -80,81 +88,118 @@ const Normal = ({ content = "", onChange, showToolbar = true, onEditorFocus, onE
                 allowBase64: true,
                 inline: false,
             }),
-            Selection,
         ],
         content,
+        onFocus: ({ editor: currentEditor }) => onEditorFocus?.(currentEditor),
+        onBlur: () => onEditorBlur?.(),
         onUpdate: ({ editor: currentEditor }) => {
-            onChange?.(currentEditor.getHTML());
+            const html = currentEditor.getHTML();
+            lastEmittedHtml.current = html;
+            onChange?.(html);
         },
     });
 
     useEffect(() => {
-        if (!editor) return;
+        if (!editor) {
+            return;
+        }
 
-        const handleFocus = () => onEditorFocus?.(editor);
-        const handleBlur = () => onEditorBlur?.();
+        if (content === lastEmittedHtml.current) {
+            return;
+        }
 
-        editor.on("focus", handleFocus);
-        editor.on("blur", handleBlur);
+        const editorHtml = editor.getHTML();
+        if (content === editorHtml) {
+            lastEmittedHtml.current = content;
+            return;
+        }
 
-        return () => {
-            editor.off("focus", handleFocus);
-            editor.off("blur", handleBlur);
-        };
-    }, [editor, onEditorFocus, onEditorBlur]);
+        editor.commands.setContent(content, { emitUpdate: false });
+        lastEmittedHtml.current = content;
+    }, [content, editor]);
 
     if (!editor) return null;
 
     return (
-        <div className="w-full h-full rounded-[1.2rem]" onClick={(e) => e.stopPropagation()}>
+        <div
+            className="w-full h-full rounded-[1.2rem]"
+            onClick={(e) => e.stopPropagation()}
+        >
             {showToolbar ? <TipTapToolbar editor={editor} /> : null}
             <TipTapBubbleMenu editor={editor} />
             <TipTapImageBubbleMenu editor={editor} />
             <EditorContent
                 editor={editor}
-                className="min-h-[12rem] h-full rounded-[1.6rem] outline-none [&_.tiptap-editor-content]:min-h-[12rem] [&_.tiptap-editor-content_p]:my-[0.4rem] [&_.tiptap-editor-content_ul]:list-disc [&_.tiptap-editor-content_ul]:pl-[2rem] [&_.tiptap-editor-content_ol]:list-decimal [&_.tiptap-editor-content_ol]:pl-[2rem] [&_.tiptap-editor-content_blockquote]:border-l-[0.4rem] [&_.tiptap-editor-content_blockquote]:border-[var(--color-gray-300)] [&_.tiptap-editor-content_blockquote]:pl-[1.2rem] [&_.tiptap-editor-content_blockquote]:text-[var(--color-gray-600)] [&_.rich-text-image-node]:w-full"
+                className={TIPTAP_WRAPPER_CLASS}
             />
         </div>
     );
 };
 
 const Code = ({ content = "", onChange }: Props) => {
-    const [, setIsUseTab] = useState(false);
+    const lastEmittedHtml = useRef(content);
+    const initialContent = useRef(content);
+
     const editor = useEditor({
         immediatelyRender: false,
-        extensions: [
-            StarterKit.configure({
-                heading: false,
-                bold: false,
-                italic: false,
-                strike: false,
-                code: false,
-            }),
-        ],
-        content,
+        extensions: createCodeBlockEditorExtensions(),
+        content: initialContent.current || "<pre><code class=\"language-javascript\"></code></pre>",
+        editorProps: {
+            attributes: {
+                autocomplete: "off",
+                autocorrect: "off",
+                autocapitalize: "off",
+                spellcheck: "false",
+                "aria-label": "코드 입력",
+                class: "tiptap-code-editor min-h-[15rem] outline-none focus:outline-none font-mono text-[1.4rem] leading-[1.6]",
+            },
+        },
         onUpdate: ({ editor: currentEditor }) => {
-            onChange?.(currentEditor.getHTML());
+            const html = currentEditor.getHTML();
+            lastEmittedHtml.current = html;
+            onChange?.(html);
         },
     });
+
+    useEffect(() => {
+        if (!editor) {
+            return;
+        }
+
+        if (!editor.isActive("codeBlock")) {
+            editor.commands.setCodeBlock({ language: DEFAULT_CODE_LANGUAGE });
+        }
+    }, [editor]);
+
+    useEffect(() => {
+        if (!editor) {
+            return;
+        }
+
+        if (content === lastEmittedHtml.current) {
+            return;
+        }
+
+        const editorHtml = editor.getHTML();
+        if (content === editorHtml) {
+            lastEmittedHtml.current = content;
+            return;
+        }
+
+        editor.commands.setContent(content || "<pre><code class=\"language-javascript\"></code></pre>", { emitUpdate: false });
+        lastEmittedHtml.current = content;
+    }, [content, editor]);
 
     if (!editor) return null;
 
     return (
-        <div className="w-full h-full rounded-[2.0rem] overflow-hidden" onClick={(e) => e.stopPropagation()}>
+        <div
+            className="w-full h-full min-h-[12rem] flex-1"
+            onClick={(e) => e.stopPropagation()}
+        >
             <EditorContent
                 editor={editor}
-                className="min-h-[150px] h-full border border-gray-300 rounded p-2 font-mono bg-[#252525] text-white focus:outline-none focus:ring-2 focus:ring-pink-400"
-                onKeyDown={(e: React.KeyboardEvent) => {
-                    if (e.key === "Tab") {
-                        e.preventDefault();
-                        setIsUseTab(true);
-                        editor.chain().focus().insertContentAt(editor.state.selection.from, "\u00A0\u00A0\u00A0\u00A0").run();
-                    }
-
-                    if (e.key === "Enter") {
-                        editor.chain().focus().insertContentAt(editor.state.selection.from, "\u00A0\u00A0\u00A0\u00A0").run();
-                    }
-                }}
+                className="tiptap-code-editor-wrapper h-full min-h-[12rem] [&_.tiptap-code-editor]:h-full [&_.tiptap-code-editor]:min-h-[12rem] [&_.tiptap-code-editor_pre]:m-0 [&_.tiptap-code-editor_pre]:bg-transparent [&_.tiptap-code-editor_pre]:p-0 [&_.tiptap-code-editor_pre]:font-mono [&_.tiptap-code-editor_pre]:text-[1.4rem] [&_.tiptap-code-editor_pre]:leading-[1.6] [&_.tiptap-code-editor_pre]:whitespace-pre-wrap [&_.tiptap-code-editor_pre]:break-words [&_.tiptap-code-editor_pre]:[tab-size:4] [&_.tiptap-code-editor_code]:block [&_.tiptap-code-editor_code]:font-mono [&_.tiptap-code-editor_code]:[tab-size:4] [&_.tiptap-code-editor_code]:bg-transparent"
             />
         </div>
     );

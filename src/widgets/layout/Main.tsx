@@ -1,7 +1,7 @@
 "use client";
 
-import { ReactNode } from 'react';
-import { usePathname } from 'next/navigation';
+import { ReactNode } from "react";
+import { usePathname } from "next/navigation";
 
 interface MainProps {
     children: ReactNode;
@@ -18,9 +18,12 @@ const Main = ({ children, id = "main", className }: MainProps) => {
     const innerClass = className?.inner || "";
 
     return (
-        <main id={id} className={`${containerClass} w-full`}>
+        <main
+            id={id}
+            className={`${containerClass} w-full`}
+        >
             <div
-                className={`main-inner ${innerClass} min-h-[100dvh] m-auto w-full flex flex-col items-start justify-between flex-1`}
+                className={`main-inner ${innerClass} min-h-[100svh] m-auto w-full flex flex-col items-start justify-between flex-1`}
                 key={pathname}
             >
                 {children}

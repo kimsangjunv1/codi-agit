@@ -21,7 +21,7 @@ export interface Block {
     style: TextStyle;
 }
 
-export type BlockMode = "main" | "sub";
+export type BlockMode = "main" | "sub" | "code";
 
 export interface NormalSectionContent {
     id: string;
@@ -59,6 +59,7 @@ export interface PostPrevNextInfo {
     idx: number;
     title: string;
     summary: string;
+    thumbnail: string;
 }
 
 export interface PostItem {

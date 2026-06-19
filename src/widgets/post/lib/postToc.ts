@@ -1,6 +1,6 @@
 import type { Block, SectionContent } from "@/entities/post/model/post.type";
 
-import { isMainBlock } from "@/widgets/post/lib/blockMode";
+import { isCodeBlock, isMainBlock } from "@/widgets/post/lib/blockMode";
 
 export type PostTocItem = {
     id: string;
@@ -63,6 +63,10 @@ export const buildPostToc = (contents: SectionContent[][]): PostTocItem[] => {
 
     for (const row of contents) {
         for (const block of row) {
+            if (isCodeBlock(block)) {
+                continue;
+            }
+
             if (isMainBlock(block)) {
                 const label = getMainBlockLabel(block);
                 if (!label) {

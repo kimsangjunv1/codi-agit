@@ -66,7 +66,7 @@ const CredentialsForm = () => {
         <Fragment>
             <article
                 id="list"
-                className="px-[2.0rem] bg-[linear-gradient(90deg,_#ffffff_10%,_var(--color-gray-100),_#ffffff_90%)] h-[100dvh] w-full flex items-center justify-center overflow-hidden"
+                className="px-[2.0rem] bg-[linear-gradient(90deg,_#ffffff_10%,_var(--color-gray-100),_#ffffff_90%)] h-[100svh] w-full flex items-center justify-center overflow-hidden"
             >
                 <motion.form
                     onSubmit={handleSubmit}

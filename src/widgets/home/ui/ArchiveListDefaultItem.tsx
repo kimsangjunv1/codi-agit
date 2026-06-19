@@ -3,7 +3,7 @@
 import { forwardRef } from "react";
 
 import TransitionLink from "@/shared/ui/common/TransitionLink";
-import TransitionAwareImage from "@/shared/ui/common/TransitionAwareImage";
+import PostThumbnail from "@/shared/ui/common/PostThumbnail";
 import { PostItem } from "@/entities/post/model/post.type";
 import { util } from "@/shared/lib/util";
 import { motion } from "motion/react";
@@ -29,7 +29,7 @@ const ArchiveListDefaultItem = forwardRef<HTMLElement, ArchiveListDefaultItemPro
         <motion.section
             ref={ref}
             layout="position"
-            className="max-w-[var(--size-tablet)] mx-auto relative w-full"
+            // className="max-w-[calc(1.6rem*16)]"
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.8 }}
@@ -37,24 +37,38 @@ const ArchiveListDefaultItem = forwardRef<HTMLElement, ArchiveListDefaultItemPro
         >
             <TransitionLink
                 href={`/post/${post.idx}`}
-                className="flex justify-start items-center gap-[1.6rem] hover:scale-[1.04] transition-transform px-[1.2rem]"
+                className="relative flex flex-col justify-start items-center overflow-hidden"
             >
-                <TransitionAwareImage
+                <PostThumbnail
                     readinessKey={`archive-list-thumbnail-${post.idx}`}
+                    seed={post.idx}
                     src={post.thumbnail}
                     alt={post.title}
-                    className="w-[calc(1.6rem*6)] h-[calc(1.6rem*9)] object-cover rounded-[1.6rem] shadow-[var(--shadow-normal)]"
+                    // className={`${post.idx % 3 === 0 ? "mobile:w-[calc(1.6rem*(12*1))] pc:w-[calc(1.6rem*(12*2))]" : "mobile:w-[calc(1.6rem*(12*1))] pc:w-[calc(1.6rem*(12*3))]"} h-[calc(1.6rem*20)] object-cover`}
+                    // className="h-[calc(1.6rem*20)] object-cover"
+                    className="w-full h-[calc(1.6rem*24)] object-cover hover:scale-[1.2] transition-transform"
+                    // className="w-[calc(1.6rem*(17))] h-[calc(1.6rem*20)] object-cover"
+                    // className="w-[calc(1.6rem*6)] h-[calc(1.6rem*9)] object-cover rounded-[1.6rem] shadow-[var(--shadow-normal)]"
                 />
-
-                <div className="flex flex-col gap-[0.8rem] flex-1">
-                    <p className={`text-left font-extrabold ${getCategoryClassName(post.category_idx)}`}>{post.category?.title}</p>
-                    <h5 className="text-left text-[2.0rem] font-extrabold mobile:text-[1.8rem] tablet:text-[2.2rem]">{post.title}</h5>
-                    <p className="text-left font-semibold leading-[1.5] text-[#00000090] line-clamp-2 mobile:text-[1.4rem] tablet:text-[1.8rem]">{post.summary}</p>
-                    <h5 className="text-left text-[1.4rem] font-bold text-[#00000090]">
-                        {util.string.getCurrentDate(post.created_at)} ・ {post.likes ?? 0} likes
-                    </h5>
+                {/* <div className="pointer-events-none absolute h-[50%] mask-[linear-gradient(0deg,_#000,_#000_2.5%,_#000_50%,_#0000)] bottom-0 left-0 w-full bg-[#00000000] backdrop-blur-[30px]" /> */}
+                <div className="pointer-events-none flex flex-col items-start flex-1 w-full absolute top-0 p-[0.8rem]">
+                    {/* className="absolute bottom-0 left-[50%] bg-[linear-gradient(0deg,#00000000_0%,#00000000)] transform translate-x-[-50%] w-full flex flex-col justify-center items-center" */}
+                    <h5 className="bg-[#000000] text-white text-left text-[2.0rem] font-bold p-[0.4rem_0.4rem_0_0.4rem]">{post.title}</h5>
+                    <p className="bg-[#000000] text-[#ffffffd0] text-left font-semibold leading-[1.5] text-[#00000090] line-clamp-2 mobile:text-[1.4rem] tablet:text-[1.6rem] p-[0.8rem_0.4rem_0.4rem_0.4rem]">
+                        &quot;{post.summary}&quot;
+                    </p>
+                    {/* <p className={`text-white text-left font-extrabold ${getCategoryClassName(post.category_idx)}`}>{post.category?.title}</p> */}
+                    {/* <h5 className="text-white text-left text-[1.4rem] font-bold text-[#00000090]">
+                        {post.category?.title} ・ {util.string.getCurrentDate(post.created_at)} ・ {post.likes ?? 0} likes
+                    </h5> */}
                 </div>
             </TransitionLink>
+            {/* <p>
+                {post.category?.title} ・ {util.string.getCurrentDate(post.created_at)} ・ {post.likes ?? 0} likes
+            </p> */}
+            <p className="[text-align-last:justify] bg-black font-bold p-[0.6rem] text-white">
+                {post.category?.title} ・ {util.string.getCurrentDate(post.created_at)} ・ {post.likes ?? 0} likes
+            </p>
         </motion.section>
     );
 });

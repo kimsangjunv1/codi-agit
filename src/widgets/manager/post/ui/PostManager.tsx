@@ -1,103 +1,109 @@
 "use client";
 
+import PostThumbnail from "@/shared/ui/common/PostThumbnail";
+
+import { useGetPostManagerListQuery } from "@/entities/post/api/post.query";
+import type { PostManagerItem } from "@/entities/post/model/post.type";
 import useNavigate from "@/shared/hooks/useNavigate";
+import { util } from "@/shared/lib/util";
 import { useModalStore } from "@/shared/stores/useModalStore";
 import UI from "@/shared/ui/common/UIComponent";
-import {
-    useGetPostManagerListQuery,
-} from "@/entities/post/api/post.query";
 import { useDeletePostManagerWithToast } from "@/widgets/manager/post/hooks/usePostManagerMutations";
-import { PostManagerItem } from "@/entities/post/model/post.type";
-import { util } from "@/shared/lib/util";
-import ManagerPageShell from "@/widgets/manager/ui/ManagerPageShell";
-import ManagerListSkeleton from "@/widgets/manager/ui/ManagerListSkeleton";
+import ManagerDetailMetaGrid from "@/widgets/manager/ui/ManagerDetailMetaGrid";
+import ManagerDetailPane from "@/widgets/manager/ui/ManagerDetailPane";
+import ManagerDetailPaneHeader from "@/widgets/manager/ui/ManagerDetailPaneHeader";
+import ManagerEmptyState from "@/widgets/manager/ui/ManagerEmptyState";
 import ManagerListError from "@/widgets/manager/ui/ManagerListError";
+import ManagerListItemCard from "@/widgets/manager/ui/ManagerListItemCard";
+import ManagerListPane from "@/widgets/manager/ui/ManagerListPane";
+import ManagerListPaneHeader from "@/widgets/manager/ui/ManagerListPaneHeader";
+import ManagerListSkeleton from "@/widgets/manager/ui/ManagerListSkeleton";
+import useManagerSelection from "@/widgets/manager/ui/useManagerSelection";
 
 const PostManager = () => {
     const { pushToUrl } = useNavigate();
     const { setModal } = useModalStore();
-
     const { data, isLoading, isError, error, refetch } = useGetPostManagerListQuery();
-    const { mutate: deletePostFetch } = useDeletePostManagerWithToast();
+    const { mutate: deletePost } = useDeletePostManagerWithToast();
+    const { selectedItem, setSelectedItem } = useManagerSelection();
+    const list = data?.result ?? [];
+    const selectedPost = list.find((item) => String(item.idx) === selectedItem);
 
     const deletePostModal = (item: PostManagerItem) =>
         setModal({
             type: "CHECK",
             title: "게시물을 삭제할까요?",
-            content: (
-                <article className="flex flex-col gap-[1.2rem]">
-                    <p className="text-[var(--color-gray-600)]">삭제 대상: {item.title}</p>
-                    <p className="text-[1.2rem] text-[var(--color-gray-500)]">
-                        연결된 댓글과 조회 기록도 함께 삭제됩니다.
-                    </p>
-                </article>
-            ),
+            content: <div className="flex flex-col gap-[1rem]"><p className="text-[var(--color-gray-600)]">삭제 대상: {item.title}</p><p className="text-[1.2rem] text-[var(--color-gray-500)]">연결된 댓글과 조회 기록도 함께 삭제됩니다.</p></div>,
             cancel: { text: "취소" },
-            confirm: {
-                text: "삭제하기",
-                onClick: () => deletePostFetch({ idx: item.idx }),
-            },
+            confirm: { text: "삭제하기", onClick: () => deletePost({ idx: item.idx }) },
             isOpen: true,
         });
 
-    const list = data?.result ?? [];
-
     return (
-        <ManagerPageShell title="게시물 관리" description="등록된 게시글을 조회·수정·삭제합니다.">
-            {isLoading ? (
-                <ManagerListSkeleton />
-            ) : isError || data?.resultCode === "ERROR" ? (
-                <ManagerListError
-                    message={isError ? error?.message : data?.resultMessage}
-                    onRetry={() => refetch()}
-                />
-            ) : list.length === 0 ? (
-                <UI.Empty title="등록된 게시물이 없습니다" className="opacity-100" />
-            ) : (
-                <section className="flex flex-col w-full gap-[1.2rem]">
-                    {list.map((item) => (
-                        <article
-                            key={item.idx}
-                            className="flex flex-col sm:flex-row sm:items-center gap-[1.2rem] bg-white rounded-[1.2rem] shadow-[var(--shadow-normal)] p-[1.6rem]"
-                        >
-                            <div className="flex-1 flex flex-col gap-[0.4rem] min-w-0">
-                                <p className="text-[1.6rem] font-bold truncate">{item.title}</p>
-                                {item.summary ? (
-                                    <p className="text-[1.4rem] text-[var(--color-gray-600)] line-clamp-2">
-                                        {item.summary}
-                                    </p>
-                                ) : null}
-                                <p className="text-[1.2rem] text-[var(--color-gray-500)]">
-                                    {item.category?.title ? `${item.category.title} · ` : ""}
-                                    조회 {item.views ?? 0} · {util.string.getCurrentDate(item.created_at)}
-                                </p>
+        <div className="contents">
+            <ManagerListPane>
+                <ManagerListPaneHeader title="게시물 관리" count={list.length} description="등록된 게시글을 조회·수정·삭제합니다." />
+                <div className="p-[1.2rem]">
+                    {isLoading ? <ManagerListSkeleton /> : isError || data?.resultCode === "ERROR" ? (
+                        <ManagerListError message={isError ? error?.message : data?.resultMessage} onRetry={() => refetch()} />
+                    ) : list.length === 0 ? <ManagerEmptyState variant="no-list" title="등록된 게시물이 없습니다" /> : (
+                        <section className="flex flex-col gap-[0.8rem]">
+                            {list.map((item) => (
+                                <ManagerListItemCard key={item.idx} isSelected={selectedItem === String(item.idx)} onClick={() => setSelectedItem(item.idx)}>
+                                    <div className="flex gap-[1.2rem]">
+                                        <div className="relative size-[4.8rem] shrink-0 overflow-hidden rounded-[0.6rem] bg-[var(--color-gray-100)]">
+                                            <PostThumbnail
+                                                readinessKey={`manager-post-thumbnail-${item.idx}`}
+                                                seed={item.idx}
+                                                src={item.thumbnail}
+                                                alt=""
+                                                fill
+                                                sizes="48px"
+                                                className="object-cover"
+                                            />
+                                        </div>
+                                        <div className="min-w-0">
+                                            <p className="truncate text-[1.4rem] font-semibold">{item.title}</p>
+                                            <p className="mt-[0.4rem] truncate text-[1.1rem] text-[var(--color-gray-500)]">{item.category?.title ?? "미분류"} · 조회 {item.views ?? 0} · {util.string.getCurrentDate(item.created_at)}</p>
+                                        </div>
+                                    </div>
+                                </ManagerListItemCard>
+                            ))}
+                        </section>
+                    )}
+                </div>
+            </ManagerListPane>
+            <ManagerDetailPane>
+                {selectedPost ? (
+                    <article>
+                        <ManagerDetailPaneHeader title={selectedPost.title} description={selectedPost.summary} />
+                        <div className="flex flex-col gap-[2.4rem] p-[2.4rem]">
+                            <div className="relative min-h-[24rem] overflow-hidden rounded-[0.8rem] bg-[var(--color-gray-100)]">
+                                <PostThumbnail
+                                    readinessKey={`manager-post-detail-thumbnail-${selectedPost.idx}`}
+                                    seed={selectedPost.idx}
+                                    src={selectedPost.thumbnail}
+                                    alt={selectedPost.title}
+                                    fill
+                                    sizes="50vw"
+                                    className="object-cover"
+                                />
                             </div>
-
-                            <div className="flex flex-wrap gap-[0.8rem] sm:flex-col sm:items-stretch">
-                                <UI.Button
-                                    className="flex-1 sm:flex-none bg-white rounded-[0.8rem] shadow-[var(--shadow-normal)] px-[1.2rem] py-[0.6rem] text-[var(--color-gray-700)]"
-                                    onClick={() => pushToUrl(`/post/${item.idx}`)}
-                                >
-                                    보기
-                                </UI.Button>
-                                <UI.Button
-                                    className="flex-1 sm:flex-none bg-white rounded-[0.8rem] shadow-[var(--shadow-normal)] px-[1.2rem] py-[0.6rem] text-[var(--color-gray-700)]"
-                                    onClick={() => pushToUrl(`/post/${item.idx}/modify`)}
-                                >
-                                    수정
-                                </UI.Button>
-                                <UI.Button
-                                    className="flex-1 sm:flex-none bg-white rounded-[0.8rem] shadow-[var(--shadow-normal)] px-[1.2rem] py-[0.6rem] text-[var(--color-gray-600)]"
-                                    onClick={() => deletePostModal(item)}
-                                >
-                                    삭제
-                                </UI.Button>
+                            <ManagerDetailMetaGrid items={[
+                                { label: "Category", value: selectedPost.category?.title ?? "미분류" },
+                                { label: "Views", value: selectedPost.views ?? 0 },
+                                { label: "Created", value: util.string.getCurrentDate(selectedPost.created_at, 4) },
+                            ]} />
+                            <div className="flex gap-[0.8rem]">
+                                <UI.Button className="rounded-[0.6rem] border border-[var(--color-gray-300)] px-[1.2rem] py-[0.7rem]" onClick={() => pushToUrl(`/post/${selectedPost.idx}`)}>보기</UI.Button>
+                                <UI.Button className="rounded-[0.6rem] border border-[var(--color-gray-300)] px-[1.2rem] py-[0.7rem]" onClick={() => pushToUrl(`/post/${selectedPost.idx}/modify`)}>수정</UI.Button>
+                                <UI.Button className="rounded-[0.6rem] border border-[var(--color-red-200)] px-[1.2rem] py-[0.7rem] text-[var(--color-red-600)]" onClick={() => deletePostModal(selectedPost)}>삭제</UI.Button>
                             </div>
-                        </article>
-                    ))}
-                </section>
-            )}
-        </ManagerPageShell>
+                        </div>
+                    </article>
+                ) : <ManagerEmptyState variant="no-item" />}
+            </ManagerDetailPane>
+        </div>
     );
 };
 

@@ -3,7 +3,7 @@
 import { forwardRef } from "react";
 
 import TransitionLink from "@/shared/ui/common/TransitionLink";
-import TransitionAwareImage from "@/shared/ui/common/TransitionAwareImage";
+import PostThumbnail from "@/shared/ui/common/PostThumbnail";
 import { PostItem } from "@/entities/post/model/post.type";
 import { motion } from "motion/react";
 
@@ -29,8 +29,9 @@ const ArchiveListGridItem = forwardRef<HTMLElement, ArchiveListGridItemProps>(fu
             transition={archiveListItemTransition}
         >
             <TransitionLink href={`/post/${post.idx}`} className="block w-full hover:scale-[1.04] transition-transform">
-                <TransitionAwareImage
+                <PostThumbnail
                     readinessKey={`archive-list-thumbnail-${post.idx}`}
+                    seed={post.idx}
                     src={post.thumbnail}
                     alt={post.title}
                     className="w-[calc(1.6rem*10)] h-[calc(1.6rem*13)] object-cover rounded-[1.6rem] shadow-[var(--shadow-normal)]"

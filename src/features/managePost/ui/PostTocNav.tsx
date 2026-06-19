@@ -68,10 +68,8 @@ const PostTocNav = ({ items }: PostTocNavProps) => {
             aria-label="글 목차"
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            className={`hidden pc:block fixed top-[12rem] right-[0.8rem] z-40 transition-all duration-200 ${
-                isHovered
-                    ? "w-[28rem] rounded-[1.2rem] border border-[var(--color-gray-200)] bg-white p-[2.4rem] shadow-[var(--shadow-normal)]"
-                    : "w-[3.2rem] bg-transparent p-0"
+            className={`hidden pc:block fixed top-[50%] right-0 transform translate-y-[-50%] z-40 ${
+                isHovered ? "w-[28rem] rounded-[1.2rem] border border-[var(--color-gray-200)] bg-white p-[2.4rem] shadow-[var(--shadow-normal)]" : "w-[3.2rem] bg-transparent p-0"
             }`}
         >
             <ul className={`flex flex-col ${isHovered ? "gap-[0.4rem]" : "items-end gap-[0.6rem]"}`}>

@@ -1,19 +1,18 @@
-"use client";
+import type { ReactNode } from "react";
 
-import { ReactNode } from "react";
-
-import ManagerSubNav from "./ManagerSubNav";
+import ManagerSidebar, { type ManagerSidebarProfile } from "./ManagerSidebar";
+import ManagerThreePaneShell from "./ManagerThreePaneShell";
 
 type ManagerLayoutShellProps = {
     children: ReactNode;
+    profile: ManagerSidebarProfile;
 };
 
-const ManagerLayoutShell = ({ children }: ManagerLayoutShellProps) => {
+const ManagerLayoutShell = ({ children, profile }: ManagerLayoutShellProps) => {
     return (
-        <div className="px-[2.0rem] flex-1 flex flex-col gap-[2.0rem] w-full max-w-[var(--size-tablet)] mx-auto pb-[4.0rem]">
-            <ManagerSubNav />
+        <ManagerThreePaneShell sidebar={<ManagerSidebar profile={profile} />}>
             {children}
-        </div>
+        </ManagerThreePaneShell>
     );
 };
 
