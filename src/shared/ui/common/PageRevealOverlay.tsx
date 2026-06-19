@@ -29,8 +29,18 @@ const PageRevealOverlay = () => {
     const hasExecutedNavigation = useRef(false);
     const hasStartedInitialReveal = useRef(false);
 
-    const { transitionPhase, transitionDirection, pendingNavigation, isPageContentVisible, pageReadinessBlockers, setTransitionPhase, setIsPageContentVisible, beginInitialReveal, completeRouteTransition, resetPageReadiness } =
-        useLayoutStore();
+    const {
+        transitionPhase,
+        transitionDirection,
+        pendingNavigation,
+        isPageContentVisible,
+        pageReadinessBlockers,
+        setTransitionPhase,
+        setIsPageContentVisible,
+        beginInitialReveal,
+        completeRouteTransition,
+        resetPageReadiness,
+    } = useLayoutStore();
 
     const hasPageReadinessBlockers = Object.keys(pageReadinessBlockers).length > 0;
 
@@ -136,11 +146,7 @@ const PageRevealOverlay = () => {
     }, [transitionPhase, reducedMotion, setTransitionPhase, completeRouteTransition]);
 
     const clipTarget =
-        transitionPhase === "covering" || transitionPhase === "waiting" || transitionPhase === "navigating"
-            ? clip.covered
-            : transitionPhase === "revealing"
-              ? clip.revealed
-              : clip.covered;
+        transitionPhase === "covering" || transitionPhase === "waiting" || transitionPhase === "navigating" ? clip.covered : transitionPhase === "revealing" ? clip.revealed : clip.covered;
 
     const clipInitial = transitionPhase === "revealing" ? clip.covered : clip.hidden;
 

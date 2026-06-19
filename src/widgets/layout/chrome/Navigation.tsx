@@ -11,6 +11,7 @@ import useNavigate from "@/shared/hooks/useNavigate";
 import { useScrollProgressBar } from "@/shared/hooks/useScrollProgress";
 import { getPostRouteFlags, PostSaveNavButton, usePostNavigationActions } from "@/features/managePost";
 import { useBlockStore } from "@/features/managePost/model/useEditorBlockStore";
+import { MaterialIcon } from "@/shared/ui/common/MaterialIcon";
 
 const springTransition = {
     type: "spring" as const,
@@ -54,16 +55,14 @@ const Navigation = () => {
                 <UI.Button
                     type="button"
                     onClick={() => pushToUrl("/")}
-                    className="bg-white hover:bg-[var(--color-blue-500)] transition-colors p-[1.2rem] rounded-full shadow-[var(--shadow-normal)] flex gap-[0.8rem] items-center z-1"
+                    className="transition-colors flex flex-col items-start z-1"
                 >
-                    <IconComponent
-                        type={`outlined-arrow-below`}
-                        alt={"나가기"}
-                        width={32}
-                        height={32}
-                        className="rotate-90"
+                    <p className="bg-black text-white p-[2.0rem] text-[2.4rem] font-semibold tablet:block mobile:hidden">{IS_ROUTE_POST_VIEW ? "메인으로" : "이전으로"}</p>
+                    <MaterialIcon
+                        name="arrow_back"
+                        size={24}
+                        className="bg-black text-white p-[2.0rem]"
                     />
-                    <p className="text-black mr-[1.6rem] text-[1.6rem] font-semibold tablet:block mobile:hidden">{IS_ROUTE_POST_VIEW ? "돌아가기" : "이전으로"}</p>
                 </UI.Button>
 
                 <section className="flex flex-col items-center justify-center gap-[1.6rem] flex-1 absolute left-[50%] translate-x-[-50%]">

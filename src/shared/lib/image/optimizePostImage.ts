@@ -21,23 +21,13 @@ export const optimizePostImage = async (file: File): Promise<OptimizedPostImage>
     const metadata = await sharp(inputBuffer, { animated: true }).metadata();
     const isAnimatedGif = metadata.format === "gif" && (metadata.pages ?? 1) > 1;
 
-    if (isAnimatedGif) {
-        const extension = file.name.split(".").pop()?.toLowerCase() ?? "gif";
-
-        return {
-            buffer: inputBuffer,
-            contentType: file.type || "image/gif",
-            extension,
-        };
-    }
-
-    let pipeline = sharp(inputBuffer);
+    let pipeline = sharp(inputBuffer, { animated: isAnimatedGif });
 
     if (metadata.width && metadata.width > MAX_WIDTH) {
         pipeline = pipeline.resize({ width: MAX_WIDTH, withoutEnlargement: true });
     }
 
-    const buffer = await pipeline.webp({ quality: WEBP_QUALITY }).toBuffer();
+    const buffer = await pipeline.webp({ quality: WEBP_QUALITY, effort: 4 }).toBuffer();
 
     return {
         buffer,

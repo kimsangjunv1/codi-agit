@@ -1,5 +1,6 @@
 import { uploadPostImageFetch } from "@/entities/post/api/post.image.api";
 import type { SectionContent } from "@/entities/post/model/post.type";
+import { normalizeBlocksForSave } from "@/features/managePost/lib/normalizePostBlocks";
 import { collectPostImageUrls } from "@/shared/lib/image/collectPostImageUrls";
 import { usePostDraftImageStore } from "@/shared/stores/usePostDraftImageStore";
 
@@ -63,7 +64,7 @@ export const preparePostPayloadForSave = async ({
         summary,
         thumbnail: replaceMap.get(thumbnail) ?? thumbnail,
         category_idx,
-        contents: replaceRowUrls(contents, replaceMap),
+        contents: normalizeBlocksForSave(replaceRowUrls(contents, replaceMap)),
     };
 };
 

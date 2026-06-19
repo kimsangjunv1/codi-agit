@@ -3,10 +3,10 @@
 import { Fragment, memo, useCallback, useEffect, useMemo } from "react";
 
 import { Block, GetPostDetailResponse, PostPrevNextInfo, SectionContent } from "@/entities/post/model/post.type";
-
 import { util } from "@/shared/lib/util";
-import { highlightCode } from "@/shared/lib/highlight";
+import { highlightCodeWithHljs } from "@/shared/lib/codeHighlight";
 import { sanitizeHtml } from "@/shared/lib/sanitizeHtml";
+import CodeBlockPanel from "@/shared/ui/common/CodeBlockPanel";
 
 import useNavigate from "@/shared/hooks/useNavigate";
 import usePageTransitionReady from "@/shared/hooks/usePageTransitionReady";
@@ -26,6 +26,8 @@ import { PostNavigationActions, usePostNavigationActions } from "@/features/mana
 
 import { useToastStore } from "@/shared/stores/useToastStore";
 import { useCreatePostStore } from "@/shared/stores/useCreatePostStore";
+import { usePostReadingSettingsStore } from "@/shared/stores/usePostReadingSettingsStore";
+import { MaterialIcon } from "@/shared/ui/common/MaterialIcon";
 
 type PostDetailProps = {
     id: string;
@@ -44,7 +46,7 @@ const PostDetail = ({ id, initialData }: PostDetailProps) => {
 
     return (
         <section className="flex flex-col w-full post">
-            <section className="mx-auto post-inner flex flex-col gap-[5.2rem] w-full items-center">
+            <section className="mx-auto post-inner flex flex-col w-full items-center">
                 <RenderContents
                     id={id}
                     initialData={initialData}
@@ -116,13 +118,23 @@ const RenderContents = ({ id, initialData }: { id: string; initialData: GetPostD
     );
 };
 
-const CodeBlockContent = memo(({ content }: { content: string }) => {
-    const html = useMemo(() => sanitizeHtml(`<pre class="code-block"><code>${highlightCode(content)}</code></pre>`), [content]);
+const CodeBlockContent = memo(({ content, fileName }: { content: string; fileName?: string }) => {
+    const html = useMemo(
+        () => sanitizeHtml(`<pre class="code-block hljs"><code>${highlightCodeWithHljs(content)}</code></pre>`),
+        [content],
+    );
 
     return (
-        <section className="overflow-x-auto">
-            <div dangerouslySetInnerHTML={{ __html: html }} />
-        </section>
+        <CodeBlockPanel
+            content={content}
+            fileName={fileName}
+            bodyClassName="p-0 px-[1.6rem] py-[1.4rem]"
+        >
+            <div
+                className="code-block-view select-text"
+                dangerouslySetInnerHTML={{ __html: html }}
+            />
+        </CodeBlockPanel>
     );
 });
 CodeBlockContent.displayName = "CodeBlockContent";
@@ -196,7 +208,7 @@ const ContentColumn = memo(({ col, rowLength, onCopySentence }: { col: SectionCo
                 />
             ) : null}
 
-            {col.type === 2 ? <CodeBlockContent content={`${col.content}`} /> : null}
+            {col.type === 2 ? <CodeBlockContent content={`${col.content}`} fileName={col.title} /> : null}
         </section>
     );
 });
@@ -204,7 +216,7 @@ ContentColumn.displayName = "ContentColumn";
 
 const PostDetailActions = ({ postIdx }: { postIdx: number }) => {
     const { pushToUrl } = useNavigate();
-    const { alreadyLiked, visibleActions, isDeletePending, handleNavAction } = usePostNavigationActions({
+    const { alreadyLiked, likeCount, navVisibility, hasNavActions, isDeletePending, handleNavAction } = usePostNavigationActions({
         postIdx,
         isView: true,
         isCreate: false,
@@ -212,18 +224,21 @@ const PostDetailActions = ({ postIdx }: { postIdx: number }) => {
         pushToUrl,
     });
 
-    if (visibleActions.length === 0) {
+    if (!hasNavActions) {
         return null;
     }
 
     return (
-        <section className="sticky bottom-[3.2rem] flex justify-center gap-[0.8rem] flex-wrap w-full pt-[0.8rem]">
-            <PostNavigationActions
-                actions={visibleActions}
-                alreadyLiked={alreadyLiked}
-                isDeletePending={isDeletePending}
-                onAction={handleNavAction}
-            />
+        <section className="sticky bottom-0 flex h-[7.2rem] w-full flex-wrap justify-center bg-black">
+            <div className="mx-auto flex w-full max-w-[var(--size-tablet)] overflow-x-auto">
+                <PostNavigationActions
+                    {...navVisibility}
+                    likeCount={likeCount}
+                    alreadyLiked={alreadyLiked}
+                    isDeletePending={isDeletePending}
+                    onAction={handleNavAction}
+                />
+            </div>
         </section>
     );
 };
@@ -245,6 +260,11 @@ type ContentsProps = {
 const Contents = ({ contents, prev, next, postId, imageUrl, title, summary, createDate, viewCount, likeCount, thumbnailAlt }: ContentsProps) => {
     const { pushToUrl } = useNavigate();
     const { setToast } = useToastStore();
+    const { fontScale, lineHeight, hydrate } = usePostReadingSettingsStore();
+
+    useEffect(() => {
+        hydrate();
+    }, [hydrate]);
 
     const handleCopySentence = useCallback(
         (text: string) => {
@@ -256,7 +276,7 @@ const Contents = ({ contents, prev, next, postId, imageUrl, title, summary, crea
 
     return (
         <>
-            <section className="flex flex-col justify-center items-center gap-[3.2rem] h-[100svh] w-full">
+            <section className="flex flex-col justify-center items-center gap-[3.2rem] h-[100svh] w-full fixed top-0 left-0">
                 <PostHero
                     mode="view"
                     imageUrl={imageUrl}
@@ -271,8 +291,14 @@ const Contents = ({ contents, prev, next, postId, imageUrl, title, summary, crea
             </section>
 
             {/* <article className="flex gap-[0.4rem] w-full max-w-[var(--size-tablet)] min-w-0 px-[1.2rem] [content-visibility:auto]"> */}
-            <article className="flex gap-[0.4rem] w-full ">
-                <section className="flex flex-col gap-[5.2rem] flex-1 min-w-0">
+            <article
+                className="post-reading-root z-[100] mt-[100svh] flex w-full gap-[0.4rem] bg-white"
+                style={{
+                    ["--post-read-scale" as string]: fontScale,
+                    ["--post-read-line-height" as string]: lineHeight,
+                }}
+            >
+                <section className="flex flex-col flex-1 min-w-0">
                     {contents?.map((row, rowIdx) => (
                         <section
                             key={rowIdx}
@@ -288,13 +314,6 @@ const Contents = ({ contents, prev, next, postId, imageUrl, title, summary, crea
                             ))}
                         </section>
                     ))}
-
-                    <PostDetailActions postIdx={parseInt(postId)} />
-
-                    {/* <GiscusComments
-                        term={`post-${postId}`}
-                        className="w-full pt-[2.4rem]"
-                    /> */}
 
                     <section className="flex mobile:flex-col tablet:flex-row flex-wrap">
                         <UI.Button
@@ -319,15 +338,20 @@ const Contents = ({ contents, prev, next, postId, imageUrl, title, summary, crea
                                     />
 
                                     <div className="absolute left-[1.6rem] top-[50%] transform translate-y-[-50%] flex min-w-0 flex-col items-start">
-                                        <p className="bg-black text-white text-left text-[2.0rem] font-semibold p-[0.6rem_0.8rem]">PREV</p>
+                                        <p className="bg-black text-[#13ff34] text-left text-[2.0rem] font-semibold p-[0.6rem_0.8rem]">PREV</p>
                                         <p className="bg-black text-white text-left text-[3.2rem] font-semibold p-[0.6rem_0.8rem] line-clamp-2">{prev.title}</p>
+                                        <MaterialIcon
+                                            name={"arrow_back"}
+                                            size={24}
+                                            className="bg-black  text-white p-[0.6rem_0.8rem]"
+                                        />
                                     </div>
                                 </div>
                             ) : (
                                 <div className="relative h-[50svh] w-full shrink-0 overflow-hidden bg-black">
                                     <div className="absolute left-[1.6rem] top-[50%] transform translate-y-[-50%] flex min-w-0 flex-col items-start">
-                                        <p className="bg-black text-white text-left text-[2.0rem] font-semibold p-[0.6rem_0.8rem]">PREV</p>
-                                        <p className="bg-black text-white text-left text-[3.2rem] font-semibold p-[0.6rem_0.8rem] line-clamp-2">이전글이 없습니다.</p>
+                                        <p className="bg-black text-[#13ff34] text-left text-[2.0rem] font-semibold p-[0.6rem_0.8rem]">PREV</p>
+                                        <p className="bg-black text-white text-left text-[3.2rem] font-semibold p-[0.6rem_0.8rem] line-clamp-2">이전글이 없어요</p>
                                     </div>
                                 </div>
                             )}
@@ -355,22 +379,34 @@ const Contents = ({ contents, prev, next, postId, imageUrl, title, summary, crea
                                             className="object-cover sacle-[1] hover:scale-[1.1] transition-transform"
                                         />
 
-                                        <div className="absolute right-[1.6rem] top-[50%] transform translate-y-[-50%] flex min-w-0 flex-col">
-                                            <p className="bg-black text-white text-right text-[2.0rem] font-semibold p-[0.6rem_0.8rem]">NEXT</p>
+                                        <div className="absolute right-[1.6rem] top-[50%] transform translate-y-[-50%] flex min-w-0 flex-col items-end">
+                                            <p className="bg-black text-[#13ff34] text-right text-[2.0rem] font-semibold p-[0.6rem_0.8rem]">NEXT</p>
                                             <p className="bg-black text-white text-right text-[3.2rem] font-semibold p-[0.6rem_0.8rem] line-clamp-2">{next.title}</p>
+                                            <MaterialIcon
+                                                name={"arrow_back"}
+                                                size={18}
+                                                className="bg-black text-white p-[0.6rem_0.8rem] rotate-180"
+                                            />
                                         </div>
                                     </div>
                                 </Fragment>
                             ) : (
                                 <div className="relative h-[50svh] w-full shrink-0 overflow-hidden bg-black">
                                     <div className="absolute right-[1.6rem] top-[50%] transform translate-y-[-50%] flex min-w-0 flex-col">
-                                        <p className="bg-black text-white text-right text-[2.0rem] font-semibold p-[0.6rem_0.8rem]">PREV</p>
-                                        <p className="bg-black text-white text-right text-[3.2rem] font-semibold p-[0.6rem_0.8rem] line-clamp-2">이전글이 없습니다.</p>
+                                        <p className="bg-black text-[#13ff34] text-right text-[2.0rem] font-semibold p-[0.6rem_0.8rem]">NEXT</p>
+                                        <p className="bg-black text-white text-right text-[3.2rem] font-semibold p-[0.6rem_0.8rem] line-clamp-2">다음글이 없어요</p>
                                     </div>
                                 </div>
                             )}
                         </UI.Button>
                     </section>
+
+                    <GiscusComments
+                        term={`post-${postId}`}
+                        className="w-full pt-[2.4rem]"
+                    />
+
+                    <PostDetailActions postIdx={parseInt(postId)} />
                 </section>
             </article>
         </>

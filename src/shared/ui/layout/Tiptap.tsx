@@ -13,6 +13,8 @@ import TipTapBubbleMenu from "@/shared/ui/layout/TipTapBubbleMenu";
 import TipTapImageBubbleMenu from "@/shared/ui/layout/TipTapImageBubbleMenu";
 import TipTapToolbar from "@/shared/ui/layout/TipTapToolbar";
 import { TIPTAP_PROSE_CLASS } from "@/features/managePost/ui/blockEditor/blockEditorStyles";
+import { createCodeBlockEditorExtensions } from "@/shared/ui/common/richText/extensions/codeBlockEditor";
+import { DEFAULT_CODE_LANGUAGE } from "@/shared/lib/codeHighlight";
 import { ResizableImage } from "@/shared/ui/common/richText/extensions/resizableImage";
 
 type Props = {
@@ -135,44 +137,69 @@ const Normal = ({ content = "", onChange, showToolbar = true, onEditorFocus, onE
 };
 
 const Code = ({ content = "", onChange }: Props) => {
+    const lastEmittedHtml = useRef(content);
+    const initialContent = useRef(content);
+
     const editor = useEditor({
         immediatelyRender: false,
-        extensions: [
-            StarterKit.configure({
-                heading: false,
-                bold: false,
-                italic: false,
-                strike: false,
-                code: false,
-            }),
-        ],
-        content,
+        extensions: createCodeBlockEditorExtensions(),
+        content: initialContent.current || "<pre><code class=\"language-javascript\"></code></pre>",
+        editorProps: {
+            attributes: {
+                autocomplete: "off",
+                autocorrect: "off",
+                autocapitalize: "off",
+                spellcheck: "false",
+                "aria-label": "코드 입력",
+                class: "tiptap-code-editor min-h-[15rem] outline-none focus:outline-none font-mono text-[1.4rem] leading-[1.6]",
+            },
+        },
         onUpdate: ({ editor: currentEditor }) => {
-            onChange?.(currentEditor.getHTML());
+            const html = currentEditor.getHTML();
+            lastEmittedHtml.current = html;
+            onChange?.(html);
         },
     });
+
+    useEffect(() => {
+        if (!editor) {
+            return;
+        }
+
+        if (!editor.isActive("codeBlock")) {
+            editor.commands.setCodeBlock({ language: DEFAULT_CODE_LANGUAGE });
+        }
+    }, [editor]);
+
+    useEffect(() => {
+        if (!editor) {
+            return;
+        }
+
+        if (content === lastEmittedHtml.current) {
+            return;
+        }
+
+        const editorHtml = editor.getHTML();
+        if (content === editorHtml) {
+            lastEmittedHtml.current = content;
+            return;
+        }
+
+        editor.commands.setContent(content || "<pre><code class=\"language-javascript\"></code></pre>", { emitUpdate: false });
+        lastEmittedHtml.current = content;
+    }, [content, editor]);
 
     if (!editor) return null;
 
     return (
         <div
-            className="w-full h-full rounded-[2.0rem] overflow-hidden"
+            className="w-full h-full min-h-[12rem] flex-1"
             onClick={(e) => e.stopPropagation()}
         >
             <EditorContent
                 editor={editor}
-                className="min-h-[150px] h-full border border-gray-300 rounded p-2 font-mono bg-[#252525] text-white focus:outline-none focus:ring-2 focus:ring-pink-400"
-                onKeyDown={(e: React.KeyboardEvent) => {
-                    if (e.key === "Tab") {
-                        e.preventDefault();
-                        editor.chain().focus().insertContentAt(editor.state.selection.from, "\u00A0\u00A0\u00A0\u00A0").run();
-                        return;
-                    }
-
-                    if (e.key === "Enter") {
-                        editor.chain().focus().insertContentAt(editor.state.selection.from, "\u00A0\u00A0\u00A0\u00A0").run();
-                    }
-                }}
+                className="tiptap-code-editor-wrapper h-full min-h-[12rem] [&_.tiptap-code-editor]:h-full [&_.tiptap-code-editor]:min-h-[12rem] [&_.tiptap-code-editor_pre]:m-0 [&_.tiptap-code-editor_pre]:bg-transparent [&_.tiptap-code-editor_pre]:p-0 [&_.tiptap-code-editor_pre]:font-mono [&_.tiptap-code-editor_pre]:text-[1.4rem] [&_.tiptap-code-editor_pre]:leading-[1.6] [&_.tiptap-code-editor_pre]:whitespace-pre-wrap [&_.tiptap-code-editor_pre]:break-words [&_.tiptap-code-editor_pre]:[tab-size:4] [&_.tiptap-code-editor_code]:block [&_.tiptap-code-editor_code]:font-mono [&_.tiptap-code-editor_code]:[tab-size:4] [&_.tiptap-code-editor_code]:bg-transparent"
             />
         </div>
     );

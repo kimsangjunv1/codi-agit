@@ -21,7 +21,7 @@ export interface Block {
     style: TextStyle;
 }
 
-export type BlockMode = "main" | "sub";
+export type BlockMode = "main" | "sub" | "code";
 
 export interface NormalSectionContent {
     id: string;

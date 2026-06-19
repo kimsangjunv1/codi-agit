@@ -10,13 +10,17 @@ import UI from "@/shared/ui/common/UIComponent";
 import IconComponent from "@/shared/ui/common/IconComponent";
 import { MaterialIcon } from "@/shared/ui/common/MaterialIcon";
 import { blockContentToHtml } from "@/widgets/post/lib/blockContent";
-import { isMainBlock } from "@/widgets/post/lib/blockMode";
+import { getBlockModeLabel, getNextBlockModePatch, isCodeBlock, isMainBlock } from "@/widgets/post/lib/blockMode";
 import { getPostTocAnchorId } from "@/widgets/post/lib/postToc";
 
 import { usePostDraftImageStore } from "@/shared/stores/usePostDraftImageStore";
 import { useToastStore } from "@/shared/stores/useToastStore";
 import { Row, useBlockStore } from "@/features/managePost/model/useEditorBlockStore";
-import { BLOCK_COLUMN_CLASS, BLOCK_ROW_CLASS } from "@/features/managePost/ui/blockEditor/blockEditorStyles";
+import { normalizeBlocksForEditor } from "@/features/managePost/lib/normalizePostBlocks";
+import { BLOCK_COLUMN_CLASS, BLOCK_ROW_CLASS, CODE_BLOCK_COLUMN_CLASS } from "@/features/managePost/ui/blockEditor/blockEditorStyles";
+import { detectCodeLanguage, extractCodeFromContent, getDefaultCodeFileBaseName, toCodeBlockHtml } from "@/shared/lib/codeHighlight";
+import { formatCodeContent } from "@/shared/lib/formatCodeContent";
+import CodeBlockPanel from "@/shared/ui/common/CodeBlockPanel";
 
 import type { SectionContent } from "@/entities/post/model/post.type";
 
@@ -70,7 +74,7 @@ const SortableBlock = ({ contents }: { contents?: Row[] }) => {
 
     useEffect(() => {
         if (contents && contents.length > 0) {
-            setRows(contents);
+            setRows(normalizeBlocksForEditor(contents));
         }
     }, [contents, setRows]);
 
@@ -199,7 +203,7 @@ const Item = ({ row, rowIndex }: { row: Row; rowIndex: number }) => {
                     <motion.section
                         key={block.id}
                         layout="position"
-                        className={BLOCK_COLUMN_CLASS}
+                        className={isCodeBlock(block) ? CODE_BLOCK_COLUMN_CLASS : BLOCK_COLUMN_CLASS}
                     >
                         <Block
                             block={block}
@@ -242,7 +246,35 @@ const Block = ({ block, rowIndex, blockIndex, last, blockCount }: { block: Secti
         });
     }, []);
 
-    const columnClassName = `w-full min-w-0 flex flex-col gap-[1.6rem] h-full group/block ${block.type !== 0 ? "rounded-[2.4rem] overflow-hidden" : ""} ${blockCount === 1 && block.type !== 0 ? "tablet:col-span-2" : blockCount > 1 && block.type !== 0 ? "tablet:min-h-[36.0rem]" : ""}`;
+    const codeBlockMode = isCodeBlock(block);
+    const showHeadingFields = block.type === 0 && isMainBlock(block) && !codeBlockMode;
+    const blockModeLabel = getBlockModeLabel(block);
+    const blockMode = codeBlockMode ? "code" : isMainBlock(block) ? "main" : "sub";
+
+    const handleFormatCode = useCallback(async () => {
+        const { code } = extractCodeFromContent(textContent);
+        if (!code.trim()) {
+            setToast({ msg: "정렬할 코드가 없어요", time: 2 });
+            return;
+        }
+
+        const language = detectCodeLanguage(code);
+        const formatted = await formatCodeContent(code, language);
+
+        updateBlock(rowIndex, blockIndex, {
+            content: toCodeBlockHtml(formatted, language),
+        });
+        setToast({ msg: "코드를 정렬했어요", time: 2 });
+    }, [blockIndex, rowIndex, setToast, textContent, updateBlock]);
+
+    useEffect(() => {
+        if (codeBlockMode) {
+            setFocusedEditor(null);
+        }
+    }, [codeBlockMode]);
+
+    const columnClassName = `w-full min-w-0 flex flex-col gap-[1.6rem] h-full group/block ${!codeBlockMode && block.type !== 0 ? "rounded-[2.4rem]" : ""} ${blockCount === 1 && !codeBlockMode && block.type !== 0 ? "tablet:col-span-2" : blockCount > 1 && !codeBlockMode && block.type !== 0 ? "tablet:min-h-[36.0rem]" : ""} ${codeBlockMode ? "rounded-[2.4rem]" : ""}`;
+    // const columnClassName = `w-full min-w-0 flex flex-col gap-[1.6rem] h-full group/block ${!codeBlockMode && block.type !== 0 ? "rounded-[2.4rem]" : ""} ${blockCount === 1 && !codeBlockMode && block.type !== 0 ? "tablet:col-span-2" : blockCount > 1 && !codeBlockMode && block.type !== 0 ? "tablet:min-h-[36.0rem]" : ""} ${codeBlockMode ? "rounded-[2.4rem] overflow-hidden" : ""}`;
 
     const handleImageFile = (file: File) => {
         if (!file.type.startsWith("image/")) {
@@ -260,8 +292,6 @@ const Block = ({ block, rowIndex, blockIndex, last, blockCount }: { block: Secti
             updateBlock(rowIndex, blockIndex, { imageUrl: previewUrl });
         }
     };
-
-    const showHeadingFields = block.type === 0 && isMainBlock(block);
 
     useEffect(() => {
         setCurrentImageUrl(block.imageUrl ?? "/");
@@ -304,27 +334,46 @@ const Block = ({ block, rowIndex, blockIndex, last, blockCount }: { block: Secti
         >
             {block.type === 0 || last ? (
                 <section
-                    className="absolute top-[calc((2.8rem/1)*-1)] left-[50%] transform translate-x-[-50%] z-10 flex items-center rounded-full overflow-hidden bg-white p-[0.4rem]"
+                    className={`absolute top-[calc((2.8rem/1)*-1)] left-[50%] transform translate-x-[-50%] z-10 flex items-center rounded-full overflow-hidden p-[0.4rem] ${block.blockMode === "code" ? "bg-[#2d2d2d]" : "bg-white"}`}
                     onClick={(event) => event.stopPropagation()}
                 >
                     {block.type === 0 ? (
                         <UI.Button
                             onClick={() => {
-                                updateBlock(rowIndex, blockIndex, {
-                                    blockMode: showHeadingFields ? "sub" : "main",
-                                });
+                                const patch = getNextBlockModePatch(block);
+
+                                if (patch.blockMode === "code") {
+                                    setFocusedEditor(null);
+                                    const { code } = extractCodeFromContent(textContent);
+                                    const language = detectCodeLanguage(code);
+                                    const defaultFileName = getDefaultCodeFileBaseName(language);
+                                    updateBlock(rowIndex, blockIndex, {
+                                        ...patch,
+                                        title: block.title?.trim() || defaultFileName,
+                                        content: toCodeBlockHtml(code, language),
+                                    });
+                                    return;
+                                }
+
+                                if (codeBlockMode) {
+                                    setFocusedEditor(null);
+                                }
+
+                                updateBlock(rowIndex, blockIndex, patch);
                             }}
                             className={`flex px-[0.8rem] py-[0.4rem] gap-[0.4rem] items-center justify-center rounded-full transition-colors ${
-                                showHeadingFields ? "bg-[var(--color-blue-100)] text-[var(--color-blue-600)]" : "bg-[var(--color-gray-200)] text-[var(--color-gray-900)]"
+                                blockMode === "main"
+                                    ? "bg-[var(--color-blue-100)] text-[var(--color-blue-600)]"
+                                    : blockMode === "code"
+                                      ? "bg-[#131313] text-[#ffffff]"
+                                      : "bg-[var(--color-gray-200)] text-[var(--color-gray-900)]"
                             }`}
                         >
-                            {/* showHeadingFields ? "bg-[var(--color-blue-500)] text-white" : "bg-[#ededed] text-[var(--color-gray-900)]" */}
-
                             <MaterialIcon
                                 name={"refresh"}
                                 size={16}
                             />
-                            <p>{showHeadingFields ? "메인" : "서브"}</p>
+                            <p>{blockModeLabel}</p>
                         </UI.Button>
                     ) : null}
 
@@ -344,7 +393,7 @@ const Block = ({ block, rowIndex, blockIndex, last, blockCount }: { block: Secti
             ) : null}
 
             <section className="relative flex flex-col gap-[1.6rem] h-full">
-                {block.type === 0 ? (
+                {block.type === 0 && !codeBlockMode ? (
                     <>
                         {showHeadingFields ? (
                             <section className="flex flex-col gap-[0.8rem]">
@@ -377,6 +426,24 @@ const Block = ({ block, rowIndex, blockIndex, last, blockCount }: { block: Secti
                     </>
                 ) : null}
 
+                {codeBlockMode ? (
+                    <CodeBlockPanel
+                        content={textContent}
+                        fileName={block.title}
+                        editableFileName
+                        showFormat
+                        onFormat={handleFormatCode}
+                        onFileNameChange={(title) => updateBlock(rowIndex, blockIndex, { title })}
+                        bodyClassName="min-h-[12rem] p-0 px-[1.6rem] py-[1.4rem]"
+                    >
+                        <TipTap.Code
+                            key={`${block.id}-code`}
+                            content={textContent}
+                            onChange={(html) => updateBlock(rowIndex, blockIndex, { content: html })}
+                        />
+                    </CodeBlockPanel>
+                ) : null}
+
                 {block.type === 1 ? (
                     <div className="relative">
                         <img
@@ -403,20 +470,11 @@ const Block = ({ block, rowIndex, blockIndex, last, blockCount }: { block: Secti
                         />
                     </div>
                 ) : null}
-
-                {block.type === 2 ? (
-                    <TipTap.Code
-                        content={block.content as string}
-                        onChange={(html) => updateBlock(rowIndex, blockIndex, { content: html })}
-                    />
-                ) : null}
             </section>
 
-            {focusedEditor ? (
+            {focusedEditor && !codeBlockMode && !focusedEditor.isDestroyed ? (
                 <div
                     className="pointer-events-auto absolute bottom-[calc((2.8rem/1)*-1)] left-[50%] transform translate-x-[-50%] mobile:w-[80%] pc:w-[50%]"
-                    // className="pointer-events-auto absolute bottom-[calc((2.8rem/1)*-1)] left-[50%] transform translate-x-[-50%] mobile:w-[80%] pc:w-[50%]"
-                    // className="pointer-events-auto absolute bottom-0 left-1/2 z-20 w-full -translate-x-1/2 translate-y-1/2 flex justify-center"
                     onPointerDown={(event) => event.stopPropagation()}
                 >
                     <TipTapToolbar editor={focusedEditor} />
