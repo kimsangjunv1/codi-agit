@@ -9,7 +9,6 @@ export { default as ManagerDetailMetaGrid } from "./ManagerDetailMetaGrid";
 export { default as ManagerListPaneHeader } from "./ManagerListPaneHeader";
 export { default as ManagerDetailPaneHeader } from "./ManagerDetailPaneHeader";
 export { default as useManagerSelection } from "./useManagerSelection";
-export { default as ManagerPageShell } from "./ManagerPageShell";
 export { default as ManagerListSkeleton } from "./ManagerListSkeleton";
 export { MANAGER_MENUS } from "./managerMenus";
 export { default as Modal } from "./Modal";
