@@ -17,6 +17,7 @@ import IconComponent from "@/shared/ui/common/IconComponent";
 import { BLOCK_COLUMN_CLASS, BLOCK_ROW_CLASS, POST_TIPTAP_CONTENT_CLASS } from "@/features/managePost/ui/blockEditor/blockEditorStyles";
 import PostHero from "@/features/managePost/ui/PostHero";
 import PostTocPanel from "@/features/managePost/ui/PostTocPanel";
+import PostRichTextContent from "@/widgets/post/ui/PostRichTextContent";
 import { isMainBlock } from "@/widgets/post/lib/blockMode";
 import { getPostTocAnchorId } from "@/widgets/post/lib/postToc";
 import PostThumbnail from "@/shared/ui/common/PostThumbnail";
@@ -160,10 +161,10 @@ const ContentColumn = memo(({ col, rowLength, onCopySentence }: { col: SectionCo
                     ) : null}
 
                     {typeof col.content === "string" ? (
-                        <section
+                        <PostRichTextContent
                             className={POST_TIPTAP_CONTENT_CLASS}
-                            dangerouslySetInnerHTML={{ __html: sanitizedContent }}
-                            onClick={(e) => {
+                            html={sanitizedContent}
+                            onParagraphClick={(e) => {
                                 const target = e.target as HTMLElement;
                                 if (target.tagName === "P" || target.closest("p")) {
                                     const paragraph = target.tagName === "P" ? target : target.closest("p");

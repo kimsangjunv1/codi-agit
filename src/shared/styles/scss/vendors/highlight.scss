@@ -108,6 +108,18 @@ pre.code-block code {
 @include code-hljs-colors("pre.code-block");
 @include code-hljs-colors(".code-block-view");
 @include code-hljs-colors(".code-block-panel");
+@include code-hljs-colors(".post-snippet-code-block");
+
+.post-snippet-code-block {
+    .snippet-code-block-editor__input {
+        color: transparent;
+        caret-color: #e2e8f0;
+    }
+
+    .snippet-code-block-editor__input::selection {
+        background: rgba(59, 130, 246, 0.35);
+    }
+}
 
 .tiptap-code-editor-wrapper {
     .tiptap-code-editor,

@@ -16,4 +16,4 @@ export const TIPTAP_PROSE_CLASS =
     "text-[1.8rem] leading-[1.5] [&_p]:break-words [&_p]:!text-[1.8rem] [&_p]:!leading-[1.5] [&_p]:mb-[0.8rem] [&_p:last-child]:mb-0 [&_p:empty]:min-h-[2.7rem] [&_p:has(>br:only-child)]:min-h-[2.7rem] [&_span]:!text-[inherit] [&_span]:!leading-[inherit] [&_ul]:list-disc [&_ul]:pl-[2rem] [&_ul]:my-[0.8rem] [&_ol]:list-decimal [&_ol]:pl-[2rem] [&_ol]:my-[0.8rem] [&_blockquote]:border-l-[0.4rem] [&_blockquote]:border-[var(--color-gray-300)] [&_blockquote]:pl-[1.2rem] [&_blockquote]:text-[var(--color-gray-600)] [&_blockquote]:my-[0.8rem]";
 
 export const POST_TIPTAP_CONTENT_CLASS =
-    `post-tiptap-content w-full ${TIPTAP_PROSE_CLASS} [&_img]:my-[1.6rem] [&_img]:block [&_img]:h-auto [&_img]:max-w-full  [&_img[data-align='center']]:mx-auto [&_img[data-align='right']]:ml-auto [&_img[data-align='right']]:mr-0`;
+    `post-tiptap-content w-full ${TIPTAP_PROSE_CLASS} [&_img]:my-[1.6rem] [&_img]:block [&_img]:h-auto [&_img]:max-w-full  [&_img[data-align='center']]:mx-auto [&_img[data-align='right']]:ml-auto [&_img[data-align='right']]:mr-0 [&_.post-snippet-code-block]:my-[1.6rem]`;
