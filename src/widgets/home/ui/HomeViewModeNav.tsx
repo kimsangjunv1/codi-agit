@@ -30,8 +30,8 @@ const HomeViewModeNav = ({ variant }: HomeViewModeNavProps) => {
     const buttonTextClass = isFloating ? "font-extrabold text-[1.8rem]" : "font-extrabold text-[3.2rem]";
 
     return (
-        <section className={isFloating ? "fixed z-100 left-1/2 -translate-x-1/2 bottom-[calc(1.6rem+env(safe-area-inset-bottom))]" : "w-full"}>
-            <section className={`${isFloating ? "gap-[0.4rem]" : "gap-[2.4rem]"} max-w-[var(--size-pc)] px-[2.0rem] mx-auto flex items-center justify-start pt-[var(--header-height)]`}>
+        <section className={isFloating ? "fixed z-100 left-1/2 -translate-x-1/2 bottom-[calc(1.6rem+env(safe-area-inset-bottom))] w-full" : "w-full"}>
+            <section className={`${isFloating ? "gap-[0.4rem] justify-center" : "gap-[2.4rem] justify-start"} max-w-[var(--size-pc)] px-[2.0rem] mx-auto flex items-center pt-[var(--header-height)]`}>
                 <AnimatePresence mode="popLayout">
                     <UI.Button
                         key="search"

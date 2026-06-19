@@ -119,10 +119,7 @@ const RenderContents = ({ id, initialData }: { id: string; initialData: GetPostD
 };
 
 const CodeBlockContent = memo(({ content, fileName }: { content: string; fileName?: string }) => {
-    const html = useMemo(
-        () => sanitizeHtml(`<pre class="code-block hljs"><code>${highlightCodeWithHljs(content)}</code></pre>`),
-        [content],
-    );
+    const html = useMemo(() => sanitizeHtml(`<pre class="code-block hljs"><code>${highlightCodeWithHljs(content)}</code></pre>`), [content]);
 
     return (
         <CodeBlockPanel
@@ -208,7 +205,12 @@ const ContentColumn = memo(({ col, rowLength, onCopySentence }: { col: SectionCo
                 />
             ) : null}
 
-            {col.type === 2 ? <CodeBlockContent content={`${col.content}`} fileName={col.title} /> : null}
+            {col.type === 2 ? (
+                <CodeBlockContent
+                    content={`${col.content}`}
+                    fileName={col.title}
+                />
+            ) : null}
         </section>
     );
 });
@@ -315,6 +317,11 @@ const Contents = ({ contents, prev, next, postId, imageUrl, title, summary, crea
                         </section>
                     ))}
 
+                    <GiscusComments
+                        term={`post-${postId}`}
+                        className="max-w-[var(--size-tablet)] w-full mx-auto my-[5.2rem] px-[2.0rem]"
+                    />
+
                     <section className="flex mobile:flex-col tablet:flex-row flex-wrap">
                         <UI.Button
                             className={`hover:brightness-50 flex-1 flex items-center justify-start gap-[0.8rem]  ${prev ? "" : "pointer-events-none"}`}
@@ -400,11 +407,6 @@ const Contents = ({ contents, prev, next, postId, imageUrl, title, summary, crea
                             )}
                         </UI.Button>
                     </section>
-
-                    <GiscusComments
-                        term={`post-${postId}`}
-                        className="w-full pt-[2.4rem]"
-                    />
 
                     <PostDetailActions postIdx={parseInt(postId)} />
                 </section>
