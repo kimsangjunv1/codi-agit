@@ -90,7 +90,8 @@ const Navigation = () => {
     if (!IS_ROUTE_POST) return null;
 
     return (
-        <nav className="fixed tablet:top-[calc(1.6rem*3)] mobile:top-[calc(1.6rem*1)] left-[50%] tablet:px-[calc(1.6rem*2)] mobile:px-0 transform translate-x-[-50%] z-[1000] w-[calc(100dvw-(1.6rem*2))]">
+        // <nav className="fixed tablet:top-[calc(1.6rem*3)] mobile:top-[calc(1.6rem*1)] left-[50%] tablet:px-[calc(1.6rem*2)] mobile:px-0 transform translate-x-[-50%] z-[1000] w-[calc(100dvw-(1.6rem*2))]">
+        <nav className="fixed tablet:top-[calc(1.6rem*3)] mobile:top-[calc(1.6rem*1)] left-0 z-[1000] w-[calc(100dvw-(1.6rem*2))]">
             <div className="nav-inner menu flex justify-between gap-[4.8rem] w-full">
                 <section className="flex items-start gap-[0.4rem] z-1">
                     <UI.Button
@@ -133,7 +134,7 @@ const Navigation = () => {
 
                 <section className="flex flex-col items-center justify-center gap-[1.6rem] flex-1 absolute left-[50%] translate-x-[-50%]">
                     <AnimatePresence mode="popLayout">
-                        {IS_ROUTE_POST_VIEW && (
+                        {/* {IS_ROUTE_POST_VIEW && (
                             <section className="flex flex-col gap-[0.8rem]">
                                 <motion.section
                                     key={"post_title_view"}
@@ -146,7 +147,7 @@ const Navigation = () => {
                                     <h2 className="tablet:text-[2.8rem] mobile:text-[2.4rem] text-center leading-[1.5] font-bold text-white">{postTitle}</h2>
                                 </motion.section>
                             </section>
-                        )}
+                        )} */}
 
                         {IS_ROUTE_POST_EDIT && (
                             <section className="flex flex-col gap-[0.8rem]">
@@ -179,14 +180,14 @@ const Navigation = () => {
                         )}
                     </AnimatePresence>
 
-                    <div className="w-[7.2rem] h-[0.8rem] p-[0.2rem] bg-[#ffffff40] backdrop-blur-sm rounded-full shadow-[var(--shadow-normal)]">
+                    {/* <div className="w-[7.2rem] h-[0.8rem] p-[0.2rem] bg-[#ffffff40] backdrop-blur-sm rounded-full shadow-[var(--shadow-normal)]">
                         <div
                             ref={progressBarRef}
                             className="h-full w-0 rounded-full bg-white shadow-[var(--shadow-normal)] will-change-[width]"
                         />
-                    </div>
+                    </div> */}
 
-                    <div className={`absolute top-0 left-[50%] transform translate-x-[-50%] w-[calc(100%*2)] h-full bg-[linear-gradient(90deg,_transparent,_#000000ee,_transparent)] blur-lg z-[-1]`} />
+                    {/* <div className={`absolute top-0 left-[50%] transform translate-x-[-50%] w-[calc(100%*2)] h-full bg-[linear-gradient(90deg,_transparent,_#000000ee,_transparent)] blur-lg z-[-1]`} /> */}
                 </section>
 
                 {IS_ROUTE_POST_EDIT || IS_ROUTE_POST_CREATE ? (
