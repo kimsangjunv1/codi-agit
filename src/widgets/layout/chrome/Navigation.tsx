@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ChangeEvent } from "react";
 import { AnimatePresence, motion } from "motion/react";
 
 import UI from "@/shared/ui/common/UIComponent";
@@ -12,6 +12,9 @@ import { useScrollProgressBar } from "@/shared/hooks/useScrollProgress";
 import { getPostRouteFlags, PostSaveNavButton, usePostNavigationActions } from "@/features/managePost";
 import { useBlockStore } from "@/features/managePost/model/useEditorBlockStore";
 import { MaterialIcon } from "@/shared/ui/common/MaterialIcon";
+import { parsePostMarkdown } from "@/features/managePost/lib/parsePostMarkdown";
+import { useCreatePostStore } from "@/shared/stores/useCreatePostStore";
+import { useToastStore } from "@/shared/stores/useToastStore";
 
 const springTransition = {
     type: "spring" as const,
@@ -24,10 +27,13 @@ const Navigation = () => {
     const params = useParams();
     const [showMenu, setShowMenu] = useState(false);
     const progressBarRef = useRef<HTMLDivElement>(null);
+    const markdownInputRef = useRef<HTMLInputElement>(null);
 
     useScrollProgressBar(progressBarRef);
     const { currentPathName, pushToUrl } = useNavigate();
-    const { rows } = useBlockStore();
+    const { rows, setRows } = useBlockStore();
+    const { title, summary, setTitle, setSummary } = useCreatePostStore();
+    const { setToast } = useToastStore();
 
     const { IS_ROUTE_POST, IS_ROUTE_POST_VIEW, IS_ROUTE_POST_EDIT, IS_ROUTE_POST_CREATE } = getPostRouteFlags(currentPathName);
 
@@ -41,6 +47,40 @@ const Navigation = () => {
         pushToUrl,
     });
 
+    const handleMarkdownFile = async (event: ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        event.target.value = "";
+
+        if (!file) return;
+        if (!file.name.toLowerCase().endsWith(".md")) {
+            setToast({ msg: "Markdown(.md) 파일만 불러올 수 있어요", type: "warning" });
+            return;
+        }
+
+        const hasContent =
+            Boolean(title.trim() || summary.trim()) ||
+            rows.some((row) => row.some((block) => Boolean(block.title?.trim() || block.subtitle?.trim() || (typeof block.content === "string" && block.content.trim()) || block.imageUrl?.trim())));
+
+        if (hasContent && !window.confirm("현재 작성 중인 제목, 요약, 블록을 불러온 Markdown 내용으로 교체할까요?")) {
+            return;
+        }
+
+        try {
+            const parsed = parsePostMarkdown(await file.text());
+            if (!parsed.title || parsed.rows.length === 0) {
+                setToast({ msg: "제목과 본문을 확인할 수 없는 Markdown 파일이에요", type: "warning" });
+                return;
+            }
+
+            setTitle(parsed.title);
+            setSummary(parsed.summary);
+            setRows(parsed.rows);
+            setToast({ msg: `${parsed.rows.length}개 그룹을 불러왔어요`, type: "success" });
+        } catch {
+            setToast({ msg: "Markdown 파일을 불러오지 못했어요", type: "fail" });
+        }
+    };
+
     useEffect(() => {
         if (showMenu) {
             setShowMenu(false);
@@ -52,18 +92,44 @@ const Navigation = () => {
     return (
         <nav className="fixed tablet:top-[calc(1.6rem*3)] mobile:top-[calc(1.6rem*1)] left-[50%] tablet:px-[calc(1.6rem*2)] mobile:px-0 transform translate-x-[-50%] z-[1000] w-[calc(100dvw-(1.6rem*2))]">
             <div className="nav-inner menu flex justify-between gap-[4.8rem] w-full">
-                <UI.Button
-                    type="button"
-                    onClick={() => pushToUrl("/")}
-                    className="transition-colors flex flex-col items-start z-1"
-                >
-                    <p className="bg-black text-white p-[2.0rem] text-[2.4rem] font-semibold tablet:block mobile:hidden">{IS_ROUTE_POST_VIEW ? "메인으로" : "이전으로"}</p>
-                    <MaterialIcon
-                        name="arrow_back"
-                        size={24}
-                        className="bg-black text-white p-[2.0rem]"
-                    />
-                </UI.Button>
+                <section className="flex items-start gap-[0.4rem] z-1">
+                    <UI.Button
+                        type="button"
+                        onClick={() => pushToUrl("/")}
+                        className="transition-colors flex flex-col items-start"
+                    >
+                        <p className="bg-black text-white p-[2.0rem] text-[2.4rem] font-semibold tablet:block mobile:hidden">{IS_ROUTE_POST_VIEW ? "메인으로" : "이전으로"}</p>
+                        <MaterialIcon
+                            name="arrow_back"
+                            size={24}
+                            className="bg-black text-white p-[2.0rem]"
+                        />
+                    </UI.Button>
+
+                    {IS_ROUTE_POST_EDIT || IS_ROUTE_POST_CREATE ? (
+                        <>
+                            <UI.Button
+                                type="button"
+                                onClick={() => markdownInputRef.current?.click()}
+                                className="transition-colors flex flex-col items-start"
+                            >
+                                <p className="bg-black text-white p-[2.0rem] text-[2.4rem] font-semibold tablet:block mobile:hidden">불러오기</p>
+                                <MaterialIcon
+                                    name="upload_file"
+                                    size={24}
+                                    className="bg-black text-white p-[2.0rem]"
+                                />
+                            </UI.Button>
+                            <input
+                                ref={markdownInputRef}
+                                type="file"
+                                accept=".md,text/markdown,text/plain"
+                                className="hidden"
+                                onChange={handleMarkdownFile}
+                            />
+                        </>
+                    ) : null}
+                </section>
 
                 <section className="flex flex-col items-center justify-center gap-[1.6rem] flex-1 absolute left-[50%] translate-x-[-50%]">
                     <AnimatePresence mode="popLayout">
