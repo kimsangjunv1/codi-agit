@@ -301,7 +301,7 @@ const Contents = ({ contents, prev, next, postId, imageUrl, title, summary, crea
                     ["--post-read-line-height" as string]: lineHeight,
                 }}
             >
-                <section className="flex flex-col flex-1 min-w-0">
+                <section className="flex flex-col flex-1 min-w-0 gap-[7.2rem]">
                     {contents?.map((row, rowIdx) => (
                         <section
                             key={rowIdx}
