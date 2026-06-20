@@ -156,6 +156,15 @@ const TipTapToolbar = ({ editor }: TipTapToolbarProps) => {
                         <MaterialIcon name="code_blocks" />
                     </ToolbarIconButton>
                     <ToolbarIconButton
+                        label="코드 스니펫"
+                        title="코드 스니펫"
+                        variant={TOOLBAR_VARIANT}
+                        active={state.isSnippetCodeBlock}
+                        onClick={() => editor.chain().focus().insertSnippetCodeBlock().run()}
+                    >
+                        <MaterialIcon name="terminal" />
+                    </ToolbarIconButton>
+                    <ToolbarIconButton
                         label="인용문"
                         title="인용문"
                         variant={TOOLBAR_VARIANT}

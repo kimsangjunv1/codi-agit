@@ -11,6 +11,7 @@ import { useToastStore } from "@/shared/stores/useToastStore";
 type CodeBlockPanelProps = {
     content: string;
     fileName?: string;
+    variant?: "default" | "compact";
     editableFileName?: boolean;
     onFileNameChange?: (fileName: string) => void;
     showCopy?: boolean;
@@ -24,6 +25,7 @@ type CodeBlockPanelProps = {
 const CodeBlockPanel = ({
     content,
     fileName = "",
+    variant = "default",
     editableFileName = false,
     onFileNameChange,
     showCopy = true,
@@ -71,6 +73,64 @@ const CodeBlockPanel = ({
         }
     }, [isFormatting, onFormat, setToast]);
 
+    const isCompact = variant === "compact";
+
+    const copyButton = showCopy ? (
+        <button
+            type="button"
+            onClick={handleCopy}
+            className="flex h-[3rem] w-[3rem] items-center justify-center rounded-[0.8rem] text-slate-400 transition-colors hover:bg-slate-800 hover:text-slate-200"
+            aria-label="코드 복사"
+        >
+            {copied ? (
+                <MaterialIcon
+                    name="check"
+                    size={18}
+                />
+            ) : (
+                <IconComponent
+                    type="outlined-copy"
+                    alt="코드 복사"
+                    className="brightness-0 invert opacity-70"
+                />
+            )}
+        </button>
+    ) : null;
+
+    const actionButtons =
+        showCopy || showFormat ? (
+            <section className="flex shrink-0 items-center gap-[0.4rem]">
+                {showFormat ? (
+                    <button
+                        type="button"
+                        onClick={handleFormat}
+                        disabled={isFormatting}
+                        className="flex h-[3rem] w-[3rem] items-center justify-center rounded-[0.8rem] text-slate-400 transition-colors hover:bg-slate-800 hover:text-slate-200 disabled:cursor-not-allowed disabled:opacity-50"
+                        aria-label="코드 정렬"
+                    >
+                        <MaterialIcon
+                            name="code"
+                            size={18}
+                        />
+                    </button>
+                ) : null}
+                {copyButton}
+            </section>
+        ) : null;
+
+    if (isCompact) {
+        return (
+            <section className={`code-block-panel overflow-hidden rounded-[1.2rem] border border-slate-700/60 bg-[#13171F] my-[1.2rem] ${className}`}>
+                <div
+                    className={`code-block-panel__body flex items-center gap-[0.8rem] bg-[#1F232A] border border-[#2B2E36] overflow-x-auto font-mono text-[1.4rem] leading-1 text-slate-50 px-[1.2rem] ${bodyClassName}`}
+                >
+                    <div className="min-w-0 flex-1">{children}</div>
+                    {showCopy ? <div className="flex h-[calc(1.35rem*1.7)] shrink-0 items-center">{copyButton}</div> : null}
+                </div>
+            </section>
+        );
+    }
+
     return (
         <section className={`code-block-panel overflow-hidden rounded-[2.4rem] border border-slate-700/60 bg-[#13171F] p-[0.4rem] ${className}`}>
             <header className="flex items-center justify-between gap-[1.2rem] px-[1.6rem]">
@@ -91,46 +151,7 @@ const CodeBlockPanel = ({
                     <p className="font-mono text-[1.2rem] font-medium tracking-[0.02em] text-slate-400">{label}</p>
                 )}
 
-                {showCopy || showFormat ? (
-                    <section className="flex shrink-0 items-center gap-[0.4rem]">
-                        {showFormat ? (
-                            <button
-                                type="button"
-                                onClick={handleFormat}
-                                disabled={isFormatting}
-                                className="flex h-[3rem] w-[3rem] items-center justify-center rounded-[0.8rem] text-slate-400 transition-colors hover:bg-slate-800 hover:text-slate-200 disabled:cursor-not-allowed disabled:opacity-50"
-                                aria-label="코드 정렬"
-                            >
-                                <MaterialIcon
-                                    name="code"
-                                    size={18}
-                                />
-                            </button>
-                        ) : null}
-
-                        {showCopy ? (
-                            <button
-                                type="button"
-                                onClick={handleCopy}
-                                className="flex h-[3rem] w-[3rem] items-center justify-center rounded-[0.8rem] text-slate-400 transition-colors hover:bg-slate-800 hover:text-slate-200"
-                                aria-label="코드 복사"
-                            >
-                                {copied ? (
-                                    <MaterialIcon
-                                        name="check"
-                                        size={18}
-                                    />
-                                ) : (
-                                    <IconComponent
-                                        type="outlined-copy"
-                                        alt="코드 복사"
-                                        className="brightness-0 invert opacity-70"
-                                    />
-                                )}
-                            </button>
-                        ) : null}
-                    </section>
-                ) : null}
+                {actionButtons}
             </header>
 
             <div
