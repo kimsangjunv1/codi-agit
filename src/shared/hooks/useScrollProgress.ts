@@ -54,7 +54,7 @@ export const useScrollProgressBar = (barRef: RefObject<HTMLElement | null>) => {
         const update = () => {
             const safe = getScrollPercent();
             bar.style.width = `${safe}%`;
-            bar.style.backgroundColor = safe >= 99 ? "#00ff61" : "#ffffff";
+            bar.style.backgroundColor = safe >= 99 ? "#ff4321" : "#ff4321";
         };
 
         const onScroll = () => {

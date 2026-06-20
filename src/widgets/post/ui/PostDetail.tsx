@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, memo, useCallback, useEffect, useMemo } from "react";
+import { Fragment, memo, useCallback, useEffect, useMemo, useRef } from "react";
 
 import { Block, GetPostDetailResponse, PostPrevNextInfo, SectionContent } from "@/entities/post/model/post.type";
 import { util } from "@/shared/lib/util";
@@ -29,6 +29,7 @@ import { useToastStore } from "@/shared/stores/useToastStore";
 import { useCreatePostStore } from "@/shared/stores/useCreatePostStore";
 import { usePostReadingSettingsStore } from "@/shared/stores/usePostReadingSettingsStore";
 import { MaterialIcon } from "@/shared/ui/common/MaterialIcon";
+import { useScrollProgressBar } from "@/shared/hooks/useScrollProgress";
 
 type PostDetailProps = {
     id: string;
@@ -219,6 +220,8 @@ ContentColumn.displayName = "ContentColumn";
 
 const PostDetailActions = ({ postIdx }: { postIdx: number }) => {
     const { pushToUrl } = useNavigate();
+    const progressBarRef = useRef<HTMLDivElement>(null);
+    useScrollProgressBar(progressBarRef);
     const { alreadyLiked, likeCount, navVisibility, hasNavActions, isDeletePending, handleNavAction } = usePostNavigationActions({
         postIdx,
         isView: true,
@@ -232,7 +235,8 @@ const PostDetailActions = ({ postIdx }: { postIdx: number }) => {
     }
 
     return (
-        <section className="sticky bottom-0 flex h-[5.2rem] w-full flex-wrap justify-center bg-black">
+        // <section className="sticky bottom-0 flex h-[5.2rem] w-full flex-wrap justify-center bg-black">
+        <section className="sticky bottom-0 flex mobile:h-[5.2rem] pc:h-[7.2rem] w-full flex-wrap justify-center bg-black">
             <div className="mx-auto flex w-full max-w-[var(--size-tablet)] overflow-x-auto">
                 <PostNavigationActions
                     {...navVisibility}
@@ -240,6 +244,14 @@ const PostDetailActions = ({ postIdx }: { postIdx: number }) => {
                     alreadyLiked={alreadyLiked}
                     isDeletePending={isDeletePending}
                     onAction={handleNavAction}
+                />
+            </div>
+
+            {/* <div className="absolute top-[calc((0.8rem/2)*-1)] left-0 w-full h-[0.8rem]"> */}
+            <div className="absolute top-[calc((0.8rem/1)*-1)] left-0 w-full h-[0.8rem]">
+                <div
+                    ref={progressBarRef}
+                    className="h-full w-0 will-change-[width]"
                 />
             </div>
         </section>
@@ -301,7 +313,7 @@ const Contents = ({ contents, prev, next, postId, imageUrl, title, summary, crea
                     ["--post-read-line-height" as string]: lineHeight,
                 }}
             >
-                <section className="flex flex-col flex-1 min-w-0 gap-[7.2rem]">
+                <section className="flex flex-col flex-1 min-w-0">
                     {contents?.map((row, rowIdx) => (
                         <section
                             key={rowIdx}
@@ -348,9 +360,11 @@ const Contents = ({ contents, prev, next, postId, imageUrl, title, summary, crea
                                             className="object-cover sacle-[1] hover:scale-[1.1] transition-transform"
                                         />
 
-                                        <div className="absolute left-[1.6rem] top-[50%] transform translate-y-[-50%] flex min-w-0 flex-col items-start">
-                                            <p className="bg-black text-[#13ff34] text-left text-[2.0rem] font-semibold p-[0.6rem_0.8rem]">PREV</p>
-                                            <p className="bg-black text-white text-left text-[3.2rem] font-semibold p-[0.6rem_0.8rem] line-clamp-2">{prev.title}</p>
+                                        <div className="absolute left-[1.6rem] top-[50%] transform translate-y-[-50%] flex min-w-0 w-[calc(100%-(1.6rem*2))] leading-[1.5] flex-col items-start">
+                                            <p className="bg-black text-[#ff4321] text-left text-[2.0rem] font-semibold p-[0.6rem_0.8rem]">PREV</p>
+                                            <p className="bg-black text-white text-left mobile:text-[2.4rem] pc:text-[3.2rem] font-semibold p-[0.6rem_0.8rem] leading-[1.5] line-clamp-2">
+                                                {prev.title}
+                                            </p>
                                             <MaterialIcon
                                                 name={"arrow_back"}
                                                 size={24}
@@ -360,9 +374,11 @@ const Contents = ({ contents, prev, next, postId, imageUrl, title, summary, crea
                                     </div>
                                 ) : (
                                     <div className="relative h-[50svh] w-full shrink-0 overflow-hidden bg-black">
-                                        <div className="absolute left-[1.6rem] top-[50%] transform translate-y-[-50%] flex min-w-0 flex-col items-start">
-                                            <p className="bg-black text-[#13ff34] text-left text-[2.0rem] font-semibold p-[0.6rem_0.8rem]">PREV</p>
-                                            <p className="bg-black text-white text-left text-[3.2rem] font-semibold p-[0.6rem_0.8rem] line-clamp-2">이전글이 없어요</p>
+                                        <div className="absolute left-[1.6rem] top-[50%] transform translate-y-[-50%] flex min-w-0 w-[calc(100%-(1.6rem*2))] leading-[1.5] flex-col items-start">
+                                            <p className="bg-black text-[#ff4321] text-left text-[2.0rem] font-semibold p-[0.6rem_0.8rem]">PREV</p>
+                                            <p className="bg-black text-white text-left mobile:text-[2.4rem] pc:text-[3.2rem] font-semibold p-[0.6rem_0.8rem] leading-[1.5] line-clamp-2">
+                                                이전글이 없어요
+                                            </p>
                                         </div>
                                     </div>
                                 )}
@@ -390,9 +406,11 @@ const Contents = ({ contents, prev, next, postId, imageUrl, title, summary, crea
                                                 className="object-cover sacle-[1] hover:scale-[1.1] transition-transform"
                                             />
 
-                                            <div className="absolute right-[1.6rem] top-[50%] transform translate-y-[-50%] flex min-w-0 flex-col items-end">
-                                                <p className="bg-black text-[#13ff34] text-right text-[2.0rem] font-semibold p-[0.6rem_0.8rem]">NEXT</p>
-                                                <p className="bg-black text-white text-right text-[3.2rem] font-semibold p-[0.6rem_0.8rem] line-clamp-2">{next.title}</p>
+                                            <div className="absolute right-[1.6rem] top-[50%] transform translate-y-[-50%] flex min-w-0 w-[calc(100%-(1.6rem*2))] leading-[1.5] flex-col items-end">
+                                                <p className="bg-black text-[#ff4321] text-right text-[2.0rem] font-semibold p-[0.6rem_0.8rem]">NEXT</p>
+                                                <p className="bg-black text-white text-right mobile:text-[2.4rem] pc:text-[3.2rem] font-semibold p-[0.6rem_0.8rem] leading-[1.5] line-clamp-2">
+                                                    {next.title}
+                                                </p>
                                                 <MaterialIcon
                                                     name={"arrow_back"}
                                                     size={18}
@@ -403,9 +421,11 @@ const Contents = ({ contents, prev, next, postId, imageUrl, title, summary, crea
                                     </Fragment>
                                 ) : (
                                     <div className="relative h-[50svh] w-full shrink-0 overflow-hidden bg-black">
-                                        <div className="absolute right-[1.6rem] top-[50%] transform translate-y-[-50%] flex min-w-0 flex-col">
-                                            <p className="bg-black text-[#13ff34] text-right text-[2.0rem] font-semibold p-[0.6rem_0.8rem]">NEXT</p>
-                                            <p className="bg-black text-white text-right text-[3.2rem] font-semibold p-[0.6rem_0.8rem] line-clamp-2">다음글이 없어요</p>
+                                        <div className="absolute right-[1.6rem] top-[50%] transform translate-y-[-50%] flex min-w-0 w-[calc(100%-(1.6rem*2))] leading-[1.5] flex-col">
+                                            <p className="bg-black text-[#ff4321] text-right text-[2.0rem] font-semibold p-[0.6rem_0.8rem]">NEXT</p>
+                                            <p className="bg-black text-white text-right mobile:text-[2.4rem] pc:text-[3.2rem] font-semibold p-[0.6rem_0.8rem] leading-[1.5] line-clamp-2">
+                                                다음글이 없어요
+                                            </p>
                                         </div>
                                     </div>
                                 )}
