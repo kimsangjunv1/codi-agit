@@ -1,8 +1,10 @@
 "use client";
 
-import { NodeViewWrapper, type NodeViewProps } from "@tiptap/react";
+import { NodeViewWrapper, type NodeViewProps, useEditorState } from "@tiptap/react";
+import { NodeSelection } from "@tiptap/pm/state";
 import { useEffect, useRef, useState } from "react";
 import { startImageDrag } from "@/shared/ui/common/richText/extensions/imageDrag";
+import { safeSetNodeSelection } from "@/shared/ui/common/richText/extensions/imageSelection";
 import { getImageElementStyle, getImageFrameStyle, getImageWrapperStyle, normalizeImageAlign, normalizeImageWidth } from "@/shared/ui/common/richText/extensions/imageLayout";
 
 function clampWidthPercent(nextWidth: number, parentWidth: number) {
@@ -15,10 +17,19 @@ function clampWidthPercent(nextWidth: number, parentWidth: number) {
     return Math.min(100, Math.max(20, percent));
 }
 
-export function ResizableImageNodeView({ node, selected, updateAttributes, getPos, editor }: NodeViewProps) {
+export function ResizableImageNodeView({ node, updateAttributes, getPos, editor }: NodeViewProps) {
     const frameRef = useRef<HTMLDivElement>(null);
     const dragSessionRef = useRef<{ cleanup: () => void } | null>(null);
     const [isDragging, setIsDragging] = useState(false);
+    const isSelected = useEditorState({
+        editor,
+        selector: ({ editor: currentEditor }) => {
+            const position = getPos();
+            const { selection } = currentEditor.state;
+
+            return typeof position === "number" && selection instanceof NodeSelection && selection.from === position && selection.node.type.name === "image";
+        },
+    });
     const align = normalizeImageAlign(node.attrs.align);
     const width = normalizeImageWidth(node.attrs.imageWidth);
 
@@ -115,7 +126,7 @@ export function ResizableImageNodeView({ node, selected, updateAttributes, getPo
             },
             onDragStateChange: setIsDragging,
             onSelect: (position) => {
-                editor.chain().setNodeSelection(position).focus(undefined, { scrollIntoView: false }).run();
+                safeSetNodeSelection(editor, position);
             },
         });
     }
@@ -128,7 +139,7 @@ export function ResizableImageNodeView({ node, selected, updateAttributes, getPo
             style={getImageWrapperStyle()}
         >
             <div
-                className={`relative overflow-hidden ${selected ? "outline outline-2 outline-[#3b82f6]" : ""} ${isDragging ? "cursor-grabbing opacity-60" : "cursor-grab"}`}
+                className={`relative overflow-hidden ${isSelected ? "outline outline-2 outline-[#3b82f6]" : ""} ${isDragging ? "cursor-grabbing opacity-60" : "cursor-grab"}`}
                 // className={`relative overflow-hidden rounded-[2.4rem] shadow-[var(--shadow-normal)] ${selected ? "outline outline-2 outline-[#3b82f6]" : ""} ${isDragging ? "cursor-grabbing opacity-60" : "cursor-grab"}`}
                 contentEditable={false}
                 onPointerDown={startMove}
@@ -143,7 +154,7 @@ export function ResizableImageNodeView({ node, selected, updateAttributes, getPo
                     style={getImageElementStyle()}
                 />
 
-                {selected ? (
+                {isSelected ? (
                     <button
                         aria-label="이미지 크기 조절"
                         className="absolute bottom-[-0.6rem] right-[-0.6rem] h-[1.4rem] w-[1.4rem] cursor-se-resize border border-white bg-[#3b82f6]"

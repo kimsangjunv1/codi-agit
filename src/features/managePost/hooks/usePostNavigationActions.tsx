@@ -95,6 +95,11 @@ export const usePostNavigationActions = ({
             return;
         }
 
+        if (!category_idx) {
+            setToast({ msg: "카테고리를 선택해주세요", time: 2 });
+            return;
+        }
+
         try {
             const payload = await preparePostPayloadForSave({
                 title,

@@ -15,7 +15,10 @@ import TipTapToolbar from "@/shared/ui/layout/TipTapToolbar";
 import { TIPTAP_PROSE_CLASS } from "@/features/managePost/ui/blockEditor/blockEditorStyles";
 import { createCodeBlockEditorExtensions } from "@/shared/ui/common/richText/extensions/codeBlockEditor";
 import { DEFAULT_CODE_LANGUAGE } from "@/shared/lib/codeHighlight";
+import { codeBlockLowlight } from "@/shared/ui/common/richText/extensions/codeBlockEditor";
+import { DraftImageDrop } from "@/shared/ui/common/richText/extensions/draftImageDrop";
 import { ResizableImage } from "@/shared/ui/common/richText/extensions/resizableImage";
+import { SnippetCodeBlock, SnippetCodeBlockLanguageAutoDetect } from "@/shared/ui/common/richText/extensions/snippetCodeBlock";
 
 type Props = {
     content?: string;
@@ -71,6 +74,7 @@ const Normal = ({ content = "", onChange, showToolbar = true, onEditorFocus, onE
         extensions: [
             StarterKit.configure({
                 horizontalRule: false,
+                trailingNode: false,
                 link: {
                     openOnClick: false,
                     enableClickSelection: true,
@@ -88,6 +92,12 @@ const Normal = ({ content = "", onChange, showToolbar = true, onEditorFocus, onE
                 allowBase64: true,
                 inline: false,
             }),
+            SnippetCodeBlock.configure({
+                lowlight: codeBlockLowlight,
+                defaultLanguage: DEFAULT_CODE_LANGUAGE,
+            }),
+            SnippetCodeBlockLanguageAutoDetect,
+            DraftImageDrop,
         ],
         content,
         onFocus: ({ editor: currentEditor }) => onEditorFocus?.(currentEditor),

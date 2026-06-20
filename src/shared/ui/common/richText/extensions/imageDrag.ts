@@ -1,4 +1,5 @@
 import type { Editor } from "@tiptap/core";
+import { NodeSelection } from "@tiptap/pm/state";
 
 const DRAG_THRESHOLD_PX = 6;
 
@@ -13,7 +14,7 @@ function getBlockStartPosition(editor: Editor, blockIndex: number) {
         position += editor.state.doc.child(index).nodeSize;
     }
 
-    return position + 1;
+    return position;
 }
 
 function getTopLevelDropPosition(editor: Editor, clientX: number, clientY: number) {
@@ -24,7 +25,12 @@ function getTopLevelDropPosition(editor: Editor, clientX: number, clientY: numbe
     }
 
     const resolved = editor.state.doc.resolve(Math.min(coordsResult.pos, editor.state.doc.content.size));
-    const blockIndex = resolved.index(0);
+    const blockIndex = Math.min(resolved.index(0), editor.state.doc.childCount - 1);
+
+    if (blockIndex < 0) {
+        return null;
+    }
+
     const blockNode = editor.state.doc.child(blockIndex);
     const blockPos = getBlockStartPosition(editor, blockIndex);
     const domNode = editor.view.nodeDOM(blockPos);
@@ -40,9 +46,9 @@ function getTopLevelDropPosition(editor: Editor, clientX: number, clientY: numbe
 }
 
 export function normalizeInsertPosition(editor: Editor, targetPos: number) {
-    const maxPos = editor.state.doc.content.size + 1;
+    const maxPos = editor.state.doc.content.size;
 
-    return Math.max(1, Math.min(targetPos, maxPos));
+    return Math.max(0, Math.min(targetPos, maxPos));
 }
 
 export function canMoveImageTo(editor: Editor, fromPos: number, nodeSize: number, targetPos: number) {
@@ -76,16 +82,11 @@ export function moveImageNode(editor: Editor, fromPos: number, targetPos: number
         return null;
     }
 
-    let insertPos = normalizedTarget;
-
-    if (normalizedTarget > fromPos) {
-        insertPos = normalizedTarget - nodeSize;
-    }
-
     const transaction = editor.state.tr.delete(fromPos, fromPos + nodeSize);
-    const mappedInsertPos = transaction.mapping.map(insertPos);
+    const mappedInsertPos = transaction.mapping.map(normalizedTarget);
 
     transaction.insert(mappedInsertPos, node);
+    transaction.setSelection(NodeSelection.create(transaction.doc, mappedInsertPos));
     editor.view.dispatch(transaction.scrollIntoView());
 
     return mappedInsertPos;
@@ -189,11 +190,7 @@ export function startImageDrag({
         const fromPos = getFromPos();
 
         if (shouldMove && isDragging && latestTargetPos !== null && typeof fromPos === "number") {
-            const movedPosition = moveImageNode(editor, fromPos, latestTargetPos);
-
-            if (movedPosition !== null) {
-                editor.chain().setNodeSelection(movedPosition).focus(undefined, { scrollIntoView: false }).run();
-            }
+            moveImageNode(editor, fromPos, latestTargetPos);
         } else if (!isDragging && typeof fromPos === "number") {
             onSelect?.(fromPos);
         }
@@ -225,7 +222,7 @@ export function startImageDrag({
         const nodeSize = typeof fromPos === "number" ? (editor.state.doc.nodeAt(fromPos)?.nodeSize ?? 0) : 0;
         latestTargetPos = getTopLevelDropPosition(editor, moveEvent.clientX, moveEvent.clientY);
 
-        if (typeof fromPos !== "number" || nodeSize < 1 || !canMoveImageTo(editor, fromPos, nodeSize, latestTargetPos ?? -1)) {
+        if (typeof fromPos !== "number" || nodeSize < 1 || latestTargetPos === null || !canMoveImageTo(editor, fromPos, nodeSize, latestTargetPos)) {
             latestTargetPos = null;
         }
 
