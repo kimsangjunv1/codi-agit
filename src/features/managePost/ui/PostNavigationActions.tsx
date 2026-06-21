@@ -37,7 +37,7 @@ const LINE_HEIGHT_OPTIONS = [1.4, 1.6, 1.8, 2] as const;
 
 const NavDivider = () => <div className="h-full w-[0.1rem] shrink-0 bg-[#ffffff20]" />;
 
-const NavButton = ({ title, icon, onClick, disabled, className = "bg-[#000000c4] hover:bg-[var(--color-blue-500)]" }: NavButtonProps) => (
+const NavButton = ({ title, icon, onClick, disabled, className = "" }: NavButtonProps) => (
     <UI.Button
         type="button"
         disabled={disabled}
@@ -167,14 +167,14 @@ const PostNavigationActions = ({ showShare, showLike, showComments, showToc, sho
     };
 
     return (
-        <section className="relative flex min-w-0 flex-1">
+        <section className={`${!isReadingSettingsOpen ? "" : "overflow-hidden"} relative flex min-w-0 flex-1`}>
             <AnimatePresence initial={false}>
                 {!isReadingSettingsOpen ? (
                     <motion.div
                         key="navigation"
-                        initial={{ x: "-100%", opacity: 0 }}
-                        animate={{ x: 0, opacity: 1 }}
-                        exit={{ x: "-100%", opacity: 0 }}
+                        initial={{ y: "-100%", opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        exit={{ y: "-100%", opacity: 0 }}
                         transition={rollingTransition}
                         className="flex h-full w-full min-w-0"
                     >
@@ -235,7 +235,8 @@ const PostNavigationActions = ({ showShare, showLike, showComments, showToc, sho
                             {showLike ? (
                                 <NavButton
                                     title={likeLabel}
-                                    className={isLiked ? "bg-[#00ff61]" : "bg-[#000000c4] hover:bg-[var(--color-blue-500)]"}
+                                    className={isLiked ? "bg-[#00ff61]" : ""}
+                                    // className={isLiked ? "bg-[#00ff61]" : "bg-[#000000c4] hover:bg-[var(--color-blue-500)]"}
                                     icon={
                                         <MaterialIcon
                                             name="thumb_up"
@@ -317,9 +318,9 @@ const PostNavigationActions = ({ showShare, showLike, showComments, showToc, sho
                 ) : (
                     <motion.div
                         key="reading-settings"
-                        initial={{ x: "100%", opacity: 0 }}
-                        animate={{ x: 0, opacity: 1 }}
-                        exit={{ x: "100%", opacity: 0 }}
+                        initial={{ y: "100%", opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        exit={{ y: "100%", opacity: 0 }}
                         transition={rollingTransition}
                         className="absolute inset-0 flex items-center bg-black"
                     >
