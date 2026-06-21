@@ -1091,7 +1091,8 @@ const DropDown = ({ children, className, list, height = "var(--input-height)", d
                 {isShowList && (
                     <motion.section
                         ref={floatingRef}
-                        className={`${className?.inner ?? ""} absolute z-[100] flex flex-col cursor-pointer whitespace-nowrap rounded-2xl p-[0.4rem] bg-[#ffffff90] backdrop-blur-sm shadow-[var(--shadow-normal)]`}
+                        // className={`${className?.inner ?? ""} absolute z-[100] flex flex-col cursor-pointer whitespace-nowrap bg-[#000000]`}
+                        className={`${className?.inner ?? ""} absolute z-[100] grid grid-cols-1 cursor-pointer whitespace-nowrap bg-[#000000]`}
                         initial={{ opacity: 0, transform: "scale(0.99)", height: "0px" }}
                         animate={{ opacity: 1, transform: "scale(1)", height: (floatingRef.current?.scrollHeight ? floatingRef.current?.scrollHeight : 0) + 10 }}
                         exit={{ opacity: 0, transform: "scale(0.99)", height: "0px" }}
@@ -1115,17 +1116,15 @@ const DropDown = ({ children, className, list, height = "var(--input-height)", d
                                         key={index}
                                         type="button"
                                         value={e.value}
-                                        initial={{ opacity: 0, transform: "scale(0.8)" }}
-                                        animate={{ opacity: 1, transform: "scale(1)" }}
-                                        exit={{ opacity: 0, transform: "scale(0.8)" }}
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        exit={{ opacity: 0 }}
                                         transition={{
                                             delay: 0,
-                                            type: "spring",
-                                            mass: 0.1,
-                                            stiffness: 100,
-                                            damping: 10,
+                                            duration: 0.28,
+                                            ease: [0.45, 0, 0.55, 1],
                                         }}
-                                        className={`${e.className} item px-[1.6rem] py-[1.3rem] hover:bg-[var(--color-gray-200)] rounded-[0.8rem] transition-colors`}
+                                        className={`${e.className} item px-[1.6rem] py-[1.2rem] h-[calc((1.2rem*2)+1.6rem)] hover:bg-[#ff4321] transition-colors duration-200 truncate`}
                                         onClick={() => {
                                             e.onClick?.();
                                         }}

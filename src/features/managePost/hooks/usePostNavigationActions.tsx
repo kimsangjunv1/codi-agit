@@ -19,7 +19,6 @@ import {
     getPostNavVisibility,
     hasVisiblePostNavActions,
 } from "@/features/managePost/lib/postPermissions";
-import PostReadingSettingsContent from "@/features/managePost/ui/PostReadingSettingsContent";
 import PostTocModalContent from "@/features/managePost/ui/PostTocModalContent";
 import { buildPostToc } from "@/widgets/post/lib/postToc";
 import { util } from "@/shared/lib/util";
@@ -67,10 +66,11 @@ export const usePostNavigationActions = ({
         [postDetailData?.result?.user_id, session?.user?.id, session?.user?.role],
     );
 
-    const hasToc = useMemo(
-        () => buildPostToc(postDetailData?.result?.contents ?? []).length > 0,
+    const tocItems = useMemo(
+        () => buildPostToc(postDetailData?.result?.contents ?? []),
         [postDetailData?.result?.contents],
     );
+    const hasToc = tocItems.length > 0;
 
     const navVisibility = useMemo(
         () => getPostNavVisibility({ canManage, isView, hasToc }),
@@ -179,16 +179,6 @@ export const usePostNavigationActions = ({
         });
     };
 
-    const openReadingSettingsModal = () => {
-        setModal({
-            type: "INFO",
-            title: "읽기 설정",
-            content: <PostReadingSettingsContent />,
-            cancel: { text: "닫기" },
-            isOpen: true,
-        });
-    };
-
     const handleNavAction = (action: PostNavAction) => {
         if (action === "share") {
             util.dom.setCopyOnClipboard(window.location.href);
@@ -216,11 +206,6 @@ export const usePostNavigationActions = ({
             return;
         }
 
-        if (action === "reading") {
-            openReadingSettingsModal();
-            return;
-        }
-
         if (action === "edit") {
             pushToUrl(`/post/${post_idx}/modify`);
             return;
@@ -233,6 +218,7 @@ export const usePostNavigationActions = ({
 
     return {
         postTitle: postDetailData?.result?.title,
+        tocItems,
         alreadyLiked: postDetailData?.result?.alreadyLiked,
         likeCount: postDetailData?.result?.likes ?? 0,
         navVisibility,
