@@ -324,18 +324,6 @@ const PostNavigationActions = ({ showShare, showLike, showComments, showToc, sho
                         transition={rollingTransition}
                         className="absolute inset-0 flex items-center bg-black"
                     >
-                        <UI.Button
-                            type="button"
-                            aria-label="원래 메뉴로 돌아가기"
-                            className="flex h-full shrink-0 items-center justify-center px-[1.2rem] text-white transition-colors hover:bg-white/10"
-                            onClick={() => setIsReadingSettingsOpen(false)}
-                        >
-                            <MaterialIcon
-                                name="arrow_back"
-                                size={18}
-                            />
-                        </UI.Button>
-                        <NavDivider />
                         <ReadingSettingControl
                             label="글자 크기"
                             value={`${Math.round(fontScale * 100)}%`}
@@ -353,6 +341,18 @@ const PostNavigationActions = ({ showShare, showLike, showComments, showToc, sho
                             onDecrease={() => updateSetting(LINE_HEIGHT_OPTIONS, lineHeight, -1, setLineHeight)}
                             onIncrease={() => updateSetting(LINE_HEIGHT_OPTIONS, lineHeight, 1, setLineHeight)}
                         />
+                        <NavDivider />
+                        <UI.Button
+                            type="button"
+                            aria-label="원래 메뉴로 돌아가기"
+                            className="flex h-full shrink-0 items-center justify-center px-[1.2rem] text-white transition-colors hover:bg-white/10"
+                            onClick={() => setIsReadingSettingsOpen(false)}
+                        >
+                            <MaterialIcon
+                                name="arrow_back"
+                                size={18}
+                            />
+                        </UI.Button>
                     </motion.div>
                 )}
             </AnimatePresence>
