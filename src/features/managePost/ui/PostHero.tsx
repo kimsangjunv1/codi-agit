@@ -104,7 +104,7 @@ const PostHero = (props: PostHeroProps) => {
             onDragOver={props.mode === "edit" ? handleThumbnailDragOver : undefined}
             onDrop={props.mode === "edit" ? handleThumbnailDrop : undefined}
         >
-            <section className="flex flex-col items-start justify-end mobile:gap-[3.2rem] pc:gap-[5.2rem] h-full w-full max-w-[var(--size-tablet)] mobile:p-[5.2rem_0.4rem] pc:p-[7.2rem_1.2rem] z-[100] absolute left-[50%] top-[50%] transform translate-x-[-50%] translate-y-[-50%] pointer-events-none">
+            <section className="flex flex-col items-start justify-end mobile:gap-[3.2rem] pc:gap-[5.2rem] h-full w-full max-w-[var(--size-tablet)] mobile:p-[5.2rem_2.0rem] pc:p-[7.2rem_1.2rem] z-[100] absolute left-[50%] top-[50%] transform translate-x-[-50%] translate-y-[-50%] pointer-events-none">
                 {props.mode === "edit" ? <PostHeroEditContent {...props} /> : <PostHeroViewContent {...props} />}
             </section>
 
@@ -167,19 +167,19 @@ const PostHeroViewContent = ({ title, summary, createDate, viewCount, likeCount 
             >
                 {title}
             </TextShimmer> */}
-            <p className="font-bold tablet:text-[2.4rem] mobile:text-[1.8rem] text-[#ffffff90] text-center">{title}</p>
-            <h2 className="font-extrabold text-left mobile:text-[2.8rem] tablet:text-[3.2rem] text-white leading-[1.5] whitespace-break-spaces">&quot;{summary}&quot;</h2>
-            <p className="font-semibold text-[2.0rem] text-white text-center">
+            <p className="font-bold mobile:text-[1.6rem] tablet:text-[2.4rem] text-[#ffffff90] leading-[1.5]">{title}</p>
+            <h2 className="font-extrabold mobile:text-[2.4rem] tablet:text-[3.2rem] text-white leading-[1.5] whitespace-break-spaces">&quot;{summary}&quot;</h2>
+            <p className="font-semibold mobile:text-[1.6rem] tablet:text-[2.0rem] text-white">
                 {util.string.getCurrentTime(createDate, 4)} ・ {viewCount} view ・ {likeCount} likes
             </p>
         </section>
 
-        <section className="flex justify-start items-end flex-wrap gap-[1.6rem] pointer-events-none">
-            <div className="relative rounded-[2.4rem] w-[9.2rem] h-[9.2rem] shadow-[var(--shadow-normal)]">
+        <section className="flex justify-start items-end gap-[1.6rem] pointer-events-none">
+            <div className="relative">
                 <img
                     src="/images/picture/post-profile.png"
                     alt="프로필"
-                    className="object-cover rounded-[2.4rem] w-[9.2rem] h-[9.2rem] shadow-[var(--shadow-normal)]"
+                    className="object-cover rounded-[1.6rem] w-[8.2rem] h-[9.2rem] shadow-[var(--shadow-normal)]"
                 />
             </div>
 
