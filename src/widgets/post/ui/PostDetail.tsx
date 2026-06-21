@@ -237,7 +237,7 @@ const PostDetailActions = ({ postIdx }: { postIdx: number }) => {
     return (
         // <section className="sticky bottom-0 flex h-[5.2rem] w-full flex-wrap justify-center bg-black">
         <section className="sticky bottom-0 flex mobile:h-[5.2rem] pc:h-[7.2rem] w-full flex-wrap justify-center bg-black">
-            <div className="mx-auto flex w-full max-w-[var(--size-tablet)] overflow-x-auto">
+            <div className="mx-auto flex w-full max-w-[var(--size-tablet)]">
                 <PostNavigationActions
                     {...navVisibility}
                     likeCount={likeCount}
