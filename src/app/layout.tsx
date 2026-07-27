@@ -105,7 +105,7 @@ export default function RootLayout({ children, modal }: Readonly<{ children: Rea
                                     </RootChromeView>
                                 </PageContentGate>
                             </PopupProvider>
-                            <FivePixelsLayer />
+                            {/* <FivePixelsLayer /> */}
                             <Toast />
                         </AuthProvider>
                     </QueryProvider>
