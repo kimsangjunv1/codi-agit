@@ -3,6 +3,7 @@ import Script from "next/script";
 
 import { SITE_DESCRIPTION, SITE_KEYWORDS, SITE_NAME } from "@/shared/lib/seo/constants";
 import { getSiteUrl } from "@/shared/lib/siteUrl";
+import { FivePixelsLayer } from "@/features/collectFeedback";
 
 import GlobalErrorBoundary from "@/app/providers/GlobalErrorBoundary";
 import QueryProvider from "@/app/providers/QueryProvider";
@@ -76,7 +77,10 @@ export default function RootLayout({ children, modal }: Readonly<{ children: Rea
                             src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
                             strategy="afterInteractive"
                         />
-                        <Script id="google-analytics" strategy="afterInteractive">
+                        <Script
+                            id="google-analytics"
+                            strategy="afterInteractive"
+                        >
                             {`
                                 window.dataLayer = window.dataLayer || [];
                                 function gtag(){dataLayer.push(arguments);}
@@ -101,6 +105,7 @@ export default function RootLayout({ children, modal }: Readonly<{ children: Rea
                                     </RootChromeView>
                                 </PageContentGate>
                             </PopupProvider>
+                            {/* <FivePixelsLayer /> */}
                             <Toast />
                         </AuthProvider>
                     </QueryProvider>
