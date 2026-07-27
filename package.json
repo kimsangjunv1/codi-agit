@@ -12,6 +12,7 @@
         "test": "vitest run"
     },
     "dependencies": {
+        "@fivepixels-js/react": "^0.2.7",
         "@giscus/react": "^3.1.0",
         "@supabase/ssr": "^0.7.0",
         "@supabase/supabase-js": "^2.57.4",
