@@ -9,6 +9,7 @@ import {
     type ResumeProjectDetail,
     type ResumeProjectDetailSection,
 } from "@/shared/constants/resume/resumeProjectDetails";
+import { R } from "./renewalStyles";
 
 const PROJECT_DIALOG_LAYER_ID = "resume-project-dialog-layer";
 
@@ -165,14 +166,9 @@ const ResumeRenewalProjectGrid = () => {
             id="renewal-projects"
             className="mx-auto w-full max-w-[calc(56rem*2)] scroll-mt-[10rem] py-[8rem] lg:py-[12rem]"
         >
-            <div className="mb-[3.2rem]">
-                <div>
-                    <p className="text-[1.2rem] font-semibold uppercase tracking-[0.12em] text-black/45">Selected work</p>
-                    <h2 className="mt-[0.8rem] text-[3.2rem] font-bold tracking-[-0.04em] lg:text-[4.8rem]">PROJECTS</h2>
-                </div>
-            </div>
+            <h2 className={`${R.label} mb-[3.2rem]`}>Projects</h2>
 
-            <div className="grid grid-cols-1 gap-[1.2rem] sm:grid-cols-2 lg:grid-cols-4">
+            <div className="grid grid-cols-1 gap-0 sm:grid-cols-2 lg:grid-cols-4">
                 {resumeProjectDetails.map((project, index) => (
                     <button
                         type="button"
