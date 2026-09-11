@@ -9,7 +9,9 @@ const ResumeRenewalFooter = () => {
     return (
         <RenewalSplitSection
             divider
-            className="bg-[#00ff61]"
+            className="min-h-[100svh]"
+            splitClassName="min-h-[100svh]"
+            rightClassName="min-h-[100svh] !items-center !py-0"
         >
             <RenewalRightBlocks
                 label={<p className={R.label}>End</p>}

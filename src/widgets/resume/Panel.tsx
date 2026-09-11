@@ -11,8 +11,8 @@ export default function Panel() {
             <Layer.TocNav />
             <Layer.Hero />
             <Layer.Worklog entries={renewalExperiences} />
-            <Layer.ProjectGrid />
             <Layer.SkillSection />
+            <Layer.ProjectGrid />
             <Layer.SideProject />
             <Layer.Footer />
             <Layer.EmailBannerSection />
