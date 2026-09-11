@@ -28,9 +28,9 @@ export const renewalHero = {
     subtitle: resumeProfile.role,
     greeting: `안녕하세요,\n프론트엔드 개발자 ${resumeProfile.name}입니다.`,
     intro: [
-        "SaaS·실시간 서비스·레거시 마이그레이션을 경험해 왔습니다. 비즈니스 가치에 맞춰 빠르게 반복하고, 일정 안에서 완성도 있는 결과물을 내는 데 집중해 왔습니다.",
-        "성능·UX 개선은 체감 지연·Lighthouse·첫 인터랙션 등 측정 조건을 먼저 정리하고, 그 기준으로 개선해 왔습니다.",
-        "API 응답 규격·JWT 인증·Playwright QA 자동화를 제안하고 팀과 합의해 적용한 경험이 있습니다. 프론트엔드 구현뿐 아니라 팀 생산성과 품질 개선에도 기여하고자 합니다.",
+        "2년 7개월 동안 React·Next.js 기반 SaaS, 게이미피케이션 서비스, 레거시 마이그레이션과 디자인 시스템을 경험했습니다.",
+        "팬덤박스의 일일 이용자 수를 120명에서 350명으로 높이고, 엔조이소프트 HUB의 최대 25분 로딩을 119ms까지 단축했습니다.",
+        "사용자 경험과 동료의 개발 경험을 함께 살피며, 측정 가능한 제품 성과와 유지보수 가능한 구조를 만드는 데 집중합니다.",
     ],
     role: "Frontend Developer",
     profileImage: "/images/picture/resume-profile.png",
@@ -100,18 +100,17 @@ function mergeTechStack(projectIds: string[]): string {
 
 const EXPERIENCE_ACHIEVEMENTS: Record<string, string[]> = {
     "maze-company": [
-        "팬덤박스(연타형 게이미피케이션 유저 상품 당첨 플랫폼)와 메이즈 공식 홈페이지 프론트엔드 단독 담당",
-        "연타·당첨 플로우 설계 및 REST API 연동 — 진행 상태·당첨·등급별 UI·이펙트 분기 처리",
-        "연타 시 API 중복 호출 정리 + 스켈레톤 UI 적용 — Chrome Network 기준 체감 응답 2~3초 → 1초 내외",
-        "저사양(iPhone 6) WebP·스프라이트·GPU 레이어 최적화 — Slow 3G 첫 인터랙션 8~10초 → 3~4초",
+        "팬덤박스 프론트엔드 개발과 UI/UX 기획을 100% 담당하고, ES6 Class 기반 연타·희귀도·이펙트 제어 로직 구축",
+        "Laravel View를 Optional FSD 구조로 모듈화하고 SCSS 규격을 정립해 백엔드와의 작업 영역 충돌 및 반복 논의 비용 절감",
+        "연타 메커니즘·등급별 파티클 연출과 브랜드 UI 개편으로 일일 이용자 수 120명 → 350명, 190% 이상 증가",
         "메이즈 홈페이지 lazy loading·코드 스플리팅 적용 — Lighthouse Mobile Performance 52 → 81, LCP 4.2s → 2.1s",
     ],
     enjoysoft: [
-        "키업패스·KQR·아이머신 CEO·엔조이소프트 HUB·대리점 CEO 등 B2B SaaS 프론트엔드 개발 담당",
-        "개발팀 협업·API·인증·QA 프로세스 개선 제안·문서화·PoC 작성 및 팀 적용",
-        "Classic ASP → Next.js 마이그레이션, WebSocket 기반 실시간 출입·관제 UI 구현",
-        "API 4키 표준·JWT 갱신·Playwright QA 자동화 — 온보딩 반나절 → 1~2시간, 회귀 QA 1~2시간 → 30~40분",
-        "연쇄 API·대량 목록 호출 정리 — 초기 로딩 체감 30초~수 분 → 2~3초",
+        "Classic ASP·PHP 서비스를 Next.js·Optional FSD로 전환하고, HUB의 최대 25분 페이지 로딩을 119ms로 단축",
+        "아이머신 CEO에 Slack 오류 추적·서버 중심 결제 흐름을 구축해 일일 오류 문의 24건 → 10건 이하, 처리 기간 최대 2일 → 1일 이내로 개선",
+        "대리점 셀프오피스를 구축해 본사 운영 문의 31건 → 3~4건, 대리점 처리 기간 1~2주 → 1일 이내로 단축",
+        "키업패스의 500줄 이상 컴포넌트를 Optional FSD로 분리하고 관제 UX를 재설계해 기능 수정 공수 3일 → 1일 이내로 단축",
+        "8배수 토큰·네임스페이스 컴포넌트·Storybook·Vitest 기반 EDS를 구축해 UI 수정·교체 공수 7일 이상 → 2일로 약 70% 단축",
     ],
 };
 
@@ -171,7 +170,7 @@ export const renewalContact = {
     email: resumeProfile.email,
     github: resumeProfile.github,
     githubLabel: "github.com/kimsangjunv1",
-    quote: '"저를 필요로 하는 기업과 함께 다양하고 재미난 일들을 벌이고 싶습니다."',
+    quote: '"사용자 경험과 동료의 개발 경험을 함께 개선합니다."',
 };
 
 export function getRenewalExperienceAnchorId(experienceId: string) {

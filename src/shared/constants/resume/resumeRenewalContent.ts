@@ -30,39 +30,39 @@ export const renewalProfileDetails = {
 export const renewalSkillHighlights: RenewalSkillHighlight[] = [
     {
         id: "react-typescript",
-        title: "React·Next.js & TypeScript 중심 프론트엔드 개발",
+        title: "React·Next.js & TypeScript",
         description:
-            "React·Next.js·TypeScript를 중심으로 SaaS·실시간 서비스를 개발해 왔습니다. CSR·SSR 모두 경험했으며, API 연동부터 프로덕션 배포까지 프론트엔드 서비스를 독립적으로 구성할 수 있습니다.",
+            "무인 관제·매장 운영·대리점 관리 SaaS를 구축하고 Classic ASP·PHP 서비스를 Next.js로 전환했습니다. UI 설계부터 API 연동·테스트·운영까지 프론트엔드 전 과정을 담당했습니다.",
     },
     {
-        id: "api-realtime",
-        title: "API & 실시간 연동",
+        id: "legacy-architecture",
+        title: "레거시 전환 & 아키텍처",
         description:
-            "REST API·WebSocket·JWT 인증을 실무에서 반복 사용했습니다. React Query로 서버 상태를 관리하고, API 응답 규격·에러 처리·캐싱 전략을 팀과 합의해 적용한 경험이 있습니다.",
+            "Classic ASP·PHP·Laravel View의 서비스 흐름을 분석하고 Optional FSD로 관심사를 분리했습니다. 키업패스에서는 500줄 이상 컴포넌트를 200~300줄 이하로 나누며 기능 수정 공수를 3일에서 1일 이내로 줄였습니다.",
     },
     {
         id: "performance",
-        title: "성능 & UX 최적화",
+        title: "성능 & 운영 효율",
         description:
-            "불필요한 리렌더·번들 크기·네트워크 비용을 줄이는 데 집중해 왔습니다. Lighthouse·체감 지연·첫 인터랙션 등 측정 조건을 먼저 정리하고, lazy loading·코드 스플리팅·스켈레톤 UI로 개선해 왔습니다.",
+            "SSR·CSR 역할 분리와 렌더링 최적화로 엔조이소프트 HUB의 최대 25분 로딩을 119ms까지 단축했습니다. 셀프오피스와 모니터링 도구로 반복 문의와 이슈 대응 시간도 줄였습니다.",
     },
     {
-        id: "quality",
-        title: "품질 & 협업",
+        id: "design-system",
+        title: "디자인 시스템 & DX",
         description:
-            "Playwright 기반 QA 자동화를 제안·도입하고, 코드리뷰·개발 프로세스 개선에 참여했습니다. 기능 구현뿐 아니라 팀 생산성과 배포 품질을 함께 높이는 방향으로 일해 왔습니다.",
+            "8배수 디자인 토큰, 네임스페이스 컴포넌트, Storybook 문서화와 Vitest 단위 테스트를 갖춘 EDS를 구축했습니다. 프로젝트별 UI 수정·교체 공수를 7일 이상에서 2일로 약 70% 단축했습니다.",
     },
     {
-        id: "state-architecture",
-        title: "상태 관리 & 아키텍처",
+        id: "ui-ux",
+        title: "UI/UX & 인터랙션",
         description:
-            "React Query·Zustand로 서버·클라이언트 상태를 분리하고, FSD entities 레이어 패턴으로 도메인 로직을 구조화했습니다. Codi Agit 본 레포에서도 동일한 철학으로 유지보수 가능한 코드베이스를 지향합니다.",
+            "게이미피케이션, 관제 화면, 복잡한 백오피스의 정보 구조와 인터랙션을 직접 설계했습니다. 팬덤박스에서는 연타 경험과 브랜드 UI를 개편해 일일 이용자 수를 120명에서 350명으로 높였습니다.",
     },
     {
-        id: "production-ops",
-        title: "결제 & 프로덕션 운영",
+        id: "reliability",
+        title: "결제 & 서비스 안정성",
         description:
-            "Toss Payments 연동, SEO·캐싱 설정 등 프로덕션 환경에서 필요한 프론트엔드 운영 경험이 있습니다. 사이드 프로젝트에서는 Supabase·NextAuth 기반 PoC도 진행 중입니다.",
+            "Toss Payments 인증 정보를 서버에서 처리하는 결제 흐름을 설계하고, Playwright E2E와 Slack 오류 추적 체계를 구축했습니다. 아이머신 CEO의 일일 오류 문의를 24건에서 10건 이하로 줄였습니다.",
     },
 ];
 
@@ -87,6 +87,7 @@ export const renewalProjectLinks: Record<string, RenewalProjectLinks> = {
     "imachine-ceo": {},
     "enjoysoft-hub": {},
     "agency-ceo": {},
+    eds: {},
 };
 
 export const renewalContactExtended = {
