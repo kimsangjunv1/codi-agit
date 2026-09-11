@@ -40,20 +40,22 @@ const ResumeRenewalWorklog = ({ entries }: { entries: RenewalSectionEntry[] }) =
                                 </div>
                             </div>
 
-                            <div className="col-span-12 lg:col-span-8">
-                                <p className="mb-[2.4rem] text-[1.7rem] leading-[1.75] text-black">{entry.overview}</p>
+                            <div className="col-span-12 lg:col-span-8 flex flex-col gap-[2.4rem]">
+                                <p className="text-[2.0rem] leading-[1.5] font-semibold text-black">{entry.overview}</p>
+
                                 <section>
-                                    <h3 className="mb-[1rem] text-[1.7rem] font-semibold text-black">주요 성과</h3>
-                                    <ul className="mt-[1.6rem] space-y-[0.9rem] pl-[2rem] text-[1.55rem] leading-[1.7] text-black/70">
+                                    <h3 className="mb-[1rem] text-[1.4rem] font-semibold text-black">주요 성과</h3>
+                                    <div className="flex flex-col gap-[0.8rem] mt-[1.6rem] space-y-[0.92rem] pl-[2rem] text-black">
                                         {entry.achievements.map((achievement) => (
-                                            <li
-                                                className="list-disc pl-[0.4rem] marker:text-black/40"
+                                            <p
+                                                className="relative list-disc pl-[0.4rem] leading-[1.5] font-regular text-[1.6rem] marker:text-black"
                                                 key={achievement}
                                             >
                                                 {achievement}
-                                            </li>
+                                                <div className="absolute top-[0.2rem] left-[-1.2rem] font-bold text-red-500">+</div>
+                                            </p>
                                         ))}
-                                    </ul>
+                                    </div>
                                 </section>
                                 <div className="mt-[2.4rem] flex flex-wrap gap-[0.7rem]">
                                     {entry.techStack.split(", ").map((technology) => (

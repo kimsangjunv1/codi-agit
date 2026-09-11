@@ -3,12 +3,10 @@
 import { useEffect, useState } from "react";
 
 import { renewalTocItems } from "@/shared/constants/resume/resumeRenewalData";
-import { useResumeProjectPanelStore } from "@/shared/stores/useResumeProjectPanelStore";
 import { R } from "./renewalStyles";
 
 const ResumeRenewalTocNav = () => {
     const [activeId, setActiveId] = useState(renewalTocItems[0]?.id ?? "");
-    const isProjectPanelOpen = useResumeProjectPanelStore((state) => state.isOpen);
     useEffect(() => {
         const sections = renewalTocItems.map((item) => document.getElementById(item.id)).filter((el): el is HTMLElement => el !== null);
 
@@ -33,8 +31,6 @@ const ResumeRenewalTocNav = () => {
     const handleClick = (id: string) => {
         document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
     };
-
-    if (isProjectPanelOpen) return null;
 
     return (
         <nav

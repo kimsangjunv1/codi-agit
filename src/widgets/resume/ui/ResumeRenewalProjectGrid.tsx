@@ -1,13 +1,11 @@
 "use client";
 
-import { ArrowUpRight, Maximize2, Minimize2, X } from "lucide-react";
+import { ArrowUpRight, X } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
-import { useCallback, useEffect, useId, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
+import { useCallback, useEffect, useId, useState } from "react";
 import { createPortal } from "react-dom";
 
 import { resumeProjectDetails, type ResumeProjectDetail, type ResumeProjectDetailSection } from "@/shared/constants/resume/resumeProjectDetails";
-import { useLayoutStore } from "@/shared/stores/useLayoutStore";
-import { useResumeProjectPanelStore } from "@/shared/stores/useResumeProjectPanelStore";
 import { R } from "./renewalStyles";
 
 const PROJECT_DIALOG_LAYER_ID = "resume-project-dialog-layer";
@@ -41,11 +39,11 @@ const ProjectTile = ({ project, index, onSelect }: { project: ResumeProjectDetai
                 />
 
                 <div className="relative z-10 flex w-full items-start justify-between gap-[1.6rem]">
-                    <span className="text-[1.4rem] font-semibold text-black/45 group-hover:text-white/55">{String(index + 1).padStart(2, "0")}</span>
+                    <span className="text-[1.4rem] font-semibold text-black group-hover:text-white/55">{String(index + 1).padStart(2, "0")}</span>
                     <ArrowUpRight size={18} />
                 </div>
                 <div className="relative z-10">
-                    <p className="mb-[0.8rem] text-[1.4rem] leading-[1.5] text-black/45 group-hover:text-white/55">{project.category}</p>
+                    <p className="mb-[0.8rem] text-[1.4rem] leading-[1.5] text-black group-hover:text-white/55">{project.category}</p>
                     <h3 className="text-[1.4rem] font-bold leading-[1.5]">{project.title}</h3>
                     <p className="mt-[1.6rem] text-[1.4rem] font-medium leading-[1.5]">{project.tileMetric}</p>
                 </div>
@@ -63,7 +61,7 @@ const ProjectDetailSection = ({ section }: { section: ResumeProjectDetailSection
             <List className={`space-y-[1.2rem] pl-[2.2rem] text-[1.55rem] leading-[1.5] text-black/70 ${section.ordered ? "list-decimal" : "list-disc"}`}>
                 {section.items.map((item) => (
                     <li
-                        className="pl-[0.4rem] leading-[1.5]"
+                        className="pl-[0.4rem] leading-[1.5] text-[1.8rem]"
                         key={item}
                     >
                         {item}
@@ -74,94 +72,61 @@ const ProjectDetailSection = ({ section }: { section: ResumeProjectDetailSection
     );
 };
 
-const ProjectDetailPanel = ({ project, onClose }: { project: ResumeProjectDetail; onClose: () => void }) => {
+const ProjectDetailModal = ({ project, onClose }: { project: ResumeProjectDetail; onClose: () => void }) => {
     const titleId = useId();
-    const isMobile = useLayoutStore((state) => state.isMobile);
-    const isExpanded = useResumeProjectPanelStore((state) => state.isExpanded);
-    const panelWidthSvw = useResumeProjectPanelStore((state) => state.panelWidthSvw);
-    const isResizing = useResumeProjectPanelStore((state) => state.isResizing);
-    const toggleExpanded = useResumeProjectPanelStore((state) => state.toggleExpanded);
-    const setPanelWidthSvw = useResumeProjectPanelStore((state) => state.setPanelWidthSvw);
-    const setIsResizing = useResumeProjectPanelStore((state) => state.setIsResizing);
-    const dragStartXRef = useRef(0);
-    const dragStartWidthRef = useRef(panelWidthSvw);
-
-    const panelWidth = isMobile || isExpanded ? "100svw" : `${panelWidthSvw}svw`;
-    const transition = isResizing ? "none" : "width 280ms cubic-bezier(0.22, 1, 0.36, 1)";
 
     useEffect(() => {
+        const previousOverflow = document.body.style.overflow;
+        const backgroundElements = Array.from(document.body.children)
+            .filter((element) => element.id !== PROJECT_DIALOG_LAYER_ID && element.tagName !== "SCRIPT")
+            .map((element) => ({
+                element,
+                hadInert: element.hasAttribute("inert"),
+                ariaHidden: element.getAttribute("aria-hidden"),
+            }));
         const handleKeyDown = (event: KeyboardEvent) => {
             if (event.key === "Escape") onClose();
         };
 
+        document.body.style.overflow = "hidden";
+        backgroundElements.forEach(({ element }) => {
+            element.setAttribute("inert", "");
+            element.setAttribute("aria-hidden", "true");
+        });
         window.addEventListener("keydown", handleKeyDown);
-        return () => window.removeEventListener("keydown", handleKeyDown);
-    }, [onClose]);
-
-    useEffect(() => {
-        if (!isResizing) return;
-
-        const previousUserSelect = document.body.style.userSelect;
-        const previousCursor = document.body.style.cursor;
-        document.body.style.userSelect = "none";
-        document.body.style.cursor = "col-resize";
-
-        const handlePointerMove = (event: PointerEvent) => {
-            const deltaSvw = ((dragStartXRef.current - event.clientX) / window.innerWidth) * 100;
-            setPanelWidthSvw(dragStartWidthRef.current + deltaSvw);
-        };
-
-        const handlePointerUp = () => {
-            setIsResizing(false);
-        };
-
-        window.addEventListener("pointermove", handlePointerMove);
-        window.addEventListener("pointerup", handlePointerUp);
 
         return () => {
-            document.body.style.userSelect = previousUserSelect;
-            document.body.style.cursor = previousCursor;
-            window.removeEventListener("pointermove", handlePointerMove);
-            window.removeEventListener("pointerup", handlePointerUp);
+            document.body.style.overflow = previousOverflow;
+            backgroundElements.forEach(({ element, hadInert, ariaHidden }) => {
+                if (!hadInert) element.removeAttribute("inert");
+                if (ariaHidden === null) element.removeAttribute("aria-hidden");
+                else element.setAttribute("aria-hidden", ariaHidden);
+            });
+            window.removeEventListener("keydown", handleKeyDown);
         };
-    }, [isResizing, setIsResizing, setPanelWidthSvw]);
-
-    const handleResizeStart = (event: ReactPointerEvent<HTMLDivElement>) => {
-        event.preventDefault();
-        dragStartXRef.current = event.clientX;
-        dragStartWidthRef.current = panelWidthSvw;
-        setIsResizing(true);
-    };
+    }, [onClose]);
 
     return createPortal(
         <div
             id={PROJECT_DIALOG_LAYER_ID}
-            className="pointer-events-none fixed inset-0 z-[120]"
+            className="fixed inset-0 z-[120] flex items-center justify-center"
         >
-            {!isMobile && !isExpanded ? (
-                <div
-                    role="separator"
-                    aria-orientation="vertical"
-                    aria-label="패널 너비 조절"
-                    className="pointer-events-auto absolute top-0 z-[10000] h-full w-[1.2rem] -translate-x-1/2 cursor-col-resize touch-none"
-                    style={{ left: `calc(100svw - ${panelWidthSvw}svw)`, transition: isResizing ? "none" : "left 280ms cubic-bezier(0.22, 1, 0.36, 1)" }}
-                    onPointerDown={handleResizeStart}
-                >
-                    <div className="absolute inset-y-0 left-1/2 w-[0.1rem] -translate-x-1/2 bg-black/10 transition-colors hover:bg-black/40" />
-                </div>
-            ) : null}
+            <button
+                type="button"
+                className="absolute inset-0 cursor-default bg-black/55"
+                aria-label="프로젝트 상세 닫기"
+                onClick={onClose}
+            />
 
-            <aside
+            <section
                 role="dialog"
-                aria-modal={isMobile || isExpanded}
+                aria-modal="true"
                 aria-labelledby={titleId}
-                className="pointer-events-auto absolute top-0 right-0 flex h-[100svh] flex-col overflow-hidden bg-white"
-                style={{ width: panelWidth, transition }}
+                className="relative flex max-h-[100svh] h-full w-full max-w-[var(--size-tablet)] shadow-[0_0_120px_220px_#00000020] flex-col overflow-hidden bg-white shadow-2xl"
             >
-                <header className="sticky top-0 z-10 flex items-start justify-between border-b border-black/15 bg-white/95 px-[2.4rem] py-[2rem] backdrop-blur lg:px-[3.2rem] lg:py-[2.4rem]">
-                    <section className="flex flex-col gap-[0.8rem] min-w-0">
-                        <p className="text-[1.4rem] font-semibold uppercase text-black/45">{project.category}</p>
-
+                <header className="sticky top-0 z-10 flex items-start justify-between border-b border-black/15 bg-white/95 p-[2.4rem]">
+                    <section className="flex min-w-0 flex-col gap-[0.8rem]">
+                        <p className="text-[1.4rem] font-semibold uppercase text-black">{project.category}</p>
                         <h2
                             id={titleId}
                             className="text-[2.4rem] font-bold"
@@ -171,16 +136,6 @@ const ProjectDetailPanel = ({ project, onClose }: { project: ResumeProjectDetail
                     </section>
 
                     <section className="flex shrink-0 items-center gap-[0.8rem]">
-                        {!isMobile ? (
-                            <button
-                                type="button"
-                                className="flex h-[4rem] w-[4rem] items-center justify-center border border-black/20 transition-colors hover:bg-black hover:text-white"
-                                aria-label={isExpanded ? "원래 비율로 돌아가기" : "패널 확대"}
-                                onClick={toggleExpanded}
-                            >
-                                {isExpanded ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
-                            </button>
-                        ) : null}
                         <button
                             type="button"
                             className="flex h-[4rem] w-[4rem] items-center justify-center border border-black/20 transition-colors hover:bg-black hover:text-white"
@@ -193,48 +148,58 @@ const ProjectDetailPanel = ({ project, onClose }: { project: ResumeProjectDetail
                     </section>
                 </header>
 
-                <section className="p-[1.4rem]">
-                    <p className="text-[1.4rem] font-medium leading-[1.5] lg:text-[2.4rem]">{project.summary}</p>
-                    <p className="text-[1.4rem] leading-[1.5] text-black/65">{project.overview}</p>
-                </section>
+                <div
+                    className="flex-1 overflow-y-auto"
+                    data-lenis-prevent="true"
+                >
+                    <section className="p-[2.4rem] flex flex-col gap-[1.6rem] border-b border-black/15">
+                        <p className="font-semibold text-[1.6rem]">한줄 요약</p>
+                        <p className="text-[1.4rem] font-medium leading-[1.5] lg:text-[1.8rem]">{project.summary}</p>
+                    </section>
 
-                <section className="grid border-y border-black/15 grid-cols-[1fr_auto_1fr]">
-                    <div className="p-[2.4rem]">
-                        <dt className="text-[1.4rem] font-semibold uppercase text-black/45">담당</dt>
-                        <dd className="mt-[0.8rem] text-[1.55rem] leading-[1.5]">{project.role}</dd>
-                    </div>
+                    <section className="p-[2.4rem] flex flex-col gap-[1.6rem] border-b border-black/15">
+                        <p className="font-semibold text-[1.6rem]">설명</p>
+                        <p className="text-[1.4rem] font-medium leading-[1.5] lg:text-[1.8rem]">{project.overview}</p>
+                    </section>
 
-                    <div className="bg-black h-full w-[0.1rem]" />
+                    <section className="grid grid-cols-[1fr_auto_1fr] border-b border-black/15">
+                        <div className="p-[2.4rem] flex flex-col gap-[1.6rem]">
+                            <p className="font-semibold text-[1.6rem]">담당</p>
+                            <p className="text-[1.4rem] font-medium leading-[1.5] lg:text-[1.8rem]">{project.role}</p>
+                        </div>
 
-                    <div className="p-[2.4rem]">
-                        <dt className="text-[1.4rem] font-semibold uppercase text-black/45">구성 인원</dt>
-                        <dd className="mt-[0.8rem] text-[1.55rem] leading-[1.5]">{project.team}</dd>
-                    </div>
-                </section>
+                        <div className="h-full w-[0.1rem] bg-black/15" />
 
-                <section>
-                    <h3 className="text-[1.4rem] font-semibold">기술 스택과 활용</h3>
-                    <ul className="space-y-[1.2rem] pl-[2.2rem] text-[1.55rem] leading-[1.5] text-black/70">
-                        {project.technologies.map((technology) => (
-                            <li
-                                className="list-disc pl-[0.4rem] leading-[1.5]"
-                                key={technology.name}
-                            >
-                                <strong className="font-semibold text-black">{technology.name}:</strong> {technology.description}
-                            </li>
+                        <div className="p-[2.4rem] flex flex-col gap-[1.6rem]">
+                            <p className="font-semibold text-[1.6rem]">구성 인원</p>
+                            <p className="text-[1.4rem] font-medium leading-[1.5] lg:text-[1.8rem]">{project.team}</p>
+                        </div>
+                    </section>
+
+                    <section className="p-[2.4rem] border-b border-black/15">
+                        <h3 className="text-[1.4rem] font-semibold">기술 스택과 활용</h3>
+                        <ul className="mt-[1.2rem] space-y-[1.2rem] pl-[2.2rem] text-[1.55rem] leading-[1.5] text-black/70">
+                            {project.technologies.map((technology) => (
+                                <li
+                                    className="list-disc pl-[0.4rem] leading-[1.5] text-[1.8rem]"
+                                    key={technology.name}
+                                >
+                                    <strong className="font-medium text-black text-[1.8rem]">{technology.name}:</strong> {technology.description}
+                                </li>
+                            ))}
+                        </ul>
+                    </section>
+
+                    <section className="flex flex-col gap-[3.2rem] p-[2.4rem]">
+                        {project.sections.map((section) => (
+                            <ProjectDetailSection
+                                key={section.title}
+                                section={section}
+                            />
                         ))}
-                    </ul>
-                </section>
-
-                <section className="p-[2.4rem]">
-                    {project.sections.map((section) => (
-                        <ProjectDetailSection
-                            key={section.title}
-                            section={section}
-                        />
-                    ))}
-                </section>
-            </aside>
+                    </section>
+                </div>
+            </section>
         </div>,
         document.body,
     );
@@ -242,27 +207,7 @@ const ProjectDetailPanel = ({ project, onClose }: { project: ResumeProjectDetail
 
 const ResumeRenewalProjectGrid = () => {
     const [selectedProject, setSelectedProject] = useState<ResumeProjectDetail | null>(null);
-    const openPanel = useResumeProjectPanelStore((state) => state.open);
-    const closePanel = useResumeProjectPanelStore((state) => state.close);
-
-    const handleSelect = useCallback(
-        (project: ResumeProjectDetail) => {
-            setSelectedProject(project);
-            openPanel();
-        },
-        [openPanel],
-    );
-
-    const handleClose = useCallback(() => {
-        setSelectedProject(null);
-        closePanel();
-    }, [closePanel]);
-
-    useEffect(() => {
-        return () => {
-            closePanel();
-        };
-    }, [closePanel]);
+    const closeProject = useCallback(() => setSelectedProject(null), []);
 
     return (
         <section
@@ -277,15 +222,15 @@ const ResumeRenewalProjectGrid = () => {
                         key={project.id}
                         project={project}
                         index={index}
-                        onSelect={handleSelect}
+                        onSelect={setSelectedProject}
                     />
                 ))}
             </div>
 
             {selectedProject ? (
-                <ProjectDetailPanel
+                <ProjectDetailModal
                     project={selectedProject}
-                    onClose={handleClose}
+                    onClose={closeProject}
                 />
             ) : null}
         </section>
