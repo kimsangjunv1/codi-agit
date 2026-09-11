@@ -11,6 +11,7 @@ import useNavigate from "@/shared/hooks/useNavigate";
 import { getPostRouteFlags } from "@/features/managePost";
 
 import { useLayoutStore } from "@/shared/stores/useLayoutStore";
+import { getResumeMainWidthSvw, useResumeProjectPanelStore } from "@/shared/stores/useResumeProjectPanelStore";
 import HomeViewModeNav from "@/widgets/home/ui/HomeViewModeNav";
 import Marquee from "@/shared/ui/layout/Marquee";
 
@@ -18,16 +19,30 @@ const Header = () => {
     const [showMenu, setShowMenu] = useState(false);
 
     const { isMobile, isMobileMenuOpen, setIsMobileMenuOpen } = useLayoutStore();
+    const isOpen = useResumeProjectPanelStore((state) => state.isOpen);
+    const isExpanded = useResumeProjectPanelStore((state) => state.isExpanded);
+    const panelWidthSvw = useResumeProjectPanelStore((state) => state.panelWidthSvw);
+    const isResizing = useResumeProjectPanelStore((state) => state.isResizing);
     const { currentPathName, pushToUrl } = useNavigate();
     const { IS_ROUTE_POST } = getPostRouteFlags(currentPathName);
     const IS_ROUTE_HOME = currentPathName === "/";
     const IS_ROUTE_RESUME = currentPathName === "/resume";
 
+    const mainWidthSvw = getResumeMainWidthSvw({ isOpen, isExpanded, panelWidthSvw }, isMobile);
+    const transition = isResizing ? "none" : "width 280ms cubic-bezier(0.22, 1, 0.36, 1)";
+
     if (IS_ROUTE_POST) return null;
 
     return (
-        <header className="fixed left-0 z-[100] mx-auto h-[calc(var(--header-height)/2)] pc:h-[var(--header-height)] w-[100svw]">
-            {/* <header className="fixed left-0 z-[100] mx-auto h-[calc(var(--header-height)/2)] pc:h-[var(--header-height)] w-full after:absolute after:top-0 after:left-0 after:-z-[1] after:mx-auto after:h-[var(--header-height)] after:w-full after:backdrop-blur-[20px] after:content-[''] after:[mask-image:linear-gradient(rgb(0,0,0),rgb(0,0,0)_0%,rgb(0,0,0)_20%,rgba(0,0,0,0))]"> */}
+        <header
+            className="fixed left-0 z-[100] mx-auto h-[calc(var(--header-height)/2)] pc:h-[var(--header-height)] overflow-hidden"
+            style={{
+                width: `${mainWidthSvw}svw`,
+                transition,
+                opacity: mainWidthSvw === 0 ? 0 : 1,
+                pointerEvents: mainWidthSvw === 0 ? "none" : undefined,
+            }}
+        >            {/* <header className="fixed left-0 z-[100] mx-auto h-[calc(var(--header-height)/2)] pc:h-[var(--header-height)] w-full after:absolute after:top-0 after:left-0 after:-z-[1] after:mx-auto after:h-[var(--header-height)] after:w-full after:backdrop-blur-[20px] after:content-[''] after:[mask-image:linear-gradient(rgb(0,0,0),rgb(0,0,0)_0%,rgb(0,0,0)_20%,rgba(0,0,0,0))]"> */}
             <div className="relative mx-auto flex h-full w-full mobile:max-w-[calc(100dvw-(1.6rem*2))] tablet:max-w-[var(--size-pc)] items-center pc:h-full px-[2.0rem]">
                 {/* <div className="relative mx-auto flex h-full w-full mobile:max-w-[calc(100dvw-(1.6rem*2))] tablet:max-w-[calc(100dvw-(2.0rem*2))] items-center pc:h-full px-[2.0rem]"> */}
                 <section className="menu flex gap-[4.8rem]">

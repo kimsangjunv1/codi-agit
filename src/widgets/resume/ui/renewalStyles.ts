@@ -8,7 +8,7 @@ export const R = {
     // split: "grid grid-cols-1 tablet:grid-cols-2",
     left: "hidden tablet:flex tablet:items-center tablet:justify-center tablet:min-h-[48rem] px-[4rem] py-[8rem]",
     leftInner: "w-full max-w-[40rem]",
-    right: "py-[6rem] tablet:py-[10rem] tablet:col-start-2 flex items-center justify-start",
+    right: "py-[6rem] pr-[2.4rem] tablet:py-[10rem] tablet:col-start-2 flex items-center justify-start",
     // right: "py-[6rem] tablet:py-[10rem] tablet:col-start-2",
     // right: "px-[2.4rem] tablet:px-[8rem] py-[6rem] tablet:py-[10rem] tablet:col-start-2",
     rightInner: "max-w-[72rem] flex flex-col gap-[2.4rem]",
