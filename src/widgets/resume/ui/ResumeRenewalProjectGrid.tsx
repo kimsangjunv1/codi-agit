@@ -10,6 +10,8 @@ import { R } from "./renewalStyles";
 
 const PROJECT_DIALOG_LAYER_ID = "resume-project-dialog-layer";
 const PROJECT_REVEAL_EASE = [0.22, 1, 0.36, 1] as const;
+const PROJECT_DETAIL_TITLE_CLASS_NAME = "font-semibold text-[1.6rem]";
+const PROJECT_DETAIL_CONTENT_CLASS_NAME = "text-[1.4rem] font-medium leading-[1.5] lg:text-[1.8rem]";
 const PROJECT_REVEAL_VARIANTS = {
     hidden: { x: "100%" },
     visible: { x: 0 },
@@ -53,21 +55,19 @@ const ProjectTile = ({ project, index, onSelect }: { project: ResumeProjectDetai
 };
 
 const ProjectDetailSection = ({ section }: { section: ResumeProjectDetailSection }) => {
-    const List = section.ordered ? "ol" : "ul";
-
     return (
-        <section>
-            <h3 className="text-[1.4rem] font-semibold">{section.title}</h3>
-            <List className={`space-y-[1.2rem] pl-[2.2rem] text-[1.55rem] leading-[1.5] text-black/70 ${section.ordered ? "list-decimal" : "list-disc"}`}>
+        <section className="flex flex-col gap-[1.6rem]">
+            <h3 className={PROJECT_DETAIL_TITLE_CLASS_NAME}>{section.title}</h3>
+            <div className="flex flex-col gap-[1.2rem]">
                 {section.items.map((item) => (
-                    <li
-                        className="pl-[0.4rem] leading-[1.5] text-[1.8rem]"
+                    <p
+                        className={PROJECT_DETAIL_CONTENT_CLASS_NAME}
                         key={item}
                     >
                         {item}
-                    </li>
+                    </p>
                 ))}
-            </List>
+            </div>
         </section>
     );
 };
@@ -153,41 +153,41 @@ const ProjectDetailModal = ({ project, onClose }: { project: ResumeProjectDetail
                     data-lenis-prevent="true"
                 >
                     <section className="p-[2.4rem] flex flex-col gap-[1.6rem] border-b border-black/15">
-                        <p className="font-semibold text-[1.6rem]">한줄 요약</p>
-                        <p className="text-[1.4rem] font-medium leading-[1.5] lg:text-[1.8rem]">{project.summary}</p>
+                        <p className={PROJECT_DETAIL_TITLE_CLASS_NAME}>한줄 요약</p>
+                        <p className={PROJECT_DETAIL_CONTENT_CLASS_NAME}>{project.summary}</p>
                     </section>
 
                     <section className="p-[2.4rem] flex flex-col gap-[1.6rem] border-b border-black/15">
-                        <p className="font-semibold text-[1.6rem]">설명</p>
-                        <p className="text-[1.4rem] font-medium leading-[1.5] lg:text-[1.8rem]">{project.overview}</p>
+                        <p className={PROJECT_DETAIL_TITLE_CLASS_NAME}>설명</p>
+                        <p className={PROJECT_DETAIL_CONTENT_CLASS_NAME}>{project.overview}</p>
                     </section>
 
                     <section className="grid grid-cols-[1fr_auto_1fr] border-b border-black/15">
                         <div className="p-[2.4rem] flex flex-col gap-[1.6rem]">
-                            <p className="font-semibold text-[1.6rem]">담당</p>
-                            <p className="text-[1.4rem] font-medium leading-[1.5] lg:text-[1.8rem]">{project.role}</p>
+                            <p className={PROJECT_DETAIL_TITLE_CLASS_NAME}>담당</p>
+                            <p className={PROJECT_DETAIL_CONTENT_CLASS_NAME}>{project.role}</p>
                         </div>
 
                         <div className="h-full w-[0.1rem] bg-black/15" />
 
                         <div className="p-[2.4rem] flex flex-col gap-[1.6rem]">
-                            <p className="font-semibold text-[1.6rem]">구성 인원</p>
-                            <p className="text-[1.4rem] font-medium leading-[1.5] lg:text-[1.8rem]">{project.team}</p>
+                            <p className={PROJECT_DETAIL_TITLE_CLASS_NAME}>구성 인원</p>
+                            <p className={PROJECT_DETAIL_CONTENT_CLASS_NAME}>{project.team}</p>
                         </div>
                     </section>
 
-                    <section className="p-[2.4rem] border-b border-black/15">
-                        <h3 className="text-[1.4rem] font-semibold">기술 스택과 활용</h3>
-                        <ul className="mt-[1.2rem] space-y-[1.2rem] pl-[2.2rem] text-[1.55rem] leading-[1.5] text-black/70">
+                    <section className="flex flex-col gap-[1.6rem] border-b border-black/15 p-[2.4rem]">
+                        <h3 className={PROJECT_DETAIL_TITLE_CLASS_NAME}>기술 스택과 활용</h3>
+                        <div className="flex flex-col gap-[1.2rem]">
                             {project.technologies.map((technology) => (
-                                <li
-                                    className="list-disc pl-[0.4rem] leading-[1.5] text-[1.8rem]"
+                                <p
+                                    className={PROJECT_DETAIL_CONTENT_CLASS_NAME}
                                     key={technology.name}
                                 >
-                                    <strong className="font-medium text-black text-[1.8rem]">{technology.name}:</strong> {technology.description}
-                                </li>
+                                    {technology.name}: {technology.description}
+                                </p>
                             ))}
-                        </ul>
+                        </div>
                     </section>
 
                     <section className="flex flex-col gap-[3.2rem] p-[2.4rem]">
