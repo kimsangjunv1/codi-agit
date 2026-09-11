@@ -27,11 +27,11 @@ const HomeViewModeNav = ({ variant }: HomeViewModeNavProps) => {
     const activeTextClass = isFloating ? "text-white" : "text-black";
     const inactiveTextClass = isFloating ? "text-white/50" : "text-[#00000050]";
     const dividerClass = isFloating ? "h-[1.6rem] w-[0.1rem] bg-white/30 shrink-0" : "h-[1.6rem] w-[0.1rem] bg-[var(--color-gray-400)] shrink-0";
-    const buttonTextClass = isFloating ? "font-extrabold text-[1.8rem]" : "font-extrabold text-[3.2rem]";
+    const buttonTextClass = isFloating ? "font-extrabold text-[1.8rem]" : "font-extrabold text-[2.4rem] whitespace-nowrap";
 
     return (
-        <section className={isFloating ? "fixed z-100 left-1/2 -translate-x-1/2 bottom-[calc(1.6rem+env(safe-area-inset-bottom))] w-full" : "w-full"}>
-            <section className={`${isFloating ? "gap-[0.4rem] justify-center" : "gap-[2.4rem] justify-start"} max-w-[var(--size-pc)] px-[2.0rem] mx-auto flex items-center pt-[var(--header-height)]`}>
+        <section className={isFloating ? "fixed z-100 left-1/2 -translate-x-1/2 bottom-[calc(1.6rem+env(safe-area-inset-bottom))] w-full" : "flex items-center"}>
+            <section className={`${isFloating ? "gap-[0.4rem] max-w-[var(--size-pc)] px-[2.0rem] mx-auto pt-[var(--header-height)]" : "gap-[2.4rem]"} flex items-center justify-center`}>
                 <AnimatePresence mode="popLayout">
                     <UI.Button
                         key="search"

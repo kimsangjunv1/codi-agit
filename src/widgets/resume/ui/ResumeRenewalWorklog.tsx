@@ -2,17 +2,14 @@
 
 import { GitCommitHorizontal } from "lucide-react";
 
-import {
-    getRenewalExperienceAnchorId,
-    type RenewalSectionEntry,
-} from "@/shared/constants/resume/resumeRenewalData";
+import { getRenewalExperienceAnchorId, type RenewalSectionEntry } from "@/shared/constants/resume/resumeRenewalData";
 import { R } from "./renewalStyles";
 
 const ResumeRenewalWorklog = ({ entries }: { entries: RenewalSectionEntry[] }) => {
     return (
         <section
             id="renewal-worklog"
-            className="mx-auto w-full max-w-[calc(56rem*2)] scroll-mt-[10rem] py-[8rem] lg:py-[12rem]"
+            className="mx-auto w-full max-w-[calc(72rem*2)] scroll-mt-[10rem] py-[8rem] lg:py-[12rem]"
         >
             <h2 className={`${R.label} mb-[5.6rem]`}>Worklog</h2>
 
@@ -32,9 +29,7 @@ const ResumeRenewalWorklog = ({ entries }: { entries: RenewalSectionEntry[] }) =
                             <span className="absolute left-[-3.45rem] top-[0.15rem] hidden h-[2rem] w-[2rem] items-center justify-center rounded-[0.45rem] border border-black/20 bg-white text-black/45 shadow-sm lg:flex">
                                 <GitCommitHorizontal size={13} />
                             </span>
-                            <h2 className="text-[1.9rem] font-medium leading-[1.35] tracking-[-0.025em] text-black">
-                                {entry.title}
-                            </h2>
+                            <h2 className="text-[1.9rem] font-medium leading-[1.35] tracking-[-0.025em] text-black">{entry.title}</h2>
                             <div className="mt-[1.2rem] flex flex-wrap items-center gap-[0.8rem]">
                                 <span className="text-[1.15rem] text-black/45">{entry.period}</span>
                                 <span className="inline-flex rounded-full border border-black/20 px-[0.65rem] py-[0.35rem] text-[0.95rem] font-semibold uppercase tracking-[0.08em] text-black/65">
@@ -71,6 +66,8 @@ const ResumeRenewalWorklog = ({ entries }: { entries: RenewalSectionEntry[] }) =
                         </div>
                     </article>
                 ))}
+
+                <div className="absolute left-[-1px] bottom-0 w-full h-[5.2rem] bg-[linear-gradient(0deg,_#fff,_#ffffff00))]" />
             </div>
         </section>
     );

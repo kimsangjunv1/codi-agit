@@ -195,7 +195,7 @@ const ResumeRenewalProjectGrid = () => {
     return (
         <section
             id="renewal-projects"
-            className="mx-auto w-full max-w-[calc(56rem*2)] scroll-mt-[10rem] py-[8rem] lg:py-[12rem]"
+            className="mx-auto w-full max-w-[calc(72rem*2)] scroll-mt-[10rem] py-[8rem] lg:py-[12rem]"
         >
             <h2 className={`${R.label} mb-[3.2rem]`}>Projects</h2>
 
