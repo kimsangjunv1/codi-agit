@@ -1,17 +1,56 @@
 "use client";
 
 import { ArrowUpRight, X } from "lucide-react";
+import { motion, useReducedMotion } from "motion/react";
 import { useCallback, useEffect, useId, useState } from "react";
 import { createPortal } from "react-dom";
 
-import {
-    resumeProjectDetails,
-    type ResumeProjectDetail,
-    type ResumeProjectDetailSection,
-} from "@/shared/constants/resume/resumeProjectDetails";
+import { resumeProjectDetails, type ResumeProjectDetail, type ResumeProjectDetailSection } from "@/shared/constants/resume/resumeProjectDetails";
 import { R } from "./renewalStyles";
 
 const PROJECT_DIALOG_LAYER_ID = "resume-project-dialog-layer";
+const PROJECT_REVEAL_EASE = [0.22, 1, 0.36, 1] as const;
+const PROJECT_REVEAL_VARIANTS = {
+    hidden: { x: "100%" },
+    visible: { x: 0 },
+};
+
+const ProjectTile = ({ project, index, onSelect }: { project: ResumeProjectDetail; index: number; onSelect: (project: ResumeProjectDetail) => void }) => {
+    const reducedMotion = useReducedMotion();
+
+    return (
+        <motion.button
+            type="button"
+            className="group aspect-square overflow-hidden bg-white p-0 text-left transition-colors hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-black"
+            aria-label={`${project.title} 상세 보기`}
+            initial={reducedMotion ? false : "hidden"}
+            whileInView={reducedMotion ? undefined : "visible"}
+            viewport={{ once: true, amount: 0.2 }}
+            onClick={() => onSelect(project)}
+        >
+            <motion.div
+                className="relative flex h-full w-full flex-col justify-between p-[2.4rem]"
+                variants={PROJECT_REVEAL_VARIANTS}
+                transition={{ duration: 0.75, delay: index * 0.08, ease: PROJECT_REVEAL_EASE }}
+            >
+                <div
+                    aria-hidden="true"
+                    className="absolute inset-0 bg-[#ededed] transition-colors duration-300 group-hover:bg-black"
+                />
+
+                <div className="relative z-10 flex w-full items-start justify-between gap-[1.6rem]">
+                    <span className="text-[1.1rem] font-semibold tracking-[0.12em] text-black/45 group-hover:text-white/55">{String(index + 1).padStart(2, "0")}</span>
+                    <ArrowUpRight size={18} />
+                </div>
+                <div className="relative z-10">
+                    <p className="mb-[0.8rem] text-[1.1rem] leading-[1.5] text-black/45 group-hover:text-white/55">{project.category}</p>
+                    <h3 className="text-[2.2rem] font-bold leading-[1.3] tracking-[-0.035em]">{project.title}</h3>
+                    <p className="mt-[1.6rem] text-[1.3rem] font-medium leading-[1.5]">{project.tileMetric}</p>
+                </div>
+            </motion.div>
+        </motion.button>
+    );
+};
 
 const ProjectDetailSection = ({ section }: { section: ResumeProjectDetailSection }) => {
     const List = section.ordered ? "ol" : "ul";
@@ -19,11 +58,7 @@ const ProjectDetailSection = ({ section }: { section: ResumeProjectDetailSection
     return (
         <section>
             <h3 className="mb-[1.6rem] text-[2rem] font-semibold tracking-[-0.025em]">{section.title}</h3>
-            <List
-                className={`space-y-[1.2rem] pl-[2.2rem] text-[1.55rem] leading-[1.8] text-black/70 ${
-                    section.ordered ? "list-decimal" : "list-disc"
-                }`}
-            >
+            <List className={`space-y-[1.2rem] pl-[2.2rem] text-[1.55rem] leading-[1.8] text-black/70 ${section.ordered ? "list-decimal" : "list-disc"}`}>
                 {section.items.map((item) => (
                     <li
                         className="pl-[0.4rem]"
@@ -90,9 +125,7 @@ const ProjectDetailModal = ({ project, onClose }: { project: ResumeProjectDetail
             >
                 <header className="sticky top-0 z-10 flex items-start justify-between gap-[2.4rem] border-b border-black/15 bg-white/95 px-[2.4rem] py-[2rem] backdrop-blur lg:px-[4.8rem] lg:py-[2.8rem]">
                     <div>
-                        <p className="mb-[0.8rem] text-[1.1rem] font-semibold uppercase tracking-[0.12em] text-black/45">
-                            {project.category}
-                        </p>
+                        <p className="mb-[0.8rem] text-[1.1rem] font-semibold uppercase tracking-[0.12em] text-black/45">{project.category}</p>
                         <h2
                             id={titleId}
                             className="text-[2.8rem] font-bold leading-[1.3] tracking-[-0.04em] lg:text-[4rem]"
@@ -113,9 +146,7 @@ const ProjectDetailModal = ({ project, onClose }: { project: ResumeProjectDetail
 
                 <div className="mx-auto flex max-w-[80rem] flex-col gap-[4.8rem] px-[2.4rem] py-[4rem] lg:px-0 lg:py-[6.4rem]">
                     <div>
-                        <p className="text-[2rem] font-medium leading-[1.7] tracking-[-0.025em] lg:text-[2.4rem]">
-                            {project.summary}
-                        </p>
+                        <p className="text-[2rem] font-medium leading-[1.7] tracking-[-0.025em] lg:text-[2.4rem]">{project.summary}</p>
                         <p className="mt-[2.4rem] text-[1.6rem] leading-[1.8] text-black/65">{project.overview}</p>
                     </div>
 
@@ -168,29 +199,14 @@ const ResumeRenewalProjectGrid = () => {
         >
             <h2 className={`${R.label} mb-[3.2rem]`}>Projects</h2>
 
-            <div className="grid grid-cols-1 gap-0 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="grid grid-cols-1 gap-0 sm:grid-cols-2 lg:grid-cols-2">
                 {resumeProjectDetails.map((project, index) => (
-                    <button
-                        type="button"
-                        className="group flex aspect-square flex-col justify-between border border-black/15 bg-white p-[2.4rem] text-left transition-colors hover:bg-black hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-black"
-                        aria-label={`${project.title} 상세 보기`}
+                    <ProjectTile
                         key={project.id}
-                        onClick={() => setSelectedProject(project)}
-                    >
-                        <div className="flex w-full items-start justify-between gap-[1.6rem]">
-                            <span className="text-[1.1rem] font-semibold tracking-[0.12em] text-black/45 group-hover:text-white/55">
-                                {String(index + 1).padStart(2, "0")}
-                            </span>
-                            <ArrowUpRight size={18} />
-                        </div>
-                        <div>
-                            <p className="mb-[0.8rem] text-[1.1rem] leading-[1.5] text-black/45 group-hover:text-white/55">
-                                {project.category}
-                            </p>
-                            <h3 className="text-[2.2rem] font-bold leading-[1.3] tracking-[-0.035em]">{project.title}</h3>
-                            <p className="mt-[1.6rem] text-[1.3rem] font-medium leading-[1.5]">{project.tileMetric}</p>
-                        </div>
-                    </button>
+                        project={project}
+                        index={index}
+                        onSelect={setSelectedProject}
+                    />
                 ))}
             </div>
 
