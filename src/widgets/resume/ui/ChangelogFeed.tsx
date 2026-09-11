@@ -3,10 +3,10 @@
 import { Check, ChevronDown, Copy, GitCommitHorizontal, ListFilter, Rss } from "lucide-react";
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { changelogTypeLabels, formatContentDate } from "@/lib/content";
-import { ContentSections } from "@/widgets/content/ContentSections";
-import { ChangelogTypeBadge } from "@/widgets/content/ChangelogTypeBadge";
-import type { ChangelogEntry, ChangelogType } from "@/lib/content";
+import { changelogTypeLabels, formatContentDate } from "@/shared/lib/content";
+import { ContentSections } from "@/widgets/resume/ui/ContentSections";
+import { ChangelogTypeBadge } from "@/widgets/resume/ui/ChangelogTypeBadge";
+import type { ChangelogEntry, ChangelogType } from "@/shared/lib/content";
 
 function toMarkdown(entries: ChangelogEntry[]) {
     return entries

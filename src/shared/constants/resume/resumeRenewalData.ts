@@ -184,11 +184,12 @@ export function getRenewalSideProjectAnchorId(projectId: string) {
 /** 실제 렌더링 섹션과 동기화된 TOC — 경력·사이드 프로젝트는 데이터에서 자동 생성 */
 export const renewalTocItems: RenewalTocItem[] = [
     { id: "renewal-about", label: "About" },
-    { id: "renewal-skills", label: "Skills" },
     ...renewalExperiences.map((experience) => ({
         id: getRenewalExperienceAnchorId(experience.id),
         label: EXPERIENCE_TOC_LABELS[experience.id] ?? experience.title,
     })),
+    { id: "renewal-projects", label: "Projects" },
+    { id: "renewal-skills", label: "Skills" },
     {
         id: getRenewalSideProjectAnchorId(renewalSideProject.id),
         label: "Side Project",
