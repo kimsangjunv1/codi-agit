@@ -367,7 +367,7 @@ export const resumeExperiences: ResumeExperience[] = [
         role: "프론트엔드 개발자",
         team: "FE 2명",
         overview:
-            "무인 관제·매장·대리점 관리 SaaS의 레거시 전환과 운영 효율 개선을 수행하고, 사내 디자인 시스템으로 UI·개발 표준을 정립했습니다.",
+            "점주·대리점·사내 운영자를 위한 백오피스와 결제·구독 시스템을 구축하고, 레거시 전환과 운영 효율 개선을 담당했습니다.",
         projectIds: [
             "dev-team-process",
             "keepupass",
@@ -386,7 +386,7 @@ export const resumeExperiences: ResumeExperience[] = [
         role: "프론트엔드 개발자",
         team: "FE 1명",
         overview:
-            "연타형 게이미피케이션 팬 리워드 플랫폼(팬덤박스)과 기업 공식 홈페이지 프론트엔드를 담당했습니다.",
+            "연타형 게이미피케이션 서비스와 기업 공식 홈페이지의 프론트엔드 개발 및 UX/UI 설계를 담당했습니다.",
         projectIds: ["fandombox", "maze"],
     },
 ];
