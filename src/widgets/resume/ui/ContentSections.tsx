@@ -1,4 +1,4 @@
-import type { ContentSection } from "@/lib/content";
+import type { ContentSection } from "@/shared/lib/content";
 
 export function ContentSections({ sections, compact = false }: { sections: ContentSection[]; compact?: boolean }) {
     return (

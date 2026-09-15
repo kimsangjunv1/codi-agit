@@ -149,7 +149,7 @@ export const resumeProjects: ResumeProject[] = [
             "API 응답 키·depth 불일치 — BE와 협의해 resultCode · resultMsg · pagination · data 4키 초안 제안, 신규·리팩터 API부터 순차 적용",
             "프론트 단독 로그인·토큰 미관리 — accessToken · refreshToken(JWT) 갱신 플로우 FE PoC 작성 후 팀 리뷰·주요 서비스 단계 적용",
             "반복 QA 수동 클릭 — Playwright E2E 핵심 시나리오 3~5건 스크립트화, 스테이징 회귀 QA 약 1~2시간 → 30~40분",
-            "화면 코멘트·Git Issue 연동 QA 도구 Stitchable 사이드 개발 (github.com/kimsangjunv1/stitchable, Private)",
+            "DOM 요소 단위 피드백·GitHub Issue 연동 QA 라이브러리 FivePixels 설계·개발 및 npm 공개",
         ],
     },
     {
@@ -318,31 +318,30 @@ export const resumeProjects: ResumeProject[] = [
 
 /** /resume Side Project 전용 (PDF 이력서 경력 섹션에는 미포함) */
 export const resumeSideProject: ResumeProject = {
-    id: "stitchable",
-    title: "Stitchable",
-    subtitle: "Figma식 화면 피드백 → Git Issue QA 협업 라이브러리",
+    id: "fivepixels",
+    title: "FivePixels",
+    subtitle: "DOM 요소 단위 QA·UI 피드백 React 라이브러리",
     period: "2026.05.20 ~ 진행 중",
-    techStack: "React, TypeScript",
-    team: "FE 1명 (개인 프로젝트 · 오픈소스)",
+    techStack: "React, TypeScript, Zustand, Shadow DOM, Vitest",
+    team: "FE 1명 (개인 프로젝트 · MIT 오픈소스)",
     overview:
-        "화면상 잘못된 부분에 Figma처럼 코멘트를 남기고, QA와 논의한 뒤 Git Issue로 승급하는 협업 체계를 React 오픈소스 라이브러리로 구상·개발 중입니다. 외부 피드백을 받고 주변 개발자에게 긍정적·진취적인 방향을 보여주기 위해 오픈소스로 공개할 예정입니다.",
+        "스테이징·QA·내부 도구 화면에서 DOM 요소에 피드백 마커를 남기고, 답변·검수 후 GitHub Issue로 전환할 수 있는 React 라이브러리입니다. UI Edit 모드로 실제 화면의 스타일과 레이아웃 수정안을 바로 비교할 수 있습니다.",
     highlight: {
-        label: "개발 기간",
-        before: "0",
-        after: "1",
-        unit: "개월",
+        label: "npm 공개 버전",
+        before: "0.0.0",
+        after: "0.2.7",
     },
     chartLabel: "Library Progress",
     chartPoints: [15, 28, 42, 55, 68, 78, 85, 90, 93, 95],
     metrics: [
-        { label: "형태", value: "React", sub: "오픈소스 라이브러리" },
-        { label: "협업", value: "Comment", sub: "→ Issue 승급" },
-        { label: "목표", value: "OSS", sub: "커뮤니티 기여" },
+        { label: "패키지", value: "React", sub: "npm 공개 라이브러리" },
+        { label: "피드백", value: "DOM", sub: "요소 단위 마커" },
+        { label: "라이선스", value: "MIT", sub: "오픈소스" },
     ],
     achievements: [
-        "Figma식 화면 코멘트 UX — 잘못된 UI 위치에 피드백을 앵커링하는 인터랙션 설계",
-        "QA 논의 → Git Issue 승급 플로우 — 피드백·토론·이슈화까지 이어지는 협업 체계 구상",
-        "오픈소스 공개 목표 — 외부 의견 수렴 및 개발자 커뮤니티에 긍정적·진취적 방향 제시",
+        "DOM 요소 단위 마커와 data-report-id·selector 기반 위치 복원으로 화면 맥락이 유지되는 피드백 흐름 구현",
+        "피드백 작성·답변·검수·상태 관리부터 GitHub Issue 전환까지 이어지는 QA 협업 플로우 설계",
+        "Shadow DOM 기반 무설정 UI와 스타일·레이아웃을 실시간 조정하는 UI Edit·Before/After·Undo/Redo 기능 구현",
     ],
 };
 
@@ -368,7 +367,7 @@ export const resumeExperiences: ResumeExperience[] = [
         role: "프론트엔드 개발자",
         team: "FE 2명",
         overview:
-            "무인 관제·매장·대리점 관리 SaaS의 레거시 전환과 운영 효율 개선을 수행하고, 사내 디자인 시스템으로 UI·개발 표준을 정립했습니다.",
+            "점주·대리점·사내 운영자를 위한 백오피스와 결제·구독 시스템을 구축하고, 레거시 전환과 운영 효율 개선을 담당했습니다.",
         projectIds: [
             "dev-team-process",
             "keepupass",
@@ -387,7 +386,7 @@ export const resumeExperiences: ResumeExperience[] = [
         role: "프론트엔드 개발자",
         team: "FE 1명",
         overview:
-            "연타형 게이미피케이션 팬 리워드 플랫폼(팬덤박스)과 기업 공식 홈페이지 프론트엔드를 담당했습니다.",
+            "연타형 게이미피케이션 서비스와 기업 공식 홈페이지의 프론트엔드 개발 및 UX/UI 설계를 담당했습니다.",
         projectIds: ["fandombox", "maze"],
     },
 ];

@@ -28,9 +28,9 @@ export const renewalHero = {
     subtitle: resumeProfile.role,
     greeting: `안녕하세요,\n프론트엔드 개발자 ${resumeProfile.name}입니다.`,
     intro: [
-        "2년 7개월 동안 React·Next.js 기반 SaaS, 게이미피케이션 서비스, 레거시 마이그레이션과 디자인 시스템을 경험했습니다.",
-        "팬덤박스의 일일 이용자 수를 120명에서 350명으로 높이고, 엔조이소프트 HUB의 최대 25분 로딩을 119ms까지 단축했습니다.",
-        "사용자 경험과 동료의 개발 경험을 함께 살피며, 측정 가능한 제품 성과와 유지보수 가능한 구조를 만드는 데 집중합니다.",
+        "2년 7개월간 React·Next.js 기반 프론트엔드 개발을 담당하며, 결제·정산 시스템과 대규모 백오피스의 신규 구축 및 레거시 전환을 주도해 왔습니다.",
+        "약 8,000건 규모의 데이터 조회 병목과 고빈도 인터랙션의 API 호출·렌더링 성능을 개선하고, API 에러 로깅·알림 체계로 운영 안정성을 높였습니다.",
+        "사용자에게 보이는 화면뿐 아니라, 제품을 함께 만드는 사람들의 개발·협업 경험까지 개선하는 프론트엔드 개발자를 지향합니다.",
     ],
     role: "Frontend Developer",
     profileImage: "/images/picture/resume-profile.png",
@@ -65,7 +65,7 @@ export type RenewalSectionEntry = Pick<
 export const renewalProjectVisuals: Record<string, { category: string; logo?: string }> = {
     fandombox: { category: "Product" },
     maze: { category: "Corporate" },
-    stitchable: { category: "Open Source" },
+    fivepixels: { category: "Open Source" },
     keepupass: { category: "SaaS Admin" },
     "dev-team-process": { category: "Team Lead" },
     kqr: { category: "SaaS" },
@@ -100,17 +100,17 @@ function mergeTechStack(projectIds: string[]): string {
 
 const EXPERIENCE_ACHIEVEMENTS: Record<string, string[]> = {
     "maze-company": [
-        "팬덤박스 프론트엔드 개발과 UI/UX 기획을 100% 담당하고, ES6 Class 기반 연타·희귀도·이펙트 제어 로직 구축",
-        "Laravel View를 Optional FSD 구조로 모듈화하고 SCSS 규격을 정립해 백엔드와의 작업 영역 충돌 및 반복 논의 비용 절감",
-        "연타 메커니즘·등급별 파티클 연출과 브랜드 UI 개편으로 일일 이용자 수 120명 → 350명, 190% 이상 증가",
-        "메이즈 홈페이지 lazy loading·코드 스플리팅 적용 — Lighthouse Mobile Performance 52 → 81, LCP 4.2s → 2.1s",
+        "초당 20~30회의 연속 입력을 300ms 단위로 병합해 API 호출을 최대 초당 3회로 제한",
+        "렌더링 부하를 줄여 iPhone 6 평균 FPS를 20대에서 45 이상으로 개선",
+        "기업 홈페이지에 지연 로딩과 코드 분할을 적용해 LCP를 5.1초에서 2.3초로 단축",
+        "초기 JavaScript 용량을 1.4MB에서 690KB로 줄이고, 저사양 기기에서 주요 흐름을 회귀 검증",
     ],
     enjoysoft: [
-        "Classic ASP·PHP 서비스를 Next.js·Optional FSD로 전환하고, HUB의 최대 25분 페이지 로딩을 119ms로 단축",
-        "아이머신 CEO에 Slack 오류 추적·서버 중심 결제 흐름을 구축해 일일 오류 문의 24건 → 10건 이하, 처리 기간 최대 2일 → 1일 이내로 개선",
-        "대리점 셀프오피스를 구축해 본사 운영 문의 31건 → 3~4건, 대리점 처리 기간 1~2주 → 1일 이내로 단축",
-        "키업패스의 500줄 이상 컴포넌트를 Optional FSD로 분리하고 관제 UX를 재설계해 기능 수정 공수 3일 → 1일 이내로 단축",
-        "8배수 토큰·네임스페이스 컴포넌트·Storybook·Vitest 기반 EDS를 구축해 UI 수정·교체 공수 7일 이상 → 2일로 약 70% 단축",
+        "Classic ASP 점주 백오피스의 12개 화면을 Next.js로 이관하고, 약 8,000건의 조회 시간을 24분에서 12초로 단축",
+        "대리점 백오피스의 중복 API 요청을 화면당 4~6회에서 1회로 줄이고, Playwright 회귀 시나리오 18개 구축",
+        "사내 디자인 시스템을 구축해 UI 수정·교체 기간을 7일 이상에서 2일로 단축하고, 작업 공수 약 70% 절감",
+        "라이선스 관리 프로세스를 자동화해 연간 수작업 약 200시간 절감",
+        "토스페이먼츠 인증·결제 정보를 서버에서 처리하도록 설계하고, 유료 전환율 80% 이상 달성",
     ],
 };
 
@@ -171,6 +171,8 @@ export const renewalContact = {
     github: resumeProfile.github,
     githubLabel: "github.com/kimsangjunv1",
     quote: '"사용자 경험과 동료의 개발 경험을 함께 개선합니다."',
+    notion: "https://app.notion.com/p/3d4a7d54d69680e59c30d5f43f0e8e45?source=copy_link",
+    notionLabel: "노션"
 };
 
 export function getRenewalExperienceAnchorId(experienceId: string) {
@@ -184,11 +186,12 @@ export function getRenewalSideProjectAnchorId(projectId: string) {
 /** 실제 렌더링 섹션과 동기화된 TOC — 경력·사이드 프로젝트는 데이터에서 자동 생성 */
 export const renewalTocItems: RenewalTocItem[] = [
     { id: "renewal-about", label: "About" },
-    { id: "renewal-skills", label: "Skills" },
     ...renewalExperiences.map((experience) => ({
         id: getRenewalExperienceAnchorId(experience.id),
         label: EXPERIENCE_TOC_LABELS[experience.id] ?? experience.title,
     })),
+    { id: "renewal-projects", label: "Projects" },
+    { id: "renewal-skills", label: "Skills" },
     {
         id: getRenewalSideProjectAnchorId(renewalSideProject.id),
         label: "Side Project",
