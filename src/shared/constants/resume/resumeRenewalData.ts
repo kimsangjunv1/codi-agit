@@ -28,9 +28,9 @@ export const renewalHero = {
     subtitle: resumeProfile.role,
     greeting: `안녕하세요,\n프론트엔드 개발자 ${resumeProfile.name}입니다.`,
     intro: [
-        "2년 7개월 동안 React·Next.js 기반 SaaS, 게이미피케이션 서비스, 레거시 마이그레이션과 디자인 시스템을 경험했습니다.",
-        "팬덤박스의 일일 이용자 수를 120명에서 350명으로 높이고, 엔조이소프트 HUB의 최대 25분 로딩을 119ms까지 단축했습니다.",
-        "사용자 경험과 동료의 개발 경험을 함께 살피며, 측정 가능한 제품 성과와 유지보수 가능한 구조를 만드는 데 집중합니다.",
+        "2년 7개월간 React·Next.js 기반 프론트엔드 개발을 담당하며, 결제·정산 시스템과 대규모 백오피스의 신규 구축 및 레거시 전환을 주도해 왔습니다.",
+        "약 8,000건 규모의 데이터 조회 병목과 고빈도 인터랙션의 API 호출·렌더링 성능을 개선하고, API 에러 로깅·알림 체계로 운영 안정성을 높였습니다.",
+        "사용자에게 보이는 화면뿐 아니라, 제품을 함께 만드는 사람들의 개발·협업 경험까지 개선하는 프론트엔드 개발자를 지향합니다.",
     ],
     role: "Frontend Developer",
     profileImage: "/images/picture/resume-profile.png",
@@ -65,7 +65,7 @@ export type RenewalSectionEntry = Pick<
 export const renewalProjectVisuals: Record<string, { category: string; logo?: string }> = {
     fandombox: { category: "Product" },
     maze: { category: "Corporate" },
-    stitchable: { category: "Open Source" },
+    fivepixels: { category: "Open Source" },
     keepupass: { category: "SaaS Admin" },
     "dev-team-process": { category: "Team Lead" },
     kqr: { category: "SaaS" },

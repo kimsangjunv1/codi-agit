@@ -8,7 +8,7 @@ const FOOTER_EMAIL_SVG = "/images/icon/common/footer-email.svg";
 
 const ResumeRenewalEmailBannerSection = () => {
     return (
-        <section className="relative left-1/2 w-[100dvw] -translate-x-1/2 overflow-hidden bg-[#00ff61]">
+        <section className="relative left-1/2 w-[100dvw] -translate-x-1/2 overflow-hidden py-[2.4rem] bg-[#00ff61]">
             <a
                 href={`mailto:${renewalContact.email}`}
                 aria-label={`${renewalContact.email}로 이메일 보내기`}

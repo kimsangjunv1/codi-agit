@@ -7,13 +7,14 @@ import { R } from "./ui/renewalStyles";
 
 export default function Panel() {
     return (
-        <article className={`relative w-full overflow-x-hidden bg-white mobile:px-[1.6rem] pc:px-0 ${R.root}`}>
+        <article className={`relative w-full overflow-x-hidden bg-white ${R.root}`}>
             <Layer.TocNav />
             <Layer.Hero />
             <Layer.Worklog entries={renewalExperiences} />
-            <Layer.SkillSection />
+            {/* <Layer.SkillSection /> */}
             <Layer.ProjectGrid />
             <Layer.SideProject />
+            <Layer.Awwwards />
             <Layer.Footer />
             <Layer.EmailBannerSection />
             <Layer.Modal />

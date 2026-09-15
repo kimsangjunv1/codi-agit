@@ -3,6 +3,7 @@ export { default as Experience } from "./ResumeRenewalExperience";
 export { default as Footer } from "./ResumeRenewalFooter";
 export { default as Hero } from "./ResumeRenewalHero";
 export { default as ProjectGrid } from "./ResumeRenewalProjectGrid";
+export { default as Awwwards } from "./ResumeRenewalAwwwards";
 export { default as Worklog } from "./ResumeRenewalWorklog";
 export { default as Modal } from "./Modal";
 export { default as SideProject } from "./ResumeRenewalSideProject";

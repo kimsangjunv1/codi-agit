@@ -200,8 +200,10 @@ const PageRevealOverlay = () => {
                     <IconComponent
                         type="graphic-logo-horizontal"
                         alt="코디 아지트"
-                        width={138}
+                        width={256}
                         height={52}
+                        // width={138}
+                        // height={52}
                         className="invert"
                     />
                 </motion.div>

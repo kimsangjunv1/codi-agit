@@ -74,14 +74,15 @@ export const renewalProjectLinks: Record<string, RenewalProjectLinks> = {
     maze: {
         demo: "https://portfoliosj-react.netlify.app/",
     },
-    stitchable: {
-        github: "https://github.com/kimsangjunv1/stitchable",
+    fivepixels: {
+        demo: "https://fivepixels.codi-agit.com/",
+        github: "https://github.com/kimsangjunv1/fivepixels",
     },
     keepupass: {
         github: resumeProfile.github,
     },
     "dev-team-process": {
-        github: "https://github.com/kimsangjunv1/stitchable",
+        github: "https://github.com/kimsangjunv1/fivepixels",
     },
     kqr: {},
     "imachine-ceo": {},
