@@ -100,17 +100,16 @@ function mergeTechStack(projectIds: string[]): string {
 
 const EXPERIENCE_ACHIEVEMENTS: Record<string, string[]> = {
     "maze-company": [
+        "Laravel의 MVC 및 서버 사이드 렌더링 구조를 유지하면서, Blade 템플릿과 프론트엔드 리소스를 페이지·기능·도메인·공통 UI 단위로 분리하는 FSD 설계",
         "팬덤박스 프론트엔드 개발과 UI/UX 기획을 100% 담당하고, ES6 Class 기반 연타·희귀도·이펙트 제어 로직 구축",
-        "Laravel View를 Optional FSD 구조로 모듈화하고 SCSS 규격을 정립해 백엔드와의 작업 영역 충돌 및 반복 논의 비용 절감",
-        "연타 메커니즘·등급별 파티클 연출과 브랜드 UI 개편으로 일일 이용자 수 120명 → 350명, 190% 이상 증가",
-        "메이즈 홈페이지 lazy loading·코드 스플리팅 적용 — Lighthouse Mobile Performance 52 → 81, LCP 4.2s → 2.1s",
+        "파티클 연출과 브랜드 UI 개편으로 일일 이용자 수 120명 → 350명, 190% 이상 증가",
+        "연타 진행률, 클릭 수, 희귀도 판단 및 상응하는 이펙트 제어 로직을 하나의 Class로 캡슐화하여 상태 및 액션 관리 최적화",
     ],
     enjoysoft: [
-        "Classic ASP·PHP 서비스를 Next.js·Optional FSD로 전환하고, HUB의 최대 25분 페이지 로딩을 119ms로 단축",
-        "아이머신 CEO에 Slack 오류 추적·서버 중심 결제 흐름을 구축해 일일 오류 문의 24건 → 10건 이하, 처리 기간 최대 2일 → 1일 이내로 개선",
-        "대리점 셀프오피스를 구축해 본사 운영 문의 31건 → 3~4건, 대리점 처리 기간 1~2주 → 1일 이내로 단축",
-        "키업패스의 500줄 이상 컴포넌트를 Optional FSD로 분리하고 관제 UX를 재설계해 기능 수정 공수 3일 → 1일 이내로 단축",
-        "8배수 토큰·네임스페이스 컴포넌트·Storybook·Vitest 기반 EDS를 구축해 UI 수정·교체 공수 7일 이상 → 2일로 약 70% 단축",
+        "Classic ASP·PHP 서비스를 Next.js·Optional FSD로 마이그레이션 하여 작업 경험을 일관되게 통일",
+        "Slack을 통해 에러 알림 시스템을 구축하여 일일 오류 문의 24건 → 10건 이하, 처리 기간 최대 2일 → 1일 이내로 개선",
+        "사내 디자인 시스템을 구축하고 UI 수정·교체 공수 7일 이상 → 2일로 약 70% 단축",
+        "화면상에 피드백을 남길 수 있는 전용 툴을 제작하여 개발과 QA 부서간의 의사소통 어려움 해소",
     ],
 };
 
@@ -171,6 +170,8 @@ export const renewalContact = {
     github: resumeProfile.github,
     githubLabel: "github.com/kimsangjunv1",
     quote: '"사용자 경험과 동료의 개발 경험을 함께 개선합니다."',
+    notion: "https://app.notion.com/p/3d4a7d54d69680e59c30d5f43f0e8e45?source=copy_link",
+    notionLabel: "노션"
 };
 
 export function getRenewalExperienceAnchorId(experienceId: string) {

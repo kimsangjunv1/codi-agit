@@ -7,6 +7,7 @@ import RenewalProjectLogoPanel from "./RenewalProjectLogoPanel";
 import RenewalRightBlocks from "./RenewalRightBlocks";
 import RenewalSplitSection from "./RenewalSplitSection";
 import { RInverse } from "./renewalStyles";
+import AwwwardsFluidCanvas from "./AwwwardsFluidCanvas";
 
 const SHOWCASE_IMAGE = "/images/picture/img-fivepixels-showcase.png";
 const SHOWCASE_VIDEO = "/videos/colorflow-animation.mp4";
@@ -97,7 +98,7 @@ const ResumeRenewalSideProject = () => {
                 />
             </RenewalSplitSection>
 
-            <div className="relative mt-auto h-[50svh] w-full shrink-0 overflow-hidden">
+            {/* <div className="relative mt-auto h-[50svh] w-full shrink-0 overflow-hidden">
                 <video
                     className="absolute inset-0 h-full w-full object-cover"
                     autoPlay
@@ -111,18 +112,21 @@ const ResumeRenewalSideProject = () => {
                         type="video/mp4"
                     />
                 </video>
-
-                <div className="relative z-[1] flex h-full w-full items-center justify-center">
-                    <Image
-                        src={SHOWCASE_IMAGE}
-                        alt={`${project.title} 화면 미리보기`}
-                        width={1600}
-                        height={900}
-                        className="h-full w-full object-contain"
-                        sizes="100vw"
-                        priority={false}
-                    />
-                </div>
+            </div> */}
+            <div className="relative mt-auto h-[50svh] w-full shrink-0 overflow-hidden">
+                <Image
+                    src={SHOWCASE_IMAGE}
+                    alt={`${project.title} 화면 미리보기`}
+                    width={1600}
+                    height={900}
+                    className="absolute top-0 left-0 h-full w-full object-contain"
+                    sizes="100vw"
+                    priority={false}
+                />
+                <AwwwardsFluidCanvas
+                    initialColor="#000000"
+                    // colors={["#E04A2E", "#FFB029", "#000000"]}
+                />
             </div>
         </div>
     );
