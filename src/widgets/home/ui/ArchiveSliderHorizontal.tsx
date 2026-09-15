@@ -144,7 +144,7 @@ const ArchiveSliderHorizontalContent = ({ posts }: ArchiveSliderHorizontalConten
     };
 
     return (
-        <section className="flex h-[calc(100svh-var(--header-height)-2.4rem)] w-full items-center overflow-hidden">
+        <section className="flex h-[calc(100svh)] w-full items-center overflow-hidden">
             {/* <section className="flex h-[100svh] w-full items-center overflow-hidden"> */}
             <div
                 ref={containerRef}

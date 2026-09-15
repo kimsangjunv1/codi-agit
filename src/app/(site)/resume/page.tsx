@@ -9,7 +9,7 @@ import ResumeView from "@/views/resume/ResumeView";
 export const metadata: Metadata = buildPageMetadata({
     title: "RESUME",
     description:
-        "김상준 프론트엔드 개발자 포트폴리오 — 프로젝트별 성과, 케이스 스터디, 기술 의사결정, 라이브 데모 및 협업 경험",
+        "김상준 프론트엔드 개발자 포트폴리오 — React·Next.js SaaS, 레거시 마이그레이션, UI/UX 및 디자인 시스템 구축 성과",
     path: "/resume",
 });
 

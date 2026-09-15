@@ -40,13 +40,13 @@ const Header = () => {
                             alt={"코디 아지트"}
                             width={138}
                             height={42}
-                            className="mobile:h-[calc(1.6rem*2.2)] mobile:w-[calc(1.6rem*7)] pc:h-[5.2rem] pc:w-auto"
+                            className="mobile:h-[calc(1.6rem*2.2)] mobile:w-[calc(1.6rem*7)] pc:h-[3.8rem] pc:w-auto"
                         />
                     </button>
 
                     <section className="absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%] flex items-center justify-center gap-[1.6rem]">
                         <AnimatePresence mode="popLayout">
-                            {/* {IS_ROUTE_HOME && !isMobile && <HomeViewModeNav variant="header" />} */}
+                            {IS_ROUTE_HOME && !isMobile && <HomeViewModeNav variant="header" />}
 
                             {IS_ROUTE_RESUME && (
                                 <motion.section

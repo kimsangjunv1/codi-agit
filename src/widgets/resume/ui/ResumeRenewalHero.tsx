@@ -5,6 +5,7 @@ import RenewalRightBlocks from "./RenewalRightBlocks";
 import RenewalSplitSection from "./RenewalSplitSection";
 import { resumeProfile } from "@/shared/constants/resume/resumeData";
 import { R } from "./renewalStyles";
+import AwwwardsFluidCanvas from "./AwwwardsFluidCanvas";
 
 const ResumeRenewalHero = () => {
     return (

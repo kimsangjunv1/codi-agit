@@ -7,7 +7,6 @@ import { R } from "./renewalStyles";
 
 const ResumeRenewalTocNav = () => {
     const [activeId, setActiveId] = useState(renewalTocItems[0]?.id ?? "");
-
     useEffect(() => {
         const sections = renewalTocItems.map((item) => document.getElementById(item.id)).filter((el): el is HTMLElement => el !== null);
 
